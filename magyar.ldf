@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/02/24 v1.5a Magyar support from the babel system]
+%%        [2004/03/01 v1.5a Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/02/24 v1.5a Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/03/01 v1.5a Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -1307,7 +1307,7 @@
   \def\refname{Hivatkoz\'asok}%
   \def\abstractname{Kivonat}%
   \def\bibname{Irodalomjegyz\'ek}%
-  \def\appendixname{F\"uggel\'ek}%
+  \def\appendixname{f\"uggel\'ek}% BUGFIX at Sun Feb 29 22:02:51 CET 2004
   \def\contentsname{Tartalomjegyz\'ek}%
   \def\listfigurename{\'Abr\'ak jegyz\'eke}%
   \def\listtablename{T\'abl\'azatok jegyz\'eke}%
@@ -3903,6 +3903,7 @@
 \fi
 \@@magyar@ifclassloaded{book}{%
   % Headings: inserting dots, changing orders
+  \def\@@magyar@appendixname{\appendixname}
   \def\@@magyar@book@psheadings{%
     \if@twoside
       \let\@oddfoot\@empty\let\@evenfoot\@empty
@@ -3913,7 +3914,8 @@
 	\markboth {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
 	    \if@mainmatter
-	      \thechapter. \@chapapp. \ %
+	      \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else. \fi
+	      \@chapapp. \ %
 	    \fi
 	  \fi
 	  ##1}}{}}%
@@ -3931,7 +3933,8 @@
 	\markright {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
 	    \if@mainmatter
-	      \thechapter. \@chapapp. \ %
+	      \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else. \fi
+	      \@chapapp. \ %
 	    \fi
 	  \fi
 	  ##1}}}%
@@ -3980,7 +3983,7 @@
       \ifnum \c@secnumdepth >\m@ne
          \if@mainmatter
            \refstepcounter{chapter}%
-           \typeout{\thechapter.\space\@chapapp.}%
+           \typeout{\thechapter.\space\@chapapp.}% Dat: force `.' even for \appendix
            \addcontentsline{toc}{chapter}%
                      {\protect\numberline{\thechapter.}#1}%
          \else
@@ -4007,7 +4010,10 @@
         {\parindent \z@ \raggedright \normalfont
           \ifnum \c@secnumdepth >\m@ne
             \if@mainmatter
-              \huge\bfseries \thechapter.~\@chapapp{}
+              \huge\bfseries \thechapter
+	      \def\reserved@a{\appendixname}%
+	      \ifx\@chapapp\reserved@a\enspace\else.~\fi
+	      \@chapapp{}
               \csname par\endcsname\nobreak
               \vskip 20\p@
             \fi
@@ -4261,6 +4267,7 @@
 %  % ^^^ \def`{\abbreviation}, but with active `
 %  \@@magyar@saved@mathoptions@on
 %}
+% !! book.cls \appendix \chapter, sub-numbers into TOC, need dot after `A. függelék'? Gyurgyák recommends `1. függelék'.
 % !! \MathReal, frenchb.ldf, \nombre
 % !! \told\ref{foo}+ban{}, if \foo expands to empty (no \section etc. in .tex file)
 % !! french.ldf number decimal comma etc.
