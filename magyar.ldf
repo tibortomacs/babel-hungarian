@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/07/23 v1.5b Magyar support from the babel system]
+%%        [2004/11/10 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/07/23 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/11/10 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -150,6 +150,7 @@
 %**     amstocnumskip=\enskip,     % TeX code or --empty--
 %**     amstocnumlang=all,         % or =hu
 %**     amspostsectiondot=no,      % or =unchanged
+%**     appendixdot=yes,           % or =no % !! dokumentálni
 %**     az=weak,                   % or =yes or =no
 %**     captions=hu,               % or =unchanged
 %**     chapternumber=unchanged,   % see partnumber=
@@ -206,6 +207,7 @@
   \magyar@opt@amspostsectiondot@@no% change over 1.4
   \magyar@opt@amstocnumlang@@all
   \magyar@opt@amstocnumskip{amstocnumskip}{\enskip}% change over 1.4
+  \magyar@opt@appendixdot@@yes
   \magyar@opt@az{az}{weak}%
   \magyar@opt@captions@@hu
   \magyar@opt@chapternumber@@unchanged
@@ -267,6 +269,7 @@
   \magyar@opt@amspostsectiondot@@unchanged% OK
   \magyar@opt@amstocnumlang@@all% OK, irrelevant
   \magyar@opt@amstocnumskip{amstocnumskip}{}% OK
+  \magyar@opt@appendixdot@@yes
   \magyar@opt@az{az}{yes}% OK
   \magyar@opt@captions@@hu% OK
   \magyar@opt@chapterhead@@yes% OK
@@ -324,6 +327,7 @@
   \magyar@opt@amspostsectiondot@@unchanged
   \magyar@opt@amstocnumlang@@all% OK, irrelevant
   \magyar@opt@amstocnumskip{amstocnumskip}{}%
+  \magyar@opt@appendixdot@@yes
   \magyar@opt@az{az}{no}%
   \magyar@opt@captions@@unchanged
   \magyar@opt@chapternumber@@unchanged
@@ -383,6 +387,7 @@
   \magyar@opt@amspostsectiondot@@no
   \magyar@opt@amstocnumlang@@all
   \magyar@opt@amstocnumskip{amstocnumskip}{\enskip}%
+  \magyar@opt@appendixdot@@no
   \magyar@opt@az{az}{yes}%
   \magyar@opt@captions@@hu
   \magyar@opt@chapternumber@@unchanged
@@ -441,6 +446,7 @@
     longcaption=centered,mathbrk=fix,mathhucomma=fix,
     postpara=diamond,postsubpara=star,postdescription=dot,
     sectiondot=safe,tablecaptions=hu,theoremtitle=hu,
+    appendixdot=no,
     titles=\enskip,\hfuzz,%
 }
 
@@ -582,10 +588,12 @@
 \def\magyar@opt@longcaption@@none{\let\magyar@caption@centering\@empty}
 \def\magyar@opt@longcaption@@unchanged{\let\magyar@caption@centering\@empty}
 \let\magyar@opt@longcaption\magyar@enumarg
-\def\magyar@opt@suggestions@@no{\def\magyar@opt@@suggestions{0}}
+\def\magyar@opt@suggestions@@no {\def\magyar@opt@@suggestions{0}}
 \def\magyar@opt@suggestions@@yes{\def\magyar@opt@@suggestions{1}}
 \let\magyar@opt@suggestions\magyar@enumarg
-\def\magyar@opt@extras@@no{\def\magyar@opt@@extras{0}}
+\def\magyar@opt@appendixdot@@no {\def\@@magyar@appendixname{\appendixname}}
+\def\magyar@opt@appendixdot@@yes{\def\@@magyar@appendixname{}}
+\let\magyar@opt@appendixdot\magyar@enumarg
 \def\magyar@opt@extras@@yes{\def\magyar@opt@@extras{1}}
 \let\magyar@opt@extras\magyar@enumarg
 \def\magyar@opt@chapterhead@@no{\def\magyar@opt@@chapterhead{0}}
@@ -819,14 +827,18 @@
 \def\@@magyar@hyphenation@next#1{%
   \ifx#1\hfuzz
   \else\if#1N% none
-    \csname l@\CurrentOption\endcsname255
+    \expandafter\ifx\csname l@\CurrentOption\endcsname\relax\else
+      \csname l@\CurrentOption\endcsname255 \fi
     \@@magyar@hyphenation@last
   \else\if#1C%
     \expandafter\ifx\csname l@\CurrentOption\endcsname\relax\else
       \@@magyar@hyphenation@last
     \fi
   \else\if#1w%
-    \@@magyar@suggpadef
+    % Dat: we reach this if no Hungarian patterns are available
+    \expandafter\ifx\csname l@\CurrentOption\endcsname\relax\else
+      \csname l@\CurrentOption\endcsname255 \fi
+    \@@magyar@suggpadef\@@magyar@hyphenation@last
   \else\if#1h\@@magyar@hyphenation@def{hungarian}%
   \else\if#1m\@@magyar@hyphenation@def{magyar}%
   \else\if#13\@@magyar@hyphenation@def{magyar3}%
@@ -839,7 +851,12 @@
 
 %\tracingmacros1 \show\magyar@opt@@hyphenation
 \expandafter\@@magyar@hyphenation@next\magyar@opt@@hyphenation\hfuzz
+%\show\l@magyar
 %\tracingmacros0
+\expandafter\ifx\csname l@\CurrentOption\endcsname\relax
+  \expandafter\newcount\csname l@\CurrentOption\endcsname
+  % ^^^ BUGFIX at Tue Oct 12 14:13:54 CEST 2004
+\fi
 \let\@@magyar@suggpadef\@undefined
 \@gobble
 {^}
@@ -1451,19 +1468,36 @@
   % has already been emitted by \fnum@table etc.
   % We apply some formatting depending on the longcaption= option.
   % Dat: Gyurgyák, p95. says: `11. ábra. Hajtási változatok.'
+  \let\@@magyar@do@makecaption\relax% before .toc
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
-    \babel@save\@makecaption
+    \@@magyar@do@makecaption}
+  \def\@@magyar@do@makecaption@captiontwo@yes{%
+    % Dat: package caption2 is loaded; assume \def\captionlabeldelim{.}
+  }
+  \def\@@magyar@do@makecaption@captiontwo@no{%
     %** @param #1 \fnum@table or \fnum@figure
-    \def\@makecaption#1#2{%
+    \def\@makecaption##1##2{%
       \vskip\abovecaptionskip
-      \sbox\@tempboxa{#1.\ #2}% Dat: `: ' changed to `. ' to match Hungarian typography
+      \sbox\@tempboxa{##1.\ ##2}% Dat: `: ' changed to `. ' to match Hungarian typography
       \ifdim \wd\@tempboxa>\magyar@caption@hsizecheck\relax
-        {\magyar@caption@centering #1.\magyar@caption@newline #2\csname par\endcsname}%
+        {\magyar@caption@centering ##1.\magyar@caption@newline ##2\csname par\endcsname}%
       \else
         \global \@minipagefalse
         \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
       \fi
       \vskip\belowcaptionskip}}
+  \AtBeginDocument{%
+    \expandafter\ifx\csname captionlabeldelim\endcsname\relax
+      \let\@@magyar@do@makecaption\@@magyar@do@makecaption@captiontwo@no
+    \else
+      % Dat: caption2.sty is loaded (and has \def\captionlabeldelim{.})
+      % Dat: we now redefine {.} to {:}
+      % Dat: the user can force {.} by \def\captionlabeldelim{.\empty}
+      % Dat: this works now: \usepackage[german,french,magyar]{babel} \usepackage{caption2} \begin{document} \renewcommand*\captionfont{\itshape} \renewcommand*\captionlabelfont{\scshape}
+      \def\reserved@a{:}%
+      \ifx\reserved@a\captionlabeldelim \def\captionlabeldelim{.}\fi
+      \let\@@magyar@do@makecaption\@@magyar@do@makecaption@captiontwo@yes
+    \fi}
   \@gobble
 {^}%
 
@@ -2073,6 +2107,19 @@
     \reserved@a
     \let\magyar@activate@shorthands\relax
   }
+  \let\@@magyar@saved@initiate@active@char\initiate@active@char
+  %
+  % vvv Fri Oct  1 18:09:55 CEST 2004
+  %     This is the ultimate fix of the .aux file catcodes when
+  %     \usepackage[german,magyar]{babel} or
+  %     \usepackage[french,magyar]{babel}.
+  %     This enforces \catcode\string``=12 very early into the .aux file.
+  % Imp: don't let \catcode``\active too early...
+  {\toks@\expandafter{\expandafter\@@magyar@protect@backtick\@begindocumenthook}%
+   \xdef\@begindocumenthook{\the\toks@}}% Dat: \@begindocumenthook has #1 #2 etc.
+  \def\@@magyar@protect@backtick{%
+    \if@filesw\immediate\write\@auxout{\catcode\noexpand\string``=12}\fi}
+  %
   %** @param #1 a non-active char token
   %** @param #2 activation type: 0, 1, 2 or 3
   % !! quick link to \@@magyar@shorthand
@@ -2087,6 +2134,11 @@
         }
         \initiate@active@char{#1}%
       \else% 2
+        % Dat: german.ldf emits `\catcode`"\active'; we should emit our
+        %      catcode change (\catcode\string``=12) before that
+        % Dat: this works only with \usepackage[magyar,german,magyar]{babel},
+	%      not with \usepackage[german,magyar]{babel}
+	%      solution: \AtBeginDocument{\if@filesw\immediate\write\@auxout{\catcode\noexpand\string`#1=12}\fi}
         \let\magyar@saved@AtBeginDocument\AtBeginDocument
         \let\AtBeginDocument\@gobble
         % vvv Calls \AtBeginDocument to set \catcode to \active and also write such a
@@ -2283,6 +2335,7 @@
   \magyar@fixddzs \expandafter\uppercase\expandafter{\magyar@fixddzs}
   \@gobble
 {^}%
+
 
 % --- hunumbers=
 
@@ -4051,7 +4104,7 @@
 \fi
 \@@magyar@ifclassloaded{book}{%
   % Headings: inserting dots, changing orders
-  \def\@@magyar@appendixname{\appendixname}
+  %\def\@@magyar@appendixname{\appendixname}% by appendixdot=
   \def\@@magyar@book@psheadings{%
     \if@twoside
       \let\@oddfoot\@empty\let\@evenfoot\@empty
@@ -4061,8 +4114,8 @@
       \def\chaptermark##1{%
 	\markboth {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
-	    \if@mainmatter
-	      \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else. \fi
+	    \if@mainmatter% Dat: csak book.cls-ben van, report.cls-ben nincs
+	      \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else.~\fi
 	      \@chapapp.\magyar@opt@@hdrtitleskip% \ %
 	    \fi
 	  \fi
@@ -4081,7 +4134,7 @@
 	\markright {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
 	    \if@mainmatter
-	      \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else. \fi
+	      \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else.~\fi
 	      \@chapapp.\magyar@opt@@hdrtitleskip% \ %
 	    \fi
 	  \fi
@@ -4131,9 +4184,10 @@
       \ifnum \c@secnumdepth >\m@ne
          \if@mainmatter
            \refstepcounter{chapter}%
-           \typeout{\thechapter.\space\@chapapp.}% Dat: force `.' even for \appendix
-           \addcontentsline{toc}{chapter}%
-                     {\protect\numberline{\thechapter.}#1}%
+           \typeout{\thechapter\ifx\@chapapp\@@magyar@appendixname\else.\fi\space\@chapapp.}%
+           \ifx\@chapapp\@@magyar@appendixname
+                \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter\protect\@gobble}#1}%
+           \else\addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#1}\fi
          \else
            \addcontentsline{toc}{chapter}{#1}%
          \fi
@@ -4159,8 +4213,7 @@
           \ifnum \c@secnumdepth >\m@ne
             \if@mainmatter
               \huge\bfseries \thechapter
-	      \def\reserved@a{\appendixname}%
-	      \ifx\@chapapp\reserved@a\enspace\else.~\fi
+	      \ifx\@chapapp\@@magyar@appendixname\enspace\else.~\fi
 	      \@chapapp{}
               \csname par\endcsname\nobreak
               \vskip 20\p@
@@ -4175,6 +4228,7 @@
 }{}
 
 \@@magyar@ifclassloaded{report}{%
+  %\def\@@magyar@appendixname{\appendixname}% by appendixdot=
   % Headings: inserting dots, changing orders
   \def\@@magyar@report@psheadings{%
     \if@twoside
@@ -4185,7 +4239,7 @@
       \def\chaptermark##1{%
 	\markboth {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
-	    \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else. \fi
+	    \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else.~\fi
 	    \@chapapp.\magyar@opt@@hdrtitleskip% \ %
 	  \fi
 	  ##1}}{}}%
@@ -4196,13 +4250,15 @@
 	  \fi
 	  ##1}}}%
     \else
+%\zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
       \let\@oddfoot\@empty
-      \def\@oddhead{\@@magyar@headrule3{\@@magyar@slshape\rightmark}\hfil\thepage}%
+      \def\@oddhead{%
+\@@magyar@headrule3{\@@magyar@slshape\rightmark}\hfil\thepage}%
       \let\@mkboth\markboth
       \def\chaptermark##1{%
-	\markright {\MakeUppercase{%
+	\markright{\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
-	    \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else. \fi
+	    \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else.~\fi
 	    \@chapapp.\magyar@opt@@hdrtitleskip% \ %
 	  \fi
 	  ##1}}}%
@@ -4221,10 +4277,13 @@
     \babel@save\@chapter
     \def\@chapter[#1]#2{%
       \ifnum \c@secnumdepth >\m@ne
+           %\typeout{\meaning\@chapapp}
+           %\typeout{\meaning\@@magyar@appendixname}
            \refstepcounter{chapter}%
-           \typeout{\thechapter.\space\@chapapp.}%
-           \addcontentsline{toc}{chapter}%
-                     {\protect\numberline{\thechapter.}#1}%
+           \typeout{\thechapter\ifx\@chapapp\@@magyar@appendixname\else.\fi\space\@chapapp.}%
+           \ifx\@chapapp\@@magyar@appendixname
+                \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter\protect\@gobble}#1}%
+           \else\addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#1}\fi
       \else
         \addcontentsline{toc}{chapter}{#1}%
       \fi
@@ -4245,7 +4304,7 @@
       \else
 	\addcontentsline{toc}{part}{#1}%
       \fi
-	\markboth{}{}%
+	\markboth{}{}% %%%%% \l@chapter in report.cls
 	{\centering
 	 \interlinepenalty \@M
 	 \normalfont
@@ -4261,7 +4320,7 @@
 	   \vskip 20\p@
 	 \fi
 	 \Huge \bfseries #2\csname par\endcsname}%
-	\@endpart}
+	\@endpart}%
   }
   \if0\magyar@opt@@chapterhead\else
     % Chapter: dot, changing order
@@ -4271,7 +4330,9 @@
         \vspace*{50\p@}%
         {\parindent \z@ \raggedright \normalfont
           \ifnum \c@secnumdepth >\m@ne
-              \huge\bfseries \thechapter.~\@chapapp{}
+              \huge\bfseries \thechapter%,,%
+              %\meaning\@chapapp;\meaning\@@magyar@appendixname((%
+              \ifx\@chapapp\@@magyar@appendixname\else.\fi~\@chapapp{}
               \csname par\endcsname\nobreak
               \vskip 20\p@
           \fi
@@ -4462,7 +4523,7 @@
         \thesubsection.\magyar@opt@@hdrtitleskip \fi #1}}%
     }{\def\chaptermark#1{\markboth{\MakeUppercase{\ifnum \c@secnumdepth>\m@ne
         \csname if@mainmatter\endcsname% report.cls doesn't have it
-        \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else. \fi
+        \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else\space \fi
         \@chapapp.\magyar@opt@@hdrtitleskip
         \expandafter\ifx\csname if@mainmatter\endcsname\relax
           \csname iftrue\endcsname\fi
