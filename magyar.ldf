@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/05/23 v1.5b Magyar support from the babel system]
+%%        [2004/05/26 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/05/23 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/05/26 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -2859,6 +2859,7 @@
   %     `\@@magyar@toldas{42}' must be the very end of #1
   \let\@@magyar@toldas\@gobbletwo
   \let\-\relax
+%  \let\@@magyar@save@tilde~%
   \let~\relax% influenced by \@safe@activestrue
   \let\refstruc\relax
   \let \ref\relax \let \pageref\relax \let \cite\relax % all unexpandable, even for \@@magyar@the
@@ -2880,10 +2881,11 @@
   \let\autoref\ref% Dat: SUXX: section 1-gyel
   \edef\reserved@a{#1}%
   \edef\reserved@a{\expandafter\@@magyar@the\reserved@a\@empty}% `\expandafter' is here so `the' and `number' take place
+  %\let~\@@magyar@save@tilde% vvv for ~ below etc.
   \if0#2\else
     #2% a or A
     % vvv Dat: we do \az with \romannumeral changed to \number
-    \expandafter\@@magyar@az@set\expandafter{\reserved@a}\hbox$~%
+    \expandafter\@@magyar@az@set\expandafter{\reserved@a}\hbox$\nobreakspace% Dat: `~' is wrong here, it has been redefined !!!
   \fi
   \edef\reserved@a{\noexpand\reserved@c\def\noexpand\reserved@a{\reserved@a}}%
   %
