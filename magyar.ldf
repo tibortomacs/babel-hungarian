@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2003/11/11 v1.5a Magyar support from the babel system]
+%%        [2003/12/02 v1.5a Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -33,6 +33,8 @@
 %%
 %
 % magyar.ldf -- LaTeX Language Definition for `magyar' (Hungarian), v1.5a
+%
+% To typeset text in Hungarian, please
 %
 % 1. Include `magyar huhyph.tex' in language.dat, re-run initex(1) (initex
 %    'latex.ini \dump') or pdfinitex(1), verify that running latex(1) displays
@@ -58,7 +60,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2003/11/11 v1.5a Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2003/12/02 v1.5a Magyar support from the babel system]
 
 % Find the best of available Hungarian hyphenation patterns.
 \expandafter\ifx\csname l@\CurrentOption\endcsname\relax
@@ -106,16 +108,528 @@
 %** Expand \CurrentOption early.
 \edef\@@magyar@error#1{\noexpand\PackageError{\CurrentOption.ldf}{#1}\noexpand\@ehc}
 
+% --- Declare options.
+%
+% Dat: \languageattribute{magyar}{...} and \bbl@declare@ttribute{magyar}{foo}{...}
+% isn't enough for us, because it is processed
+% after \usepackage[magyar]{babel}, but we need the options information
+% earlier. And also it cannot contain `='.
+% 
+
+%** `\dMf foo-bar {...}' is `\def\foo-bar{...}' where `-' is a letter
+\def\dMf#1 {\expandafter\def\csname#1\endcsname}
+\def\magyar@@unchanged{unchanged}
+\def\magyar@enumarg#1#2{%
+  \expandafter\ifx\csname magyar@opt@#1@@#2\endcsname\relax
+    \@@magyar@error{Invalid arg for option: #1 = #2}%
+  \else
+    \csname magyar@opt@#1@@#2\endcsname
+  \fi
+}
+\def\@@magyar@argw@no  {0}%
+\def\@@magyar@argw@weak{1}%
+\def\@@magyar@argw@yes {2}%
+\def\magyar@yesweaknoarg#1#2{%
+  \expandafter\ifx\csname @@magyar@argw@#2\endcsname\relax
+    \@@magyar@error{Invalid arg for option: #1 = #2\MessageBreak Must be =no, =yes or =weak}%
+  \else
+    \expandafter\edef\csname magyar@opt@@#1\endcsname{\csname @@magyar@argw@#2\endcsname}%
+  \fi
+}
+
+% Declare defaults.
+
+%** These defaults load most of the new functionality, but try not to
+%** introduce visible typographical changes over magyar.ldf v1.4. These
+%** are the ovarall defaults of magyar.ldf v1.5, in case
+%** \def\magyarOptions{} is missing.
+%**
+%** These are the defaults:
+%**   \def\magyarOptions{
+%**     accents=defaulthigh,     % or =high or =low
+%**     active=safe,             % or =problematic or =none or =onlycs
+%**     activeprefix=babelopt2,  % or =none or =babelopt3 or =grave or =acute or =quotedbl
+%**     activespace=none,        % or =safe or =problematic
+%**     afterindent=unchanged,   % or =force-no or =force-yes
+%**     amslevelfix=fix-ams,     % or =unchanged or =fix-all
+%**     amstocnumskip=\quad,     % TeX code or --empty--
+%**     captions=hu,             % or =unchanged
+%**     chapternumber=unchanged, % see partnumber
+%**     classmod=yes,            % or =unchanged(=no) or TeX class name
+%**     %defaults=over-1.4,      % or =compat-1.4 or =safest or =prettiest
+%**     dottedtocline=fix,       % or =unchanged
+%**     emitdate=weak,           % or =no or =yes
+%**     extras=yes,              % or =no
+%**     figurecaptions=hu,       % or =us or =unchanged
+%**     frenchspacing=no,        % or =unchanged=no or yes
+%**     hang=weak,               % or =no or =yes
+%**     hunumbers=yes,           % or =no
+%**     hutoday=yes,             % or =no
+%**     hyphenmins=22,           % or =unchanged or two chars: \lefthyphenmin\righthyphenmin
+%**     longcaption=justified,   % or =centered or =centernewline or =none (=unchanged)
+%**     mond=weak,               % or =no or =yes
+%**     openqq=maybeup,          % or =up or =down or =unchanged
+%**     partnumber=unchanged,    % or =huordinal or =Huordinal
+%**     postpara=unchanged,      % or =bfdot or =dot or =quad or =diamond or =enskip or =quad or =em or =empty ... (\magyar@post@...)
+%**     postsubpara=unchanged,   % see postpara
+%**     refstruc=weak,           % or =no or =yes
+%**     %safest=no,              % or =yes (safest=no has no effect, safest=yes is equivalent to defaults=safest)
+%**     sectiondot=safe,         % or =none or =problematic
+%**     shorthandcs=none,        % or =? or a csname or a \cs, e.g shorthandcs=\shu
+%**     shortrefcmds=no,         % or =yes
+%**     suggestions=yes,         % or =no
+%**     tablecaptions=hu,        % or =us or =unchanged
+%**     textqq=weak,             % or =no or =yes
+%**     theoremtitle=hu,         % or =unchanged
+%**     titles=\enskip,          % TeX code: =unchanged, =\quad or other
+%**     toclang=good,            % or =badfloat or =badall or =unchanged
+%**     told=weak,                % or =no or =yes
+%**   }\usepackage[magyar]{babel}
+\dMf magyar@opt@defaults@@over-1.4 {%
+  \magyar@opt@accents@@defaulthigh
+  \magyar@opt@active@@safe
+  \magyar@opt@activeprefix{activeprefix}{babelopt2}%
+  \magyar@opt@activespace@@none
+  \magyar@opt@afterindent@@unchanged
+  \magyar@opt@amslevelfix{amslevelfix}{fix-ams}%
+  \magyar@opt@amstocnumskip{amstocnumskip}{}%
+  \magyar@opt@captions@@hu
+  \magyar@opt@chapternumber@@unchanged
+  \magyar@opt@classmod@@yes
+  \magyar@opt@dottedtocline@@fix
+  \magyar@opt@emitdate{emitdate}{weak}%
+  \magyar@opt@extras@@yes
+  \magyar@opt@chapterhead@@yes
+  \magyar@opt@figurecaptions@@hu
+  \magyar@opt@frenchspacing@@no
+  \magyar@opt@hang{hang}{weak}%
+  \magyar@opt@hunumbers@@yes
+  \magyar@opt@hutoday@@yes
+  \magyar@opt@hyphenmins{hyphenmins}{22}% Dat: Default LaTeX is {23}
+  \magyar@opt@longcaption@@justified
+  \magyar@opt@mond{mond}{weak}%
+  \magyar@opt@openqq@@maybeup
+  \magyar@opt@partnumber@@unchanged
+  \magyar@opt@postpara{}{unchanged}%
+  \magyar@opt@postsubpara{}{unchanged}%
+  \magyar@opt@refstruc{refstruc}{weak}%
+  \magyar@opt@sectiondot@@safe
+  \magyar@opt@shorthandcs{shorthandcs}{\shu}%
+  \magyar@opt@shortrefcmds@@no
+  \magyar@opt@suggestions@@yes
+  \magyar@opt@tablecaptions@@hu
+  \magyar@opt@textqq{textqq}{weak}%
+  \magyar@opt@theoremtitle@@hu
+  \magyar@opt@titles{}{\enskip}%
+  \magyar@opt@toclang@@good
+  \magyar@opt@told{told}{weak}%
+}
+
+%** These defaults try to be compatible with magyar.ldf v1.4 as much as
+%** possible -- but avoids stupid, problematic, dangerous implementation
+%** mistakes that would make magyar.ldf incompatible with many LaTeX
+%** packages. Some very useful fixes are not applied here -- please use
+%** defaults=over-1.4 to have them. Also some very nice features such
+%** as \emitdate and \told are not available here.
+\dMf magyar@opt@defaults@@compat-1.4 {%
+  \magyar@opt@accents@@defaulthigh% OK
+  \magyar@opt@active@@safe% we don't want =problematic
+  \magyar@opt@activeprefix@@grave% OK
+  \magyar@opt@activespace@@none% OK
+  \magyar@opt@afterindent@@unchanged% OK
+  \magyar@opt@amslevelfix@@none% OK
+  \magyar@opt@amstocnumskip{amstocnumskip}{}% OK
+  \magyar@opt@captions@@hu% OK
+  \magyar@opt@chapternumber@@unchanged% OK
+  \magyar@opt@classmod@@yes% OK
+  \magyar@opt@dottedtocline@@unchanged% OK
+  \magyar@opt@emitdate{emitdate}{no}% OK
+  \magyar@opt@extras@@yes% OK
+  \magyar@opt@chapterhead@@yes% OK
+  \magyar@opt@figurecaptions@@hu% OK
+  \magyar@opt@frenchspacing@@no% OK
+  \magyar@opt@hang{hang}{no}% OK
+  \magyar@opt@hunumbers@@no% OK
+  \magyar@opt@hutoday@@yes% OK
+  \magyar@opt@hyphenmins{hyphenmins}{unchanged}%
+  \magyar@opt@longcaption@@justified% OK
+  \magyar@opt@mond{mond}{no}% OK
+  \magyar@opt@openqq@@maybeup% OK
+  \magyar@opt@partnumber@@unchanged% OK
+  \magyar@opt@postpara{}{unchanged}% OK
+  \magyar@opt@postsubpara{}{unchanged}% OK
+  \magyar@opt@refstruc{refstruc}{no}% OK
+  \magyar@opt@sectiondot@@safe% we don't want =problematic
+  \magyar@opt@shorthandcs{shorthandcs}{none}% OK
+  \magyar@opt@shortrefcmds@@yes% OK
+  \magyar@opt@suggestions@@no% OK -- user has explicity requested defaults=compat-1.4
+  \magyar@opt@tablecaptions@@hu% OK
+  \magyar@opt@textqq{textqq}{no}% OK
+  \magyar@opt@theoremtitle@@hu% OK
+  \magyar@opt@titles{}{\quad}% OK -- ugly, but compatible
+  \magyar@opt@toclang@@good% we don't want weird errors and mischosen languages (would be =badall)
+  \magyar@opt@told{told}{no}% OK
+}
+
+%** These defaults turn of most features -- the effect is similar to as if
+%** magyar.ldf hasn't been loaded at all. Useful for debugging purposes.
+\def\magyar@opt@defaults@@safest{%
+  \magyar@opt@accents@@defaulthigh
+  \magyar@opt@active@@none
+  \magyar@opt@activeprefix@@none
+  \magyar@opt@activespace@@none
+  \magyar@opt@afterindent@@unchanged
+  \magyar@opt@amslevelfix@@unchanged
+  \magyar@opt@amstocnumskip{amstocnumskip}{}%
+  \magyar@opt@captions@@unchanged
+  \magyar@opt@chapternumber@@unchanged
+  \magyar@opt@classmod@@unchanged
+  \magyar@opt@dottedtocline@@unchanged
+  \magyar@opt@emitdate{emitdate}{no}%
+  \magyar@opt@extras@@no
+  \magyar@opt@chapterhead@@no
+  \magyar@opt@figurecaptions@@unchanged
+  \magyar@opt@frenchspacing@@unchanged
+  \magyar@opt@hang{hang}{no}%
+  \magyar@opt@hunumbers@@no
+  \magyar@opt@hutoday@@no
+  \magyar@opt@hyphenmins{hyphenmins}{unchanged}%
+  \magyar@opt@longcaption@@unchanged
+  \magyar@opt@mond{mond}{no}%
+  \magyar@opt@openqq@@unchanged
+  \magyar@opt@partnumber@@unchanged
+  \magyar@opt@postpara{}{unchanged}%
+  \magyar@opt@postsubpara{}{unchanged}%
+  \magyar@opt@refstruc{refstruc}{no}%
+  \magyar@opt@sectiondot@@none
+  \magyar@opt@shorthandcs{shorthandcs}{none}%
+  \magyar@opt@shortrefcmds@@no
+  \magyar@opt@suggestions@@yes
+  \magyar@opt@tablecaptions@@unchanged
+  \magyar@opt@textqq{textqq}{no}%
+  \magyar@opt@theoremtitle@@unchanged
+  \magyar@opt@titles{}{unchanged}%
+  \magyar@opt@toclang@@unchanged
+  \magyar@opt@told{told}{no}%
+}
+
+%** These defaults load almost all features, and try to do their best to make
+%** the document comply to the Hungarian typography standards. Full compliance
+%** is not achieved yet, and as new features are implemented, they will be
+%** added to these defaults.
+\dMf magyar@opt@defaults@@prettiest {% !!
+  \magyar@opt@accents@@defaulthigh% {low} would have no effect with \usepackage{t1enc}
+  \magyar@opt@active@@safe
+  \magyar@opt@activeprefix{activeprefix}{babelopt2}%
+  \magyar@opt@activespace@@safe
+  \magyar@opt@afterindent@@unchanged% keep =force-no
+  \magyar@opt@amslevelfix{amslevelfix}{fix-ams}%
+  \magyar@opt@amstocnumskip{amstocnumskip}{\enskip}% each line depends on the language, \enskip <-> \quad changings would look ugly between languages :-( !! overall override
+  \magyar@opt@captions@@hu
+  \magyar@opt@chapternumber@@unchanged
+  \magyar@opt@classmod@@yes
+  \magyar@opt@dottedtocline@@fix
+  \magyar@opt@emitdate{emitdate}{yes}%
+  \magyar@opt@extras@@yes
+  \magyar@opt@chapterhead@@yes
+  \magyar@opt@figurecaptions@@hu
+  \magyar@opt@frenchspacing@@yes
+  \magyar@opt@hang{hang}{yes}%
+  \magyar@opt@hunumbers@@yes
+  \magyar@opt@hutoday@@yes
+  \magyar@opt@hyphenmins{hyphenmins}{22}% Dat: Default LaTeX is {23}
+  \magyar@opt@longcaption@@centered
+  \magyar@opt@mond{mond}{yes}%
+  \magyar@opt@openqq@@maybeup
+  \magyar@opt@partnumber@@Huordinal
+  \magyar@opt@postpara{}{diamond}%
+  \magyar@opt@postsubpara{}{star}%
+  \magyar@opt@refstruc{refstruc}{yes}%
+  \magyar@opt@sectiondot@@safe
+  \magyar@opt@shorthandcs{shorthandcs}{\shu}%
+  \magyar@opt@shortrefcmds@@no
+  \magyar@opt@suggestions@@yes
+  \magyar@opt@tablecaptions@@hu
+  \magyar@opt@textqq{textqq}{yes}%
+  \magyar@opt@theoremtitle@@hu
+  \magyar@opt@titles{}{\enskip}%
+  \magyar@opt@toclang@@good
+  \magyar@opt@{told}{yes}%
+}
+
+\let\magyar@opt@defaults\magyar@enumarg
+\def\magyar@opt@safest@@yes{\magyar@opt@defaults@@safest}
+\def\magyar@opt@safest@@no{}
+\let\magyar@opt@safest\magyar@enumarg
+
+% Declare normal options.
+
+\def\magyar@opt@titles#1#2{\def\magyar@opt@@titleskip{#2}}
+\def\@@magyar@twodigitcheck#1#2#3\hfuzz#4#5{%
+  \csname if\ifnum0<0\string#1 \ifnum0<0\string#2 false\else true\fi\else true\fi\endcsname
+    \@@magyar@error{Option #4 needs [1-9][1-9], got #1#2}%
+  \fi
+}
+\def\magyar@opt@hyphenmins#1#2{%
+  \def\reserved@a{#2}%
+  \ifx\reserved@a\magyar@@unchanged
+    \let\magyar@opt@@hyphenmins\@empty
+  \else
+    \@@magyar@twodigitcheck#2..\hfuzz{#1}{#2}%
+    \def\magyar@opt@@hyphenmins{#2}%
+  \fi
+}
+
+\def\magyar@opt@amstocnumskip#1#2{\def\magyar@opt@@amstocnumskip{#2}}
+\def\magyar@opt@active@@none{\def\magyar@opt@@active{0}}
+\def\magyar@opt@active@@onlycs{\def\magyar@opt@@active{1}}
+\def\magyar@opt@active@@safe{\def\magyar@opt@@active{2}}
+\def\magyar@opt@active@@problematic{\def\magyar@opt@@active{3}}
+\let\magyar@opt@active\magyar@enumarg
+\def\magyar@opt@activeprefix@@none    {\let\magyar@opt@@activeprefix\relax}
+\def\magyar@opt@activeprefix@@acute   {\def\magyar@opt@@activeprefix{'}}
+\def\magyar@opt@activeprefix@@grave   {\def\magyar@opt@@activeprefix{`}}
+\def\magyar@opt@activeprefix@@quotedbl{\def\magyar@opt@@activeprefix{"}}
+\dMf magyar@opt@activeprefix@@babelopt2 {%
+  \@ifpackagewith{babel}{activeacute}% Dat: not expandable
+    {\def\magyar@opt@@activeprefix{'}}%
+    {\def\magyar@opt@@activeprefix{`}}%
+}
+\dMf magyar@opt@activeprefix@@babelopt3 {%
+  \@ifpackagewith{babel}{activeacute}%
+    {\def\magyar@opt@@activeprefix{'}}%
+ {\@ifpackagewith{babel}{activegrave}%
+    {\def\magyar@opt@@activeprefix{`}}%
+    {\def\magyar@opt@@activeprefix{"}}}%
+}
+\let\magyar@opt@activeprefix\magyar@enumarg
+\def\magyar@opt@activespace@@none{\def\magyar@opt@@activespace{0}}
+\def\magyar@opt@activespace@@safe{\def\magyar@opt@@activespace{2}}
+\def\magyar@opt@activespace@@problematic{\def\magyar@opt@@activespace{3}}
+\let\magyar@opt@activespace\magyar@enumarg
+\def\magyar@opt@sectiondot@@none{\def\magyar@opt@@sectiondot{0}}
+\def\magyar@opt@sectiondot@@safe{\def\magyar@opt@@sectiondot{1}}
+\def\magyar@opt@sectiondot@@problematic{\def\magyar@opt@@sectiondot{2}}
+\let\magyar@opt@sectiondot\magyar@enumarg
+\def\magyar@opt@captions@@unchanged{\def\magyar@opt@@captions{0}}
+\def\magyar@opt@captions@@hu{\def\magyar@opt@@captions{1}}
+\let\magyar@opt@captions\magyar@enumarg
+\def\magyar@opt@figurecaptions@@unchanged{\def\magyar@opt@@figurecaptions{0}}
+\def\magyar@opt@figurecaptions@@hu{\def\magyar@opt@@figurecaptions{1}}
+\def\magyar@opt@figurecaptions@@us{\def\magyar@opt@@figurecaptions{2}}
+\let\magyar@opt@figurecaptions\magyar@enumarg
+\def\magyar@opt@tablecaptions@@unchanged{\def\magyar@opt@@tablecaptions{0}}
+\def\magyar@opt@tablecaptions@@hu{\def\magyar@opt@@tablecaptions{1}}
+\def\magyar@opt@tablecaptions@@us{\def\magyar@opt@@tablecaptions{2}}
+\let\magyar@opt@tablecaptions\magyar@enumarg
+\def\magyar@opt@toclang@@unchanged{\def\magyar@opt@@toclang{0}}% same as =badall
+\def\magyar@opt@toclang@@badall{\def\magyar@opt@@toclang{0}}
+\def\magyar@opt@toclang@@badfloat{\def\magyar@opt@@toclang{1}}
+\def\magyar@opt@toclang@@good{\def\magyar@opt@@toclang{2}}
+\let\magyar@opt@toclang\magyar@enumarg
+\def\magyar@opt@partnumber@@unchanged{}
+\def\magyar@opt@partnumber@@huordinal{\def\thepart{\@huordinal\c@part}\let\magyar@needopt@hunumbers\@empty}
+\def\magyar@opt@partnumber@@Huordinal{\def\thepart{\@Huordinal\c@part}\let\magyar@needopt@hunumbers\@empty}
+\let\magyar@opt@partnumber\magyar@enumarg
+\def\magyar@opt@chapternumber@@unchanged{}
+\def\magyar@opt@chapternumber@@huordinal{\def\thechapter{\@huordinal\c@chapter}\let\magyar@needopt@hunumbers\@empty}
+\def\magyar@opt@chapternumber@@Huordinal{\def\thechapter{\@Huordinal\c@chapter}\let\magyar@needopt@hunumbers\@empty}
+\let\magyar@opt@chapternumber\magyar@enumarg
+\def\magyar@opt@accents@@high{\def\magyar@opt@@umlaut{\umlauthigh}}
+\def\magyar@opt@accents@@low{\def\magyar@opt@@umlaut{\umlautlow\umlautelow}}
+\def\magyar@opt@accents@@defaulthigh{\let\magyar@opt@@umlaut\@empty}
+\let\magyar@opt@accents\magyar@enumarg
+\def\magyar@opt@longcaption@@centered{\def\magyar@caption@centering{\centering}\def\magyar@caption@newline{ }}
+\def\magyar@opt@longcaption@@justified{\def\magyar@caption@centering{\relax}\def\magyar@caption@newline{ }}
+\def\magyar@opt@longcaption@@centernewline{\def\magyar@caption@centering{\centering}\def\magyar@caption@newline{\\\relax}}
+\def\magyar@opt@longcaption@@none{\let\magyar@caption@centering\@empty}
+\def\magyar@opt@longcaption@@unchanged{\let\magyar@caption@centering\@empty}
+\let\magyar@opt@longcaption\magyar@enumarg
+\def\magyar@opt@suggestions@@no{\def\magyar@opt@@suggestions{0}}
+\def\magyar@opt@suggestions@@yes{\def\magyar@opt@@suggestions{1}}
+\let\magyar@opt@suggestions\magyar@enumarg
+\def\magyar@opt@extras@@no{\def\magyar@opt@@extras{0}}
+\def\magyar@opt@extras@@yes{\def\magyar@opt@@extras{1}}
+\let\magyar@opt@extras\magyar@enumarg
+\def\magyar@opt@chapterhead@@no{\def\magyar@opt@@chapterhead{0}}
+\def\magyar@opt@chapterhead@@yes{\def\magyar@opt@@chapterhead{1}}
+\let\magyar@opt@chapterhead\magyar@enumarg
+\def\magyar@opt@classmod@@no       {\let\magyar@opt@@classmod\relax}
+\def\magyar@opt@classmod@@unchanged{\let\magyar@opt@@classmod\relax}
+\def\magyar@opt@classmod@@yes      {\let\magyar@opt@@classmod\@empty}
+\def\magyar@opt@classmod#1#2{%
+  \expandafter\ifx\csname magyar@opt@#1@@#2\endcsname\relax
+    \@namedef{magyar@opt@@#1}{#2}%
+  \else
+    \csname magyar@opt@#1@@#2\endcsname
+  \fi
+}
+\def\magyar@opt@shorthandcs#1#2{%
+  \def\reserved@a{#2}%
+  \def\reserved@b{none}%
+  \ifx\reserved@a\reserved@b\else
+    \ifcat\hfuzz\noexpand#2\relax% #2 is \shu
+      \def#2##1{\protect\@@magyar@shorthand}% Dat: ##1 is usually ?_12
+    \else
+      \@namedef{#2}{\protect\@@magyar@shorthand}%
+    \fi
+  \fi
+}
+\def\magyar@opt@hunumbers@@no{\def\magyar@opt@@hunumbers{0}}
+\def\magyar@opt@hunumbers@@yes{\def\magyar@opt@@hunumbers{1}}
+\let\magyar@opt@hunumbers\magyar@enumarg
+\let\magyar@opt@told\magyar@yesweaknoarg
+\let\magyar@opt@textqq\magyar@yesweaknoarg
+\let\magyar@opt@emitdate\magyar@yesweaknoarg
+\let\magyar@opt@refstruc\magyar@yesweaknoarg
+\let\magyar@opt@mond\magyar@yesweaknoarg
+\let\magyar@opt@hang\magyar@yesweaknoarg
+\def\magyar@opt@theoremtitle@@unchanged{\def\magyar@opt@@theoremtitle{0}}
+\def\magyar@opt@theoremtitle@@hu{\def\magyar@opt@@theoremtitle{1}}
+\let\magyar@opt@theoremtitle\magyar@enumarg
+\def\magyar@opt@hutoday@@no{\def\magyar@opt@@hutoday{0}}
+\def\magyar@opt@hutoday@@yes{\def\magyar@opt@@hutoday{1}}
+\let\magyar@opt@hutoday\magyar@enumarg
+\def\magyar@opt@shortrefcmds@@no{\def\magyar@opt@@shortrefcmds{0}}
+\def\magyar@opt@shortrefcmds@@yes{\def\magyar@opt@@shortrefcmds{1}}
+\let\magyar@opt@shortrefcmds\magyar@enumarg
+\def\magyar@opt@dottedtocline@@fix{\def\magyar@opt@@dottedtocline{0}}
+\def\magyar@opt@dottedtocline@@unchanged{\def\magyar@opt@@dottedtocline{1}}
+\let\magyar@opt@dottedtocline\magyar@enumarg
+\def\magyar@opt@amslevelfix@@unchanged{\def\magyar@opt@@amslevelfix{0}}
+\dMf magyar@opt@amslevelfix@@fix-ams  {\def\magyar@opt@@amslevelfix{1}}
+\dMf magyar@opt@amslevelfix@@fix-all  {\def\magyar@opt@@amslevelfix{2}}
+\let\magyar@opt@amslevelfix\magyar@enumarg
+\def\magyar@opt@openqq@@unchanged{\def\magyar@opt@@openqq{0}}
+\def\magyar@opt@openqq@@up{\def\magyar@opt@@openqq{1}}
+\def\magyar@opt@openqq@@down{\def\magyar@opt@@openqq{2}}
+\def\magyar@opt@openqq@@maybeup{\def\magyar@opt@@openqq{3}}
+\let\magyar@opt@openqq\magyar@enumarg
+\def\magyar@opt@frenchspacing@@unchanged{\def\magyar@opt@@frenchspacing{0}}% same as =no
+\def\magyar@opt@frenchspacing@@no {\def\magyar@opt@@frenchspacing{0}}
+\def\magyar@opt@frenchspacing@@yes{\def\magyar@opt@@frenchspacing{1}}
+\let\magyar@opt@frenchspacing\magyar@enumarg
+\dMf magyar@opt@afterindent@@force-no {\def\magyar@opt@@afterindent{0}}
+\dMf magyar@opt@afterindent@@force-yes {\def\magyar@opt@@afterindent{1}}
+\dMf magyar@opt@afterindent@@unchanged {\def\magyar@opt@@afterindent{9}}
+\let\magyar@opt@afterindent\magyar@enumarg
+\def\magyar@opt@postpara#1#2{%
+  \def\reserved@a{#2}%
+  \ifx#2\magyar@@unchanged
+    \let\magyar@opt@@paragraphs\@undefined
+  \else
+    \expandafter\def\csname magyar@opt@@#1\endcsname{#2}%
+    \let\magyar@opt@@paragraphs\@empty
+  \fi
+}
+\let\magyar@opt@postsubpara\magyar@opt@postpara
+
+% --- Option processing code of \magyarOptions
+%
+% Example: \def\magyarOptions{titles=\quad,active=safe} \usepackage[magyar]{babel}
+% Dat: Babel has \languageoptions, but it is quite weak and it's too late
+% Dat: this is a complete rewrite based on examplep.sty
+
+%** @param #1 to gobble a space token
+\def\magyar@doopt#1,{%
+  \if,\noexpand#1,% ignore multiple commas (#1 is empty)
+    \expandafter\magyar@doopt
+  \else
+    \csname fi\endcsname% don't count as `\fi' when being skipped
+    \magyar@doopt@low#1,=,%
+  \fi
+}
+\iftrue\csname fi\endcsname% \def\magyar@doopt@low contains `\fi'. Make it skippable.
+%** @param #1 is here for gobbling space tokens
+%** @param #4 \fi -- will be ignored
+\def\magyar@doopt@low#1#2=#3,#4\fi{%
+  % Dat: Normal case: #1#2 is key, #3 is value, #4 is `=,'
+  % Dat: MissingArg case: #1#2 is `key,', #3 is empty, #4 is empty
+  % Dat: Terminator case: #1#2 is `\hfuzz,', #3 is empty, #4 is empty
+  % Dat: OnlySpace case: #1 is `,', #2 is empty, #3 is empty, #4 is empty
+  \ifx\relax#4\relax% MissingArg or Terminator
+    \ifx#1\hfuzz% Terminator
+    \else
+      \if,\noexpand#1\else% OnlySpace case
+        \magyar@doopt@missingval#1#2% #2 already contains comma at end
+      \fi
+      \expandafter\expandafter\expandafter\magyar@doopt
+    \fi
+  \else% Normal
+    \expandafter\ifx\csname magyar@opt@#1#2\endcsname\relax
+      \@@magyar@error{Unknown option: #1#2 (= #3)}\@ehc
+    \else
+      \csname magyar@opt@#1#2\endcsname{#1#2}{#3}%
+    \fi
+    \expandafter\magyar@doopt
+  \fi
+}
+\def\magyar@doopt@missingval#1,{%
+  \@@magyar@error{Value (=) missing for option: #1}\@ehc
+}
+%** Dat: Spaces and newlines at end of #1 are not ignored, so please prefix
+%**      them with a comma, e.g \magyar@doopts{foo=bar, }
+%** @param #1 comma-separated optoinname=value pairs
+\def\magyar@doopts#1{\magyar@doopt #1,\hfuzz,}%
+
+\def\magyar@dooptions{%
+  \expandafter\ifx\csname opt@\CurrentOption.ldf.sty\endcsname\relax\else
+    % Usage: \PassOptionsToPackage{foo=bar}{magyar.ldf}
+    \expandafter\expandafter\expandafter
+    \magyar@doopt\csname opt@\CurrentOption.ldf.sty\endcsname,\hfuzz,%
+  \fi
+  \expandafter\ifx\csname \CurrentOption Options\endcsname\relax\else
+    \expandafter\expandafter\expandafter
+    \magyar@doopt\csname\CurrentOption Options\endcsname,\hfuzz,%
+    \expandafter\let\csname \CurrentOption Options\endcsname\relax
+  \fi
+}
+\def\magyar@do@option@low#1#2=#3=,\vfuzz{%
+  \ifx#1\hfuzz\else
+    %%\typeout{(#1#2)=(#3)}%
+    % vvv wastes some heap (\csname), but never mind
+  \fi    
+}
+
+
+\magyar@opt@defaults{defaults}{over-1.4}
+\magyar@dooptions% in \magyarOptions
+\ifnum\magyar@opt@@openqq=3 % =maybeup
+  \ifnum\magyar@opt@@active=0
+    \def\magyar@opt@@openqq{0}% =unchanged
+  \else
+    \def\magyar@opt@@openqq{2}% =down
+  \fi
+\fi
+\expandafter\ifx\csname magyar@needopt@hunumbers\endcsname\relax\else
+  \ifnum\magyar@opt@@hunumbers=0
+    \@@magyar@error{(chapter|part)number=... implies hunumbers=yes}%
+  \fi
+\fi
+\magyar@opt@@umlaut
+% Imp: undef \magyar\@opt@* to save memory
+
+%** Usage: `\if...\else\@@magyar@skiplong\fi ... \@gobble{^}', where {^} is in
+%** its own line
+\def\@@magyar@skiplong#1{%
+  \fi
+  \bgroup% so ^} would close it
+  \catcode\string`^13 \lccode\string`~=\string`^
+  \lowercase{\let~\fi}%
+  \catcode\string`\\14 % comment -- avoid using hash memory
+  \catcode\string`$14
+  \iffalse
+}
 
 % ---
 
 \@namedef{extras\CurrentOption}{}%
 
-% --- theorem numbers
+% --- theorem title number ordering and the dot
 %
 % Dat: \ref{mytheorem} never appends a dot
-% !! make these and others conditional
 
+\if0\magyar@opt@@theoremtitle \@@magyar@skiplong\fi
 % for theorem.sty and ntheorem.sty
 % Define your \newtheorem commands in the preamble, before \theoremstyle
 \expandafter\ifx\csname theorem@headerfont\endcsname\relax\else
@@ -136,9 +650,9 @@
 \fi
 
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
-  %\show\theorem@headerfont
+  %%\show\theorem@headerfont
   \expandafter\ifx\csname thm@swap\endcsname\relax
-    \expandafter\ifx\csname theorem@headerfont\endcsname\relax% theorem.sty
+    \expandafter\ifx\csname theorem@headerfont\endcsname\relax% no theorem.sty
       \babel@save\@begintheorem
       % Dat: amsart.cls: \def\@begintheorem#1#2[#3]{}%
       \def\@begintheorem#1#2{\trivlist
@@ -146,15 +660,25 @@
       \babel@save\@opargbegintheorem
       \def\@opargbegintheorem#1#2#3{\trivlist
 	\item[\hskip \labelsep{\bfseries #2.\ #1\ (#3).}]\itshape}% old: \slshape
-    \else% theorem.sty
+    \else% theorem.sty or ntheorem.sty
       % Nothing -- style already set up in the preamble.
     \fi
-  \else
-    \babel@save\thm@swap
-    % \swapnumbers. \newtheorem{...}{...} already inserts the trailing dot
-    \def\thm@swap{S}%
+  \else% amsthm.sty
+    \babel@save\thmhead
+    \babel@save\swappedhead
+    %** \swapnumbers. \newtheorem{...}{...} already inserts the trailing dot
+    % \def\thm@swap{S}% no effect :-(
+    %** overrides amsart.cls
+    \def\thmhead#1#2#3{%
+      \thmnumber{\@upn{#2}\@ifnotempty{#1}{.~}}%
+      \thmname{#1}%
+      \thmnote{ {\the\thm@notefont(#3)}}%
+    }%
+    \let\swappedhead\thmhead
   \fi
 }%
+\@gobble
+{^}%
 
 % --- Quotation marks with \textqq
 %
@@ -167,49 +691,64 @@
 % Typing this works in T1, but not in OT1 for outer: ,,foo''
 %
 
+\if0\magyar@opt@@textqq \@@magyar@skiplong\fi
 \def\magyar@textqq@level{0}
-\expandafter\ifx\csname textqq\endcsname\relax
-  %** Provide a placeholder for language-unspecific \textqq
-  \def\textqq#1{%
-    \ifcase\magyar@textqq@level
-      \def\magyar@textqq@level{1}%
-      \textquotedblleft#1\textquotedblright
-      \def\magyar@textqq@level{0}%
-    \or
-      \textquoteleft#1\textquoteright
-    \fi
-  }
-\fi
-
-\expandafter\addto\csname extras\CurrentOption\endcsname{%
-  \babel@save\textqq
-  \@namedef{textqq }#1{\ifmmode\expandafter\mbox\fi{%
-    % Imp: \textqq{\textqq{foo}} -> \textqq{\textqq{foo}\,}
-    % Dat: \showhyphens{\textqq{hello bello}} --> hel-lo bel-lo
-    \ifcase\magyar@textqq@level
-      \def\magyar@textqq@level{1}%
-      \quotedblbase\nobreak\hskip-.06em#1\kern\z@\textquotedblright% skip OK for the CM and EC fonts
-      \def\magyar@textqq@level{0}%
-    \or
-      \def\magyar@textqq@level{2}%
-      \guillemotright\nobreak\hskip-.07em\nobreak#1\kern-0.05em\guillemotleft% skip OK for CM and EC fonts
-      \def\magyar@textqq@level{1}%
-    \or
-      \def\magyar@textqq@level{3}%
-      \textquoteright\nobreak#1\kern\z@\textquoteright
-      \def\magyar@textqq@level{2}%
-    \else
-      \quotedblbase\nobreak\hskip-.06em#1\kern\z@\textquotedblright% skip OK for the CM and EC fonts
-    \fi
-  }}%
-  \edef\textqq{\noexpand\protect\expandafter\noexpand\csname textqq \endcsname}% \MakeRobust
+%** Provide a placeholder for language-unspecific \textqq
+\def\@@magyar@textqq@nolang#1{%
+  \ifcase\magyar@textqq@level
+    \def\magyar@textqq@level{1}%
+    \textquotedblleft#1\textquotedblright
+    \def\magyar@textqq@level{0}%
+  \or
+    \textquoteleft#1\textquoteright
+  \fi
 }
+\def\@@magyar@textqq@hu#1{\ifmmode\expandafter\mbox\fi{%
+  % Imp: \textqq{\textqq{foo}} -> \textqq{\textqq{foo}\,}
+  % Dat: \showhyphens{\textqq{hello bello}} --> hel-lo bel-lo
+  \ifcase\magyar@textqq@level
+    \def\magyar@textqq@level{1}%
+    \quotedblbase\nobreak\hskip-.06em#1\kern\z@\textquotedblright% skip OK for the CM and EC fonts
+    \def\magyar@textqq@level{0}%
+  \or
+    \def\magyar@textqq@level{2}%
+    \guillemotright\nobreak\hskip-.07em\nobreak#1\kern-0.05em\guillemotleft% skip OK for CM and EC fonts
+    \def\magyar@textqq@level{1}%
+  \or
+    \def\magyar@textqq@level{3}%
+    \textquoteright\nobreak#1\kern\z@\textquoteright
+    \def\magyar@textqq@level{2}%
+  \else
+    \quotedblbase\nobreak\hskip-.06em#1\kern\z@\textquotedblright% skip OK for the CM and EC fonts
+  \fi
+}}%
+
+\edef\reserved@a{\the\lccode`Q }%
+\catcode`\ =11\relax% make space a letter
+\ifnum\magyar@opt@@textqq\expandafter\ifx\csname\@gobble.textqq\endcsname\relax1\fi>1\relax% 21, 2, 11, 1
+\def\textqq{\protect\textqq }% \MakeRobust
+\def\@@magyar@textqq{\protect\textqq }%
+\let\textqq \@@magyar@textqq@nolang%
+\expandafter\addto\csname\@gobble.extras\CurrentOption\endcsname%
+{\babel@save\textqq \let\textqq \@@magyar@textqq@hu}%
+\else%
+\def\@@magyar@textqq{\protect\@@magyar@textqq }% \MakeRobust
+\let\@@magyar@textqq \@@magyar@textqq@nolang%
+\expandafter\addto\csname\@gobble.extras\CurrentOption\endcsname%
+{\babel@save\@@magyar@textqq \let\@@magyar@textqq \@@magyar@textqq@hu}%
+\fi%
+\catcode`\ =10\relax% back to space again
+\@gobble
+{^}%
 
 % --- Definite articles (\pageref -> \apageref etc.)
 
 %** modified by pts at Fri Oct  3 22:19:13 CEST 2003
-\def\@@magyar@vfuzzdef#1#2#3{{%
+\def\@@magyar@az@vfuzzdef#1#2#3{{%
   \let\romannumeral\number% by pts@fazekas.hu at Mon Oct 27 23:44:06 CET 2003
+  \let\ref\@@magyar@zeroref \let\pageref\@@magyar@zeropageref \let\cite\@@magyar@zerocite
+  % ^^^ fix so \az{\ref{...}} works
+  \let\refstruc\ref
   \def\setbox ##1{}% to get rid of accents and special letters
   \def\hbox ##1{}%
   \def\accent ##1 ##2{##2}%
@@ -230,20 +769,22 @@
   \expandafter}\vfuzz
 }
 
-% \az \az* \Az \Az*
-%** Usage: \az{alma}
+%** Usage: \az{alma} -> `az alma'; \Az*{alma} -> `az'
 \def\az{a\@ifstar{\@@magyar@az@lowy}{\@@magyar@az@lowx}}
 \def\Az{A\@ifstar{\@@magyar@az@lowy}{\@@magyar@az@lowx}}
 \def\@@magyar@az@lowx#1{\@@magyar@az@lowy{#1}~#1}
-\def\@@magyar@az@lowy#1{%
+\def\@@magyar@az@lowy#1{{%
   \begingroup
-  \@@magyar@vfuzzdef{relax}{relax}{#1}%
+  %\def\protect{\noexpand\protect\noexpand}%
+  \set@display@protect% screws up \r
+  \@@magyar@az@vfuzzdef{relax}{relax}{#1}%
+  %%\show\vfuzz
   \expandafter\endgroup\expandafter
+  \set@display@protect\expandafter% fixes \r; why??
   \@@magyar@az\vfuzz\hbox$% \vfuzz is already expanded
-}
+}}
 
-% \azr \azr* \Azr \Azr* \azr( \Azr(
-%** \Aref({e:foo}) -> `az (5)'
+%** \Aref({e:foo}) -> `az (5)'; \aref*{e:foo}: `az'
 \def\aref{a\@ifstar{\@@magyar@az@ref\@firstoftwo}{\@@magyar@az@lowa}}
 \def\Aref{A\@ifstar{\@@magyar@az@ref\@firstoftwo}{\@@magyar@az@lowa}}
 \def\@@magyar@az@lowa{\@ifnextchar ({\@@magyar@az@lowb}{\@@magyar@az@lowb\@empty}}
@@ -251,7 +792,7 @@
 %** @param #1 \@firstoftwo (for \ref) or \@secodoftwo (for \pageref)
 \def\@@magyar@az@ref#1#2{%
   \begingroup
-    \@@magyar@vfuzzdef{@@magyar@r@#2}{r@#2}{}%
+    \@@magyar@az@vfuzzdef{@@magyar@r@#2}{r@#2}{}%
     \ifx\vfuzz\@empty\else% a speed boost
       \edef\vfuzz{\noexpand\@@magyar@az\expandafter#1\vfuzz\hbox$}%
     \fi
@@ -274,11 +815,12 @@
 \def\@@magyar@acite@lowd#1{\@@magyar@acite@lowc#1,\hbox$}
 \def\@@magyar@acite@lowc#1,#2\hbox#3${%
   \begingroup
-  \@@magyar@vfuzzdef{@@magyar@b@#1}{b@#1}{}% Dat: @@magyar@b@... is never used
+  \@@magyar@az@vfuzzdef{@@magyar@b@#1}{b@#1}{}% Dat: @@magyar@b@... is never used
   \expandafter\endgroup\expandafter
   \@@magyar@az\vfuzz\hbox$% \vfuzz is already expanded
 }
 
+%** Changes spaces (catcode 10) to catcode 12.
 %** _May_ change some category codes to 12 (11 -> 12 etc.)
 %** @param #1 first char of `blank space' `the character' `end-group character'
 %**   or `letter', but please don't give `macro:' or `\hbox' etc.
@@ -288,14 +830,20 @@
 %** @example \message{\expandafter\@@magyar@unspace\space abc }
 %** @example \edef\foo{\@@magyar@unspace a b} \def\bar#1#2#3{#1-#2-#3} \message{\expandafter\bar\foo }
 %** @example \edef\foo{f oo\space\space\space bar\space\space baz }\message{\expandafter\@@magyar@unspace\foo}% <f oo   bar  baz>
-\def\@@magyar@unspace#1 {#1\expandafter\@@magyar@unspace@wasspace\meaning}%
+\def\@@magyar@unspace{\@@magyar@unspace@gob/}%
+\def\@@magyar@unspace@gob#1 {\@gobble#1\expandafter\@@magyar@unspace@wasspace\meaning}%
 \edef\reserved@a{\the\lccode`[ }%
 %** @param #1#2 #3: `blank space' or `the letter' or `the character' or `end-group character' etc.
 \lccode`[32 \lowercase{\def\@@magyar@unspace@wasspace#1#2 #3 {%
   \if#1e\expandafter\@@magyar@unspace@egroup
-  \else[\expandafter\@@magyar@unspace\fi
+  \else\if#1b\expandafter\expandafter\expandafter\@@magyar@unspace@bgroup
+  \else[\expandafter\expandafter\expandafter\@@magyar@unspace@gob\expandafter\expandafter\expandafter/\fi\fi
 }}
 \lccode`[\reserved@a
+%** @param #1 `{' with catcode 12
+\def\@@magyar@unspace@bgroup#1{%
+  \expandafter\@@magyar@unspace@gob\expandafter/\expandafter{\if}.\fi
+}
 \def\@@magyar@unspace@egroup#1{\if{.\fi}}% close a brace
 
 %** Adds definite article for a word #1#2#3 if #1 is in [A..Z]. Spaces
@@ -354,7 +902,9 @@
 %** @expands to `z' or nothing (last char of definite article)
 \def\@@magyar@az#1\hbox#2${% by pts
   % ^^^ Dat: we have `$' instead of `!' because of catcode changes
+  %%\def\reserved@a{\@@magyar@unspace#1 }\show\reserved@a
   \edef\reserved@a{\@@magyar@unspace#1 }%
+  %\show\vfuzz
   \expandafter\@@magyar@aznospace\reserved@a[][]\hbox
 }
 
@@ -461,484 +1011,6 @@
   \fi
 }
 
-% --- Option processing of \magyarOptions
-%
-% Example: \def\magyarOptions{titles=\quad,active=safe} \usepackage[magyar]{babel}
-% Dat: Babel has \languageoptions, but it is quite weak
-% Dat: this is a complete rewrite based on examplep.sty
-
-%** @param #1 to gobble a space token
-\def\magyar@doopt#1,{%
-  \if,\noexpand#1,% ignore multiple commas (#1 is empty)
-    \expandafter\magyar@doopt
-  \else
-    \csname fi\endcsname% don't count as `\fi' when being skipped
-    \magyar@doopt@low#1,=,%
-  \fi
-}
-\iftrue\csname fi\endcsname% \def\magyar@doopt@low contains `\fi'. Make it skippable.
-%** @param #1 is here for gobbling space tokens
-%** @param #4 \fi -- will be ignored
-\def\magyar@doopt@low#1#2=#3,#4\fi{%
-  % Dat: Normal case: #1#2 is key, #3 is value, #4 is `=,'
-  % Dat: MissingArg case: #1#2 is `key,', #3 is empty, #4 is empty
-  % Dat: Terminator case: #1#2 is `\hfuzz,', #3 is empty, #4 is empty
-  % Dat: OnlySpace case: #1 is `,', #2 is empty, #3 is empty, #4 is empty
-  \ifx\relax#4\relax% MissingArg or Terminator
-    \ifx#1\hfuzz% Terminator
-    \else
-      \if,\noexpand#1\else% OnlySpace case
-        \magyar@doopt@missingval#1#2% #2 already contains comma at end
-      \fi
-      \expandafter\expandafter\expandafter\magyar@doopt
-    \fi
-  \else% Normal
-    \expandafter\ifx\csname magyar@opt@#1#2\endcsname\relax
-      \@@magyar@error{Unknown option: #1#2 (= #3)}\@ehc
-    \else
-      \csname magyar@opt@#1#2\endcsname{#1#2}{#3}%
-    \fi
-    \expandafter\magyar@doopt
-  \fi
-}
-\def\magyar@doopt@missingval#1,{%
-  \@@magyar@error{Value (=) missing for option: #1}\@ehc
-}
-%** Dat: Spaces and newlines at end of #1 are not ignored, so please prefix
-%**      them with a comma, e.g \magyar@doopts{foo=bar, }
-%** @param #1 comma-separated optoinname=value pairs
-\def\magyar@doopts#1{\magyar@doopt #1,\hfuzz,}%
-
-\def\magyar@dooptions{%
-  \expandafter\ifx\csname opt@\CurrentOption.ldf.sty\endcsname\relax\else
-    % Usage: \PassOptionsToPackage{foo=bar}{magyar.ldf}
-    \expandafter\expandafter\expandafter
-    \magyar@doopt\csname opt@\CurrentOption.ldf.sty\endcsname,\hfuzz,%
-  \fi
-  \expandafter\ifx\csname \CurrentOption Options\endcsname\relax\else
-    \expandafter\expandafter\expandafter
-    \magyar@doopt\csname\CurrentOption Options\endcsname,\hfuzz,%
-    \expandafter\let\csname \CurrentOption Options\endcsname\relax
-  \fi
-}
-\def\magyar@do@option@low#1#2=#3=,\vfuzz{%
-  \ifx#1\hfuzz\else
-    %%\typeout{(#1#2)=(#3)}%
-    % vvv wastes some heap (\csname), but never mind
-  \fi    
-}
-
-\def\magyar@enumarg#1#2{%
-  \expandafter\ifx\csname magyar@opt@#1@@#2\endcsname\relax
-    \@@magyar@error{Invalid arg for option: #1 = #2}%
-  \else
-    \csname magyar@opt@#1@@#2\endcsname
-  \fi
-}
-
-% --- Declare options.
-%
-% Dat: \languageattribute{magyar}{...} and \bbl@declare@ttribute{magyar}{foo}{...}
-% isn't enough for us, because it is processed
-% after \usepackage[magyar]{babel}, but we need the options information
-% earlier. And also it cannot contain `='.
-% 
-
-%** `\dMf foo-bar {...}' is `\def\foo-bar{...}' where `-' is a letter
-\def\dMf#1 {\expandafter\def\csname#1\endcsname}
-\def\magyar@@unchanged{unchanged}
-
-% Declare defaults.
-
-%** These defaults load most of the new functionality, but try not to
-%** introduce visible typographical changes over magyar.ldf v1.4. These
-%** are the ovarall defaults of magyar.ldf v1.5, in case
-%** \def\magyarOptions{} is missing.
-%**
-%** These are the defaults:
-%**   \def\magyarOptions{
-%**     accents=defaulthigh,     % or =high or =low
-%**     active=safe,             % or =problematic or =none or =onlycs
-%**     activeprefix=babelopt2,  % or =none or =babelopt3 or =grave or =acute or =quotedbl
-%**     activespace=none,        % or =safe or =problematic
-%**     afterindent=unchanged,   % or =force-no or =force-yes
-%**     amslevelfix=fix-ams,     % or =unchanged or =fix-all
-%**     amstocnumskip=\quad,     % TeX code or --empty--
-%**     captions=hu,             % or =unchanged
-%**     chapternumber=unchanged, % see partnumber
-%**     classmod=yes,            % or =unchanged(=no) or TeX class name
-%**     %defaults=over-1.4,      % or =compat-1.4 or =safest or =prettiest
-%**     dottedtocline=fix,       % or =unchanged
-%**     emitdate=yes,            % or =no
-%**     extras=yes,              % or =no
-%**     figurecaptions=hu,       % or =us or =unchanged
-%**     frenchspacing=no,        % or =unchanged=no or yes
-%**     hunumbers=yes,           % or =no
-%**     hutoday=yes,             % or =no
-%**     hyphenmins=22,           % or =unchanged or two chars: \lefthyphenmin\righthyphenmin
-%**     longcaption=justified,   % or =centered or =centernewline or =none (=unchanged)
-%**     openqq=maybeup,          % or =up or =down or =unchanged
-%**     partnumber=unchanged,    % or =huordinal or =Huordinal
-%**     postpara=unchanged,      % or =bfdot or =dot or =quad or =diamond or =enskip or =quad or =em or =empty ... (\magyar@post@...)
-%**     postsubpara=unchanged,   % see postpara
-%**     %safest=no,              % or =yes (safest=no has no effect, safest=yes is equivalent to defaults=safest)
-%**     sectiondot=safe,         % or =none or =problematic
-%**     shorthandcs=none,        % or =? or a csname or a \cs, e.g shorthandcs=\shu
-%**     shortrefcmds=no,         % or =yes % incompatible!!
-%**     suggestions=yes,         % or =no
-%**     tablecaptions=hu,        % or =us or =unchanged
-%**     titles=\enskip,          % TeX code: =unchanged, =\quad or other
-%**     toclang=good,            % or =badfloat or =badall or =unchanged
-%**     told=yes,                % or =no
-%**   }\usepackage[magyar]{babel}
-\dMf magyar@opt@defaults@@over-1.4 {%
-  \magyar@opt@accents@@defaulthigh
-  \magyar@opt@active@@safe
-  \magyar@opt@activeprefix{activeprefix}{babelopt2}%
-  \magyar@opt@activespace@@none
-  \magyar@opt@afterindent@@unchanged
-  \magyar@opt@amslevelfix{amslevelfix}{fix-ams}%
-  \magyar@opt@amstocnumskip{amstocnumskip}{}%
-  \magyar@opt@captions@@hu
-  \magyar@opt@chapternumber@@unchanged
-  \magyar@opt@classmod@@yes
-  \magyar@opt@dottedtocline@@fix
-  \magyar@opt@emitdate@@yes
-  \magyar@opt@extras@@yes
-  \magyar@opt@chapterhead@@yes
-  \magyar@opt@figurecaptions@@hu
-  \magyar@opt@frenchspacing@@no
-  \magyar@opt@hunumbers@@yes
-  \magyar@opt@hutoday@@yes
-  \magyar@opt@hyphenmins{hyphenmins}{22}% Dat: Default LaTeX is {23}
-  \magyar@opt@longcaption@@justified
-  \magyar@opt@openqq@@maybeup
-  \magyar@opt@partnumber@@unchanged
-  \magyar@opt@postpara{}{unchanged}%
-  \magyar@opt@postsubpara{}{unchanged}%
-  \magyar@opt@sectiondot@@safe
-  \magyar@opt@shorthandcs{shorthandcs}{\shu}%
-  \magyar@opt@shortrefcmds@@no
-  \magyar@opt@suggestions@@yes
-  \magyar@opt@tablecaptions@@hu
-  \magyar@opt@titles{}{\enskip}
-  \magyar@opt@toclang@@good
-  \magyar@opt@told@@yes
-}
-
-%** These defaults try to be compatible with magyar.ldf v1.4 as much as
-%** possible -- but avoids stupid, problematic, dangerous implementation
-%** mistakes that would make magyar.ldf incompatible with many LaTeX
-%** packages. Some very useful fixes are not applied here -- please use
-%** defaults=over-1.4 to have them. Also some very nice features such
-%** as \emitdate and \told are not available here.
-\dMf magyar@opt@defaults@@compat-1.4 {%
-  \magyar@opt@accents@@defaulthigh% OK
-  \magyar@opt@active@@safe% we don't want =problematic
-  \magyar@opt@activeprefix@@grave% OK
-  \magyar@opt@activespace@@none% OK
-  \magyar@opt@afterindent@@unchanged% OK
-  \magyar@opt@amslevelfix@@none% OK
-  \magyar@opt@amstocnumskip{amstocnumskip}{}% OK
-  \magyar@opt@captions@@hu% OK
-  \magyar@opt@chapternumber@@unchanged% OK
-  \magyar@opt@classmod@@yes% OK
-  \magyar@opt@dottedtocline@@unchanged% OK
-  \magyar@opt@emitdate@@no% OK
-  \magyar@opt@extras@@yes% OK
-  \magyar@opt@chapterhead@@yes% OK
-  \magyar@opt@figurecaptions@@hu% OK
-  \magyar@opt@frenchspacing@@no% OK
-  \magyar@opt@hunumbers@@no% OK
-  \magyar@opt@hutoday@@yes% OK
-  \magyar@opt@hyphenmins{hyphenmins}{unchanged}%
-  \magyar@opt@longcaption@@justified% OK
-  \magyar@opt@openqq@@maybeup% OK
-  \magyar@opt@partnumber@@unchanged% OK
-  \magyar@opt@postpara{}{unchanged}% OK
-  \magyar@opt@postsubpara{}{unchanged}% OK
-  \magyar@opt@sectiondot@@safe% we don't want =problematic
-  \magyar@opt@shorthandcs{shorthandcs}{none}% OK
-  \magyar@opt@shortrefcmds@@yes% OK
-  \magyar@opt@suggestions@@no% OK -- user has explicity requested defaults=compat-1.4
-  \magyar@opt@tablecaptions@@hu% OK
-  \magyar@opt@titles{}{\quad}% OK -- ugly, but compatible
-  \magyar@opt@toclang@@good% we don't want weird errors and mischosen languages (would be =badall)
-  \magyar@opt@told@@no% OK
-}
-
-%** These defaults turn of most features -- the effect is similar to as if
-%** magyar.ldf hasn't been loaded at all. Useful for debugging purposes.
-\def\magyar@opt@defaults@@safest{%
-  \magyar@opt@accents@@defaulthigh
-  \magyar@opt@active@@none
-  \magyar@opt@activeprefix@@none
-  \magyar@opt@activespace@@none
-  \magyar@opt@afterindent@@unchanged
-  \magyar@opt@amslevelfix@@unchanged
-  \magyar@opt@amstocnumskip{amstocnumskip}{}%
-  \magyar@opt@captions@@unchanged
-  \magyar@opt@chapternumber@@unchanged
-  \magyar@opt@classmod@@unchanged
-  \magyar@opt@dottedtocline@@unchanged
-  \magyar@opt@emitdate@@no
-  \magyar@opt@extras@@no
-  \magyar@opt@chapterhead@@no
-  \magyar@opt@figurecaptions@@unchanged
-  \magyar@opt@frenchspacing@@unchanged
-  \magyar@opt@hunumbers@@no
-  \magyar@opt@hutoday@@no
-  \magyar@opt@hyphenmins{hyphenmins}{unchanged}%
-  \magyar@opt@longcaption@@unchanged
-  \magyar@opt@openqq@@unchanged
-  \magyar@opt@partnumber@@unchanged
-  \magyar@opt@postpara{}{unchanged}%
-  \magyar@opt@postsubpara{}{unchanged}%
-  \magyar@opt@sectiondot@@none
-  \magyar@opt@shorthandcs{shorthandcs}{none}%
-  \magyar@opt@shortrefcmds@@no
-  \magyar@opt@suggestions@@yes
-  \magyar@opt@tablecaptions@@unchanged
-  \magyar@opt@titles{}{unchanged}
-  \magyar@opt@toclang@@unchanged
-  \magyar@opt@told@@no
-}
-
-%** These defaults load almost all features, and try to do their best to make
-%** the document comply to the Hungarian typography standards. Full compliance
-%** is not achieved yet, and as new features are implemented, they will be
-%** added to these defaults.
-\dMf magyar@opt@defaults@@prettiest {% !!
-  \magyar@opt@accents@@defaulthigh% {low} would have no effect with \usepackage{t1enc}
-  \magyar@opt@active@@safe
-  \magyar@opt@activeprefix{activeprefix}{babelopt2}%
-  \magyar@opt@activespace@@safe
-  \magyar@opt@afterindent@@unchanged% keep =force-no
-  \magyar@opt@amslevelfix{amslevelfix}{fix-ams}%
-  \magyar@opt@amstocnumskip{amstocnumskip}{\enskip}% each line depends on the language, \enskip <-> \quad changings would look ugly between languages :-(
-  \magyar@opt@captions@@hu
-  \magyar@opt@chapternumber@@unchanged
-  \magyar@opt@classmod@@yes
-  \magyar@opt@dottedtocline@@fix
-  \magyar@opt@emitdate@@yes
-  \magyar@opt@extras@@yes
-  \magyar@opt@chapterhead@@yes
-  \magyar@opt@figurecaptions@@hu
-  \magyar@opt@frenchspacing@@yes
-  \magyar@opt@hunumbers@@yes
-  \magyar@opt@hutoday@@yes
-  \magyar@opt@hyphenmins{hyphenmins}{22}% Dat: Default LaTeX is {23}
-  \magyar@opt@longcaption@@centered
-  \magyar@opt@openqq@@maybeup
-  \magyar@opt@partnumber@@Huordinal
-  \magyar@opt@postpara{}{diamond}%
-  \magyar@opt@postsubpara{}{star}%
-  \magyar@opt@sectiondot@@safe
-  \magyar@opt@shorthandcs{shorthandcs}{\shu}%
-  \magyar@opt@shortrefcmds@@no
-  \magyar@opt@suggestions@@yes
-  \magyar@opt@tablecaptions@@hu
-  \magyar@opt@titles{}{\enskip}
-  \magyar@opt@toclang@@good
-  \magyar@opt@told@@yes
-}
-
-\let\magyar@opt@defaults\magyar@enumarg
-\def\magyar@opt@safest@@yes{\magyar@opt@defaults@@safest}
-\def\magyar@opt@safest@@no{}
-\let\magyar@opt@safest\magyar@enumarg
-
-% Declare normal options.
-
-\def\magyar@opt@titles#1#2{\def\magyar@opt@@titleskip{#2}}
-\def\@@magyar@twodigitcheck#1#2#3\hfuzz#4#5{%
-  \csname if\ifnum0<0\string#1 \ifnum0<0\string#2 false\else true\fi\else true\fi\endcsname
-    \@@magyar@error{Option #4 needs [1-9][1-9], got #1#2}%
-  \fi
-}
-\def\magyar@opt@hyphenmins#1#2{%
-  \def\reserved@a{#2}%
-  \ifx\reserved@a\magyar@@unchanged
-    \let\magyar@opt@@hyphenmins\@empty
-  \else
-    \@@magyar@twodigitcheck#2..\hfuzz{#1}{#2}%
-    \def\magyar@opt@@hyphenmins{#2}%
-  \fi
-}
-
-\def\magyar@opt@amstocnumskip#1#2{\def\magyar@opt@@amstocnumskip{#2}}
-\def\magyar@opt@active@@none{\def\magyar@opt@@active{0}}
-\def\magyar@opt@active@@onlycs{\def\magyar@opt@@active{1}}
-\def\magyar@opt@active@@safe{\def\magyar@opt@@active{2}}
-\def\magyar@opt@active@@problematic{\def\magyar@opt@@active{3}}
-\let\magyar@opt@active\magyar@enumarg
-\def\magyar@opt@activeprefix@@none    {\let\magyar@opt@@activeprefix\relax}
-\def\magyar@opt@activeprefix@@acute   {\def\magyar@opt@@activeprefix{'}}
-\def\magyar@opt@activeprefix@@grave   {\def\magyar@opt@@activeprefix{`}}
-\def\magyar@opt@activeprefix@@quotedbl{\def\magyar@opt@@activeprefix{"}}
-\dMf magyar@opt@activeprefix@@babelopt2 {%
-  \@ifpackagewith{babel}{activeacute}% Dat: not expandable
-    {\def\magyar@opt@@activeprefix{'}}%
-    {\def\magyar@opt@@activeprefix{`}}%
-}
-\dMf magyar@opt@activeprefix@@babelopt3 {%
-  \@ifpackagewith{babel}{activeacute}%
-    {\def\magyar@opt@@activeprefix{'}}%
- {\@ifpackagewith{babel}{activegrave}%
-    {\def\magyar@opt@@activeprefix{`}}%
-    {\def\magyar@opt@@activeprefix{"}}}%
-}
-\let\magyar@opt@activeprefix\magyar@enumarg
-\def\magyar@opt@activespace@@none{\def\magyar@opt@@activespace{0}}
-\def\magyar@opt@activespace@@safe{\def\magyar@opt@@activespace{2}}
-\def\magyar@opt@activespace@@problematic{\def\magyar@opt@@activespace{3}}
-\let\magyar@opt@activespace\magyar@enumarg
-\def\magyar@opt@sectiondot@@none{\def\magyar@opt@@sectiondot{0}}
-\def\magyar@opt@sectiondot@@safe{\def\magyar@opt@@sectiondot{1}}
-\def\magyar@opt@sectiondot@@problematic{\def\magyar@opt@@sectiondot{2}}
-\let\magyar@opt@sectiondot\magyar@enumarg
-\def\magyar@opt@captions@@unchanged{\def\magyar@opt@@captions{0}}
-\def\magyar@opt@captions@@hu{\def\magyar@opt@@captions{1}}
-\let\magyar@opt@captions\magyar@enumarg
-\def\magyar@opt@figurecaptions@@unchanged{\def\magyar@opt@@figurecaptions{0}}
-\def\magyar@opt@figurecaptions@@hu{\def\magyar@opt@@figurecaptions{1}}
-\def\magyar@opt@figurecaptions@@us{\def\magyar@opt@@figurecaptions{2}}
-\let\magyar@opt@figurecaptions\magyar@enumarg
-\def\magyar@opt@tablecaptions@@unchanged{\def\magyar@opt@@tablecaptions{0}}
-\def\magyar@opt@tablecaptions@@hu{\def\magyar@opt@@tablecaptions{1}}
-\def\magyar@opt@tablecaptions@@us{\def\magyar@opt@@tablecaptions{2}}
-\let\magyar@opt@tablecaptions\magyar@enumarg
-\def\magyar@opt@toclang@@unchanged{\def\magyar@opt@@toclang{0}}% same as =badall
-\def\magyar@opt@toclang@@badall{\def\magyar@opt@@toclang{0}}
-\def\magyar@opt@toclang@@badfloat{\def\magyar@opt@@toclang{1}}
-\def\magyar@opt@toclang@@good{\def\magyar@opt@@toclang{2}}
-\let\magyar@opt@toclang\magyar@enumarg
-\def\magyar@opt@partnumber@@unchanged{}
-\def\magyar@opt@partnumber@@huordinal{\def\thepart{\@huordinal\c@part}\let\magyar@needopt@hunumbers\@empty}
-\def\magyar@opt@partnumber@@Huordinal{\def\thepart{\@Huordinal\c@part}\let\magyar@needopt@hunumbers\@empty}
-\let\magyar@opt@partnumber\magyar@enumarg
-\def\magyar@opt@chapternumber@@unchanged{}
-\def\magyar@opt@chapternumber@@huordinal{\def\thechapter{\@huordinal\c@chapter}\let\magyar@needopt@hunumbers\@empty}
-\def\magyar@opt@chapternumber@@Huordinal{\def\thechapter{\@Huordinal\c@chapter}\let\magyar@needopt@hunumbers\@empty}
-\let\magyar@opt@chapternumber\magyar@enumarg
-\def\magyar@opt@accents@@high{\def\magyar@opt@@umlaut{\umlauthigh}}
-\def\magyar@opt@accents@@low{\def\magyar@opt@@umlaut{\umlautlow\umlautelow}}
-\def\magyar@opt@accents@@defaulthigh{\let\magyar@opt@@umlaut\@empty}
-\let\magyar@opt@accents\magyar@enumarg
-\def\magyar@opt@longcaption@@centered{\def\magyar@caption@centering{\centering}\def\magyar@caption@newline{ }}
-\def\magyar@opt@longcaption@@justified{\let\magyar@caption@centering\@empty\def\magyar@caption@newline{ }}
-\def\magyar@opt@longcaption@@centernewline{\def\magyar@caption@centering{\centering}\def\magyar@caption@newline{\\\relax}}
-\def\magyar@opt@longcaption@@none{\let\magyar@caption@centering\@empty}
-\def\magyar@opt@longcaption@@unchanged{\let\magyar@caption@centering\@empty}
-\let\magyar@opt@longcaption\magyar@enumarg
-\def\magyar@opt@suggestions@@no{\def\magyar@opt@@suggestions{0}}
-\def\magyar@opt@suggestions@@yes{\def\magyar@opt@@suggestions{1}}
-\let\magyar@opt@suggestions\magyar@enumarg
-\def\magyar@opt@extras@@no{\def\magyar@opt@@extras{0}}
-\def\magyar@opt@extras@@yes{\def\magyar@opt@@extras{1}}
-\let\magyar@opt@extras\magyar@enumarg
-\def\magyar@opt@chapterhead@@no{\def\magyar@opt@@chapterhead{0}}
-\def\magyar@opt@chapterhead@@yes{\def\magyar@opt@@chapterhead{1}}
-\let\magyar@opt@chapterhead\magyar@enumarg
-\def\magyar@opt@classmod@@no       {\let\magyar@opt@@classmod\relax}
-\def\magyar@opt@classmod@@unchanged{\let\magyar@opt@@classmod\relax}
-\def\magyar@opt@classmod@@yes      {\let\magyar@opt@@classmod\@empty}
-\def\magyar@opt@classmod#1#2{%
-  \expandafter\ifx\csname magyar@opt@#1@@#2\endcsname\relax
-    \@namedef{magyar@opt@@#1}{#2}%
-  \else
-    \csname magyar@opt@#1@@#2\endcsname
-  \fi
-}
-\def\magyar@opt@shorthandcs#1#2{%
-  \def\reserved@a{#2}%
-  \def\reserved@b{none}%
-  \ifx\reserved@a\reserved@b\else
-    \ifcat\hfuzz\noexpand#2\relax% #2 is \shu
-      \def#2##1{\protect\@@magyar@shorthand}% Dat: ##1 is usually ?_12
-    \else
-      \@namedef{#2}{\protect\@@magyar@shorthand}%
-    \fi
-  \fi
-}
-\def\magyar@opt@hunumbers@@no{\def\magyar@opt@@hunumbers{0}}
-\def\magyar@opt@hunumbers@@yes{\def\magyar@opt@@hunumbers{1}}
-\let\magyar@opt@hunumbers\magyar@enumarg
-\def\magyar@opt@told@@no{\def\magyar@opt@@told{0}}
-\def\magyar@opt@told@@weak{\def\magyar@opt@@told{1}}
-\def\magyar@opt@told@@yes{\def\magyar@opt@@told{2}}% Imp: =enable ?
-\let\magyar@opt@told\magyar@enumarg
-\def\magyar@opt@emitdate@@no{\def\magyar@opt@@emitdate{0}}
-\def\magyar@opt@emitdate@@weak{\def\magyar@opt@@emitdate{1}}
-\def\magyar@opt@emitdate@@yes{\def\magyar@opt@@emitdate{2}}
-\let\magyar@opt@emitdate\magyar@enumarg
-\def\magyar@opt@hutoday@@no{\def\magyar@opt@@hutoday{0}}
-\def\magyar@opt@hutoday@@yes{\def\magyar@opt@@hutoday{1}}
-\let\magyar@opt@hutoday\magyar@enumarg
-\def\magyar@opt@shortrefcmds@@no{\def\magyar@opt@@shortrefcmds{0}}
-\def\magyar@opt@shortrefcmds@@yes{\def\magyar@opt@@shortrefcmds{1}}
-\let\magyar@opt@shortrefcmds\magyar@enumarg
-\def\magyar@opt@dottedtocline@@fix{\def\magyar@opt@@dottedtocline{0}}
-\def\magyar@opt@dottedtocline@@unchanged{\def\magyar@opt@@dottedtocline{1}}
-\let\magyar@opt@dottedtocline\magyar@enumarg
-\def\magyar@opt@amslevelfix@@unchanged{\def\magyar@opt@@amslevelfix{0}}
-\dMf magyar@opt@amslevelfix@@fix-ams  {\def\magyar@opt@@amslevelfix{1}}
-\dMf magyar@opt@amslevelfix@@fix-all  {\def\magyar@opt@@amslevelfix{2}}
-\let\magyar@opt@amslevelfix\magyar@enumarg
-\def\magyar@opt@openqq@@unchanged{\def\magyar@opt@@openqq{0}}
-\def\magyar@opt@openqq@@up{\def\magyar@opt@@openqq{1}}
-\def\magyar@opt@openqq@@down{\def\magyar@opt@@openqq{2}}
-\def\magyar@opt@openqq@@maybeup{\def\magyar@opt@@openqq{3}}
-\let\magyar@opt@openqq\magyar@enumarg
-\def\magyar@opt@frenchspacing@@unchanged{\def\magyar@opt@@frenchspacing{0}}% same as =no
-\def\magyar@opt@frenchspacing@@no {\def\magyar@opt@@frenchspacing{0}}
-\def\magyar@opt@frenchspacing@@yes{\def\magyar@opt@@frenchspacing{1}}
-\let\magyar@opt@frenchspacing\magyar@enumarg
-\dMf magyar@opt@afterindent@@force-no {\def\magyar@opt@@afterindent{0}}
-\dMf magyar@opt@afterindent@@force-yes {\def\magyar@opt@@afterindent{1}}
-\dMf magyar@opt@afterindent@@unchanged {\def\magyar@opt@@afterindent{9}}
-\let\magyar@opt@afterindent\magyar@enumarg
-\def\magyar@opt@postpara#1#2{%
-  \def\reserved@a{#2}%
-  \ifx#2\magyar@@unchanged
-    \let\magyar@opt@@paragraphs\@undefined
-  \else
-    \expandafter\def\csname magyar@opt@@#1\endcsname{#2}%
-    \let\magyar@opt@@paragraphs\@empty
-  \fi
-}
-\let\magyar@opt@postsubpara\magyar@opt@postpara
->>>>>>> a2567d4... [2003/08/10] updated and extended magyar.ldf (see the diff for details)
-
-\magyar@opt@defaults{defaults}{over-1.4}
-\magyar@dooptions% in \magyarOptions
-\ifnum\magyar@opt@@openqq=3 % =maybeup
-  \ifnum\magyar@opt@@active=0
-    \def\magyar@opt@@openqq{0}% =unchanged
-  \else
-    \def\magyar@opt@@openqq{2}% =down
-  \fi
-\fi
-\expandafter\ifx\csname magyar@needopt@hunumbers\endcsname\relax\else
-  \ifnum\magyar@opt@@hunumbers=0
-    \@@magyar@error{(chapter|part)number=... implies hunumbers=yes}%
-  \fi
-\fi
-\magyar@opt@@umlaut
-% Imp: undef \magyar\@opt@* to save memory
-
-%** Usage: `\if...\else\@@magyar@skiplong\fi ... \@gobble{^}', where {^} is in
-%** its own line
-\def\@@magyar@skiplong#1{%
-  \fi
-  \bgroup% so ^} would close it
-  \catcode\string`^13 \lccode\string`~=\string`^
-  \lowercase{\let~\fi}%
-  \catcode\string`\\14 % comment -- avoid using hash memory
-  \catcode\string`$14
-  \iffalse
-}
-
 % --- captions=
 
 \if0\magyar@opt@@captions\@@magyar@skiplong\fi
@@ -973,9 +1045,9 @@
 % --- Changing the order of the table numbers; tablecaptions=
 
 \if0\magyar@opt@@tablecaptions\@@magyar@skiplong\fi
-  % Wee need `1. táblázat.' instead of `Table 1'
+  % Wee need `1. táblázat' instead of `Table 1'
   \if1\magyar@opt@@tablecaptions
-        \def\@@magyar@fnum@table{\thetable.~\tablename.}%
+        \def\@@magyar@fnum@table{\thetable.~\tablename}%
   \else \def\@@magyar@fnum@table{\tablename\nobreakspace\thetable}\fi
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\fnum@table\let\fnum@table\@@magyar@fnum@table}
@@ -986,7 +1058,7 @@
 
 \if0\magyar@opt@@figurecaptions\@@magyar@skiplong\fi
   \if1\magyar@opt@@figurecaptions
-        \def\@@magyar@fnum@figure{\thefigure.~\figurename.}%
+        \def\@@magyar@fnum@figure{\thefigure.~\figurename}%
   \else \def\@@magyar@fnum@figure{\figurename\nobreakspace\thefigure}\fi
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\fnum@figure\let\fnum@figure\@@magyar@fnum@figure}
@@ -1058,12 +1130,13 @@
   % We don't emit the two dots of `1. táblázat.' here, because
   % has already been emitted by \fnum@table etc.
   % We apply some formatting depending on the longcaption= option.
+  % Dat: Gyurgyák, p95. says: `11. ábra. Hajtási változatok.
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@makecaption
     %** @param #1 \fnum@table or \fnum@figure
     \def\@makecaption#1#2{%
       \vskip\abovecaptionskip
-      \sbox\@tempboxa{#1 #2}%
+      \sbox\@tempboxa{#1.\ #2}% Dat: `: ' changed to `. '
       \ifdim \wd\@tempboxa >\hsize
         {\magyar@caption@centering #1.\magyar@caption@newline #2\csname par\endcsname}%
       \else
@@ -2309,6 +2382,139 @@
 \@gobble
 {^}%
 
+% --- refstruc=
+
+\if0\magyar@opt@@refstruc \@@magyar@skiplong\fi
+\def\@@magyar@nonumbers@skipa#1\@@magyar@nonumbers@s{#1\@@magyar@nonumbers@a}
+%** Changes arabic and roman numbers to 1 or i, respectively.
+%** Usage: \typeout{((\@@magyar@nonumbers@a 35.2.iv\hfuzz))} -> ((1.1.i))
+\def\@@magyar@nonumbers@a#1{%
+  \ifx#1\hfuzz \expandafter\@gobble
+  \else\if\noexpand#101%
+  \else\if\noexpand#111%
+  \else\if\noexpand#121%
+  \else\if\noexpand#131%
+  \else\if\noexpand#141%
+  \else\if\noexpand#151%
+  \else\if\noexpand#161%
+  \else\if\noexpand#171%
+  \else\if\noexpand#181%
+  \else\if\noexpand#191%
+  \else\if\noexpand#1mi%
+  \else\if\noexpand#1di%
+  \else\if\noexpand#1ci%
+  \else\if\noexpand#1li%
+  \else\if\noexpand#1xi%
+  \else\if\noexpand#1vi%
+  \else\if\noexpand#1ii%
+  \else\noexpand#1\@@magyar@nonumbers@skipa
+  \fi\fi\fi\fi\fi\fi\fi \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi \fi
+  \@@magyar@nonumbers@s
+}
+\def\@@magyar@nonumbers@s#1{%
+  \ifx#1\hfuzz \expandafter\@gobble
+  \else\if\noexpand#10%
+  \else\if\noexpand#11%
+  \else\if\noexpand#12%
+  \else\if\noexpand#13%
+  \else\if\noexpand#14%
+  \else\if\noexpand#15%
+  \else\if\noexpand#16%
+  \else\if\noexpand#17%
+  \else\if\noexpand#18%
+  \else\if\noexpand#19%
+  \else\if\noexpand#1m%
+  \else\if\noexpand#1d%
+  \else\if\noexpand#1c%
+  \else\if\noexpand#1l%
+  \else\if\noexpand#1x%
+  \else\if\noexpand#1v%
+  \else\if\noexpand#1i%
+  \else\noexpand#1\@@magyar@nonumbers@skipa
+  \fi\fi\fi\fi\fi\fi\fi \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi \fi
+  \@@magyar@nonumbers@s
+}
+
+\def\@@magyar@strucname@part{r\'esz}%
+\def\@@magyar@strucname@chapter{fejezet}%
+\def\@@magyar@strucname@section{szakasz}%
+\def\@@magyar@strucname@subsection{alszakasz}%
+\def\@@magyar@strucname@subsubsection{alalszakasz}%
+\def\@@magyar@strucname@subsubsubsection{alalalszakasz}%
+\def\@@magyar@strucname@paragraph{bekezd\'es}%
+\def\@@magyar@strucname@subparagraph{albekezd\'es}%
+\def\@@magyar@strucname@subsubparagraph{alalbekezd\'es}%
+%** @param #1 `section' etc.
+%** @expands to its name in English
+\def\@@magyar@strucname#1{#1}
+%** @param #1 `section' etc.
+%** @expands to its name in Hungarian
+\def\@@magyar@strucname@hu#1{\csname @@magyar@strucname@#1\endcsname}
+
+\def\@@magyar@refstruc@parse#1#2\vfuzz{%
+  \ifx\relax#1\let\reserved@a\relax
+  \else\def\reserved@a{#1}\fi
+}%
+%** @param #1 name of a count register (e.g c@part)
+\def\@@magyar@refstruc@setcnt#1{%
+  \expandafter\ifx\csname#1\endcsname\relax\expandafter\@tempcnta
+  \else\csname#1\endcsname\fi
+}%
+
+%** @param #1 \ref id
+\def\@@magyar@refstruc@name#1{%
+  \begingroup
+  \expandafter\expandafter\expandafter
+  \@@magyar@refstruc@parse\csname r@#1\endcsname..\vfuzz%
+  %%\show\reserved@a% first arg of ref, i.e section number, eg. `1.2.3' -- or \relax
+  \ifx\reserved@a\relax
+    \textbf{??}%
+    \G@refundefinedtrue
+  \else
+    \edef\reserved@a{\expandafter\@@magyar@nonumbers@a\reserved@a\hfuzz}%
+    \expandafter\lowercase\expandafter{\expandafter\def\expandafter\reserved@a\expandafter{\reserved@a}}%
+    \@@magyar@refstruc@setcnt{c@part}1
+    \@@magyar@refstruc@setcnt{c@chapter}1
+    \@@magyar@refstruc@setcnt{c@section}1
+    \@@magyar@refstruc@setcnt{c@subsection}1
+    \@@magyar@refstruc@setcnt{c@subsubsection}1
+    \@@magyar@refstruc@setcnt{c@subsubsubsection}1
+    \@@magyar@refstruc@setcnt{c@paragraph}1
+    \@@magyar@refstruc@setcnt{c@subparagraph}1
+    \@@magyar@refstruc@setcnt{c@subsubparagraph}1
+    \def\reserved@c{subsubparagraph}\edef \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+    \def\reserved@c{subparagraph}\edef    \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+    \def\reserved@c{paragraph}\edef       \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+    \def\reserved@c{subsubsubsection}\edef\reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+    \def\reserved@c{subsubsection}\edef   \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+    \def\reserved@c{subsection}\edef      \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+    \def\reserved@c{section}\edef         \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+    \def\reserved@c{chapter}\edef         \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+    \def\reserved@c{part}\edef            \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+    \@latex@error{Unknown structure level for ref \string`\reserved@a'}\@ehc%
+    \def\reserved@c{\textbf{??}}%
+    \fi\fi\fi\fi\fi\fi\fi\fi\fi
+    \expandafter\@@magyar@strucname\expandafter{\reserved@c}%
+  \fi
+  \endgroup
+}%
+
+\def\@@magyar@refstruc@hu#1{\ref{#1}.~\@@magyar@refstruc@name{#1}}%
+\def\@@magyar@refstruc#1{\@@magyar@refstruc@name{#1}~\ref{#1}}%
+
+\expandafter\addto\csname extras\CurrentOption\endcsname{%
+  \babel@save\@@magyar@refstruc
+  \babel@save\@@magyar@strucname
+  \let\@@magyar@refstruc \@@magyar@refstruc@hu
+  \let\@@magyar@strucname\@@magyar@strucname@hu
+}
+
+\ifnum\magyar@opt@@refstruc \expandafter\ifx\csname refstruc\endcsname\relax1\fi>1 % 21, 2, 11, 1
+  \DeclareRobustCommand\refstruc{\@@magyar@refstruc}%
+\fi
+\@gobble
+{^}
+
 % --- Printing dates; emitdate=
 
 \ifnum\magyar@opt@@emitdate=0 \@@magyar@skiplong\fi
@@ -2486,10 +2692,8 @@
   \endgroup
 }
 
-\ifnum\magyar@opt@@emitdate>1
+\ifnum\magyar@opt@@emitdate \expandafter\ifx\csname emitdate\endcsname\relax1\fi>1 % 21, 2, 11, 1
   \let\emitdate\@@magyar@emitdate
-\else
-  \expandafter\ifx\csname  emitdate\endcsname\relax \let \emitdate\@@magyar@emitdate\fi
 \fi
 \@gobble
 {^}%
@@ -2788,12 +2992,19 @@
 
 % --- !! disable
 
+\if0\magyar@opt@@mond \@@magyar@skiplong\fi
 %** Dat: `--\enspace' would be too much
 %** Use this in the beginning of the paragraph.
-\def\mond{--\hbox{ }}
+\def\@@magyar@mond{\par--\hbox{ }}
+\ifnum\magyar@opt@@mond \expandafter\ifx\csname mond\endcsname\relax1\fi>1 % 21, 2, 11, 1
+  \let\mond\@@magyar@mond
+\fi
+\@gobble
+{^}%
 
+\if0\magyar@opt@@hang \@@magyar@skiplong\fi
 %** Usage: \hang{-- } Foo\par
-\def\hang#1{%
+\def\@@magyar@hang#1{%
   \begingroup
   \setbox0\hbox{#1}%
   \advance\linewidth-\wd0 % not \hsize
@@ -2806,6 +3017,11 @@
   %\def\par{\endgroup\par}% doesn't work, restores \parshape too early
   \ignorespaces
 }%
+\ifnum\magyar@opt@@hang \expandafter\ifx\csname hang\endcsname\relax1\fi>1 % 21, 2, 11, 1
+  \let\hang\@@magyar@hang
+\fi
+\@gobble
+{^}%
 
 % --- Finish
 
@@ -2827,7 +3043,9 @@
 
 \ldf@finish\CurrentOption% \input \CurrentOption.cfg
 
-% !! fix other incompatibilites
+% !! make others conditional
+% !! \refn{foo}: 5.2.~alszakasz
+% !! \begin{description}
 % !! should \newlabel emit a `.' ? (now doesn't) -- compatibility
 % !! alternative solutions for meny-nyi (possibly defining ligatures?)
 % !! baseline grid?
