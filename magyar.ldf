@@ -1775,16 +1775,22 @@
 % after the first float has been typeset. A better solution would be
 % `\select@language{\languagename}', which forcibly activates the default
 % language.
-%   \ps@headings isn't run \AtBeginDocument. (4)
+%   \ps@headings isn't run \AtBeginDocument, but book.cls runs
+% \pagestyle{headings} when it is loaded. We should change this to
+%  (4)
 
 \ifnum\magyar@opt@@toclang=0 \@@magyar@skiplong\fi
   \ifnum\magyar@opt@@toclang>1
     % Solve problems (2) and (4). Timing is critical. \select@language must
     % be called after \AtBeginDocument, so \catcode{}s won't be \activated
-    % too early. Note that \extrasmagyar containing the \catcode changes is
+    % too early. (Because some code in \AtBeginDocument might issue an
+    % \input such as hyperref.sty which does \RequirePackage{nameref}.)
+    % Note that \extrasmagyar containing the \catcode changes is
     % only run when `magyar' is the default language (last arg of
     % \usepackage[...]{babel}). If that is run after \AtBeginDocument hooks,
     % then most packages will use 12 as \catcode\string``, which is intended.
+    %   \@@magyar@psheadings might just be run \AtBeginDocument, it doesn't
+    % need \@preamblecmds.
     \expandafter\gdef\expandafter\@preamblecmds\expandafter{\@preamblecmds
       \select@language{\languagename}% force initial language
       \@@magyar@psheadings% !! don't put inside toclang=
@@ -4109,6 +4115,16 @@
 
 \ldf@finish\CurrentOption% \input \CurrentOption.cfg
 
+% !! gam
+% !! layout.sty
+%\DeclareOption{magyar}{%
+%  \def\Headertext{Fejl\'ec}
+%  \def\Bodytext{A dokumentum teste\qquad}
+%  \def\Footertext{L\'abl\'ec}
+%  \def\MarginNotestext{Sz\'el-\\jegyzet}
+%  \def\oneinchtext{1 inch}
+%  \def\notshown{nem l\'atszik}
+%  }
 % !! vvv this w/ and w/o nathb.sty: $H_{`symm}$, $H_``symm $
 %\let\@@magyar@saved@mathoptions@on\mathoptions@on
 %\def\mathoptions@on{% overrides nath.sty
@@ -4117,6 +4133,9 @@
 %  % ^^^ \def`{\abbreviation}, but with active `
 %  \@@magyar@saved@mathoptions@on
 %}
+% !! varioref.sty (2001/09/04 v1.3c) mustn't be loaded with option
+%    [magyar], because that option contains a stupid \AtBeginDocument hook
+%    added to \extrasmagyar
 % !! french.ldf number decimal comma etc.
 % !! \hunnewlabel should store `table', `figure', `section' etc.
 % !! letter.cls
