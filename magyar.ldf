@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/04/17 v1.5b Magyar support from the babel system]
+%%        [2004/04/20 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/04/17 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/04/20 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -3088,6 +3088,8 @@
   \endgroup
 }
 
+\def\@@magyar@chapapp{\appendixname}%
+
 %** Input is \reserved@a, output is \reserved@c
 \def\@@magyar@refstruc@work{%
   \edef\reserved@a{\expandafter\@@magyar@nonumbers@a\reserved@a\hfuzz}%
@@ -3112,11 +3114,23 @@
   \def\reserved@c{chapter}\edef         \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
   \def\reserved@c{appendix}\edef        \reserved@b{\@Alph\c@chapter}\ifx\reserved@a\reserved@b\else% Imp: do this without changing counters in \appendix
   \def\reserved@c{part}\edef            \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  %%\show\@chapapp \show\@@magyar@chapapp
+  \ifx\@chapapp\@@magyar@chapapp% we're in an appendix referring to a normal chapter
+    \def\thechapter{\@arabic\c@chapter}\fi
+  \def\reserved@c{subsubparagraph}\edef \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{subparagraph}\edef    \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{paragraph}\edef       \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{subsubsubsection}\edef\reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{subsubsection}\edef   \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{subsection}\edef      \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{section}\edef         \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{chapter}\edef         \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  %
   \@latex@error{Unknown structure level for ref \string`\reserved@a';
     \reserved@b}\@ehc%
   \def\reserved@c{??}% Dat: must be expandable
   \let\reserved@b\@empty
-  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
 }
 
 \def\@@magyar@refstruc@hu#1{\@@magyar@refstruc@name{#1}1}%
