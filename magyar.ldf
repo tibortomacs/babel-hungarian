@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2003/08/10 v1.5a Magyar support from the babel system]
+%%        [2003/11/11 v1.5a Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -58,7 +58,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2003/08/10 v1.5a Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2003/11/11 v1.5a Magyar support from the babel system]
 
 % Find the best of available Hungarian hyphenation patterns.
 \expandafter\ifx\csname l@\CurrentOption\endcsname\relax
@@ -510,6 +510,11 @@
 \def\magyar@doopts#1{\magyar@doopt #1,\hfuzz,}%
 
 \def\magyar@dooptions{%
+  \expandafter\ifx\csname opt@\CurrentOption.ldf.sty\endcsname\relax\else
+    % Usage: \PassOptionsToPackage{foo=bar}{magyar.ldf}
+    \expandafter\expandafter\expandafter
+    \magyar@doopt\csname opt@\CurrentOption.ldf.sty\endcsname,\hfuzz,%
+  \fi
   \expandafter\ifx\csname \CurrentOption Options\endcsname\relax\else
     \expandafter\expandafter\expandafter
     \magyar@doopt\csname\CurrentOption Options\endcsname,\hfuzz,%
@@ -2874,6 +2879,7 @@
 % !! `\aref{ekezetek}. táblázat' shouldn't need `.'
 % !! 1848 március+ának közepe
 %
+% Dat: additive \PassOptionsToPackage{foo=bar}{magyar.ldf}
 % Dat: for book.cls and article.cls: the user has to run \pagestyle{headings} after \selectlanguage{magyar} -- for performance reasons
 % Dat: doc: \let\@@magyar@psheadings\relax maybe needed in the preamble 
 % Dat: \pagestyle{headings} is forced \AtBeginDocument -- user should change it later
