@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/03/14 v1.5a Magyar support from the babel system]
+%%        [2004/03/17 v1.5a Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/03/14 v1.5a Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/03/17 v1.5a Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -2165,7 +2165,7 @@
   %** @example Kiss Elõd\shu?--Nagy Pál
   %** @example közgazdaság\shu?-tudományi
   \def\@@magyar@shorthandminus{%
-    \ifmmode \mskip2.4mu plus3.6mu minus1.8mu \else % ,`- is just a space
+    \ifmmode \mskip2.4mu plus3.6mu minus1.8mu \else % ,`- is just a space in math mode
       \if-\noexpand\@Lang@tmp \leavevmode\nobreak\,\nobreak\hbox{--}\,\expandafter\expandafter\expandafter\@gobble% Dat: \@gobble -
       \else                   \leavevmode\nobreak-\hskip\z@skip\fi
     \fi
@@ -2174,7 +2174,7 @@
   %** A hyphen that is displayed in both next and current lines. Hyphenation
   %** is OK at both sides. This differs from ukraineb.ldf.
   %** \showhyphens{nátrium`|klorid} -> nát-ri-um--klo-rid
-  \@@magyar@declare@shorthandx |{\leavevmode\nobreak-\nobreak\discretionary{}{-}{}\nobreak\hskip\z@skip}% Dat: all \nobreak s are important
+  \@@magyar@declare@shorthandx |{\leavevmode\nobreak-\nobreak\discretionary{}{-}{}\nobreak\hskip\z@skip}% Dat: all \nobreak s are important % e.g egyszer`|kétszer
   \@@magyar@declare@shorthandx _{\leavevmode\nobreak\-\nobreak\hskip\z@skip}
   \@@magyar@declare@shorthandx <{\flqq}
   \@@magyar@declare@shorthandx >{\frqq}
@@ -4271,6 +4271,7 @@
 %  % ^^^ \def`{\abbreviation}, but with active `
 %  \@@magyar@saved@mathoptions@on
 %}
+% !! option to detect new magyar.ldf from a TeX file
 % !! book.cls \appendix \chapter, sub-numbers into TOC, need dot after `A. függelék'? Gyurgyák recommends `1. függelék'.
 % !! \MathReal, frenchb.ldf, \nombre
 % !! \told\ref{foo}+ban{}, if \foo expands to empty (no \section etc. in .tex file)
