@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/04/20 v1.5b Magyar support from the babel system]
+%%        [2004/05/02 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/04/20 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/05/02 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -966,6 +966,7 @@
 %** modified by pts at Fri Oct  3 22:19:13 CEST 2003
 \def\@@magyar@az@vfuzzdef#1#2#3{{%
   \let\romannumeral\number% by pts@fazekas.hu at Mon Oct 27 23:44:06 CET 2003
+  % Dat: deliberately no \autoref for hyperref.sty !!
   \let\ref\@@magyar@zeroref \let\pageref\@@magyar@zeropageref
   \let\cite\@@magyar@zerocite \let\eqref\@@magyar@zeroeqref
   % ^^^ fix so \az{\ref{...}} works
@@ -2842,6 +2843,7 @@
   \let \ref\relax \let \pageref\relax \let \cite\relax % all unexpandable, even for \@@magyar@the
   \let\aref\relax \let\apageref\relax \let\acite\relax
   \let\Aref\relax \let\Apageref\relax \let\Acite\relax
+  \let\autoref\relax
   %\set@display@protect% \string. Why?? doesn't seem to screw up \r
   \set@typeset@protect% \relax.
   \edef\reserved@c{#1-}%
@@ -2854,6 +2856,7 @@
   \let\ref\@@magyar@zeroref \let\pageref\@@magyar@zeropageref \let\cite\@@magyar@zerocite
   \let\aref\ref \let\apageref\pageref \let\acite\cite% !! \Aref* \Aref(, only 1st arg of \acite etc.
   \let\Aref\ref \let\Apageref\pageref \let\Acite\cite
+  \let\autoref\ref% Dat: SUXX: section 1-gyel
   \edef\reserved@a{#1}%
   \edef\reserved@a{\expandafter\@@magyar@the\reserved@a\@empty}% `\expandafter' is here so `the' and `number' take place
   \if0#2\else
@@ -3019,6 +3022,14 @@
 \def\@@magyar@strucname@paragraph{bekezd\'es\@@magyar@toldas{4}}%
 \def\@@magyar@strucname@subparagraph{albekezd\'es\@@magyar@toldas{4}}%
 \def\@@magyar@strucname@subsubparagraph{alalbekezd\'es\@@magyar@toldas{4}}%
+\def\@@magyar@strucname@figure{\'ab\-ra\@@magyar@toldas{4}}% !! ábrában etc.
+\def\@@magyar@strucname@table{t\'ab\-l\'azat\@@magyar@toldas{6}}%
+\def\@@magyar@strucname@equation{egyenlet\@@magyar@toldas{7}}%
+\def\@@magyar@strucname@footnote{l\'ab\-jegy\-zet\@@magyar@toldas{7}}%
+\def\@@magyar@strucname@item{elem\@@magyar@toldas{4}}% !! elemmel etc.
+\def\@@magyar@strucname@FancyVerbLine{sor\@@magyar@toldas{8}}% !! sorral
+\def\@@magyar@strucname@theorem{t\'e-tel\@@magyar@toldas{4}}% !! tétellel
+
 %** Must be expandable.
 %** @param #1 `section' etc.
 %** @expands to its name in English
@@ -3032,6 +3043,20 @@
   \ifx\relax#1\let\reserved@a\relax
   \else\def\reserved@a{#1}\fi
 }%
+%** Retrieves the structure name (arg #4) from arg 2 of a \newlabel emitted
+%** by hyperref.sty.
+%** @example \newlabel{fig:vonal}{{1}{1}{my title}{figure.1}{}}
+%**        \@namedef{r@fig:vonal}{{1}{1}{my title}{figure.1}{}}
+%**          -> extract `figure' to \reserved@c
+\def\@@magyar@refstruc@parsehyname#1#2#3#4#5\vfuzz{%
+  \ifx\relax#1%
+  \else\expandafter\@@magyar@refstruc@parsehynamedot#4\vfuzz\fi
+}%
+\def\@@magyar@refstruc@parsehynamedot#1.#2\vfuzz{%
+  \expandafter\ifx\csname @@magyar@strucname@#1\endcsname\relax
+  \else\def\reserved@c{#1}\fi
+}
+
 %** @param #1 name of a count register (e.g c@part)
 \def\@@magyar@refstruc@setcnt#1{%
   \expandafter\ifx\csname#1\endcsname\relax\expandafter\@tempcnta
@@ -3050,7 +3075,7 @@
     \else
       \expandafter\expandafter\expandafter
       \@@magyar@refstruc@parse\csname r@#1\endcsname..\vfuzz%
-      \@@magyar@refstruc@work
+      \@@magyar@refstruc@work{#1}%
       \let\@@magyar@save@m\-%
       \let\-\relax
       \let\@@magyar@toldas\relax
@@ -3077,12 +3102,13 @@
   \begingroup
   \expandafter\expandafter\expandafter
   \@@magyar@refstruc@parse\csname r@#1\endcsname..\vfuzz%
+  % ^^^ sets \reserved@a to the reference target
   %%\show\reserved@a% first arg of ref, i.e section number, eg. `1.2.3' -- or \relax
   \ifx\reserved@a\relax
     \@@magyar@refstruc@split#1+\vfuzz#2% ends by +suffix, needs \told
   \else
-    \if\noexpand#20\else\ref{#1}.~\fi
-    \@@magyar@refstruc@work
+    \if\noexpand#20\else{\ref{#1}.}~\fi% Dat: \ref might redefine \reserved@a, especially in hyperref.sty
+    \@@magyar@refstruc@work{#1}%
     \expandafter\@@magyar@strucname\expandafter{\reserved@c}%
   \fi
   \endgroup
@@ -3091,7 +3117,7 @@
 \def\@@magyar@chapapp{\appendixname}%
 
 %** Input is \reserved@a, output is \reserved@c
-\def\@@magyar@refstruc@work{%
+\def\@@magyar@refstruc@work#1{%
   \edef\reserved@a{\expandafter\@@magyar@nonumbers@a\reserved@a\hfuzz}%
   %\expandafter\lowercase\expandafter{\expandafter\def\expandafter\reserved@a\expandafter{\reserved@a}}%
   % ^^^ Dat: don't do lowercasing, deliberately.
@@ -3105,6 +3131,10 @@
   \@@magyar@refstruc@setcnt{c@paragraph}1
   \@@magyar@refstruc@setcnt{c@subparagraph}1
   \@@magyar@refstruc@setcnt{c@subsubparagraph}1
+  \let\reserved@c\relax
+  \expandafter\expandafter\expandafter
+  \@@magyar@refstruc@parsehyname\csname r@#1\endcsname....\vfuzz%
+  \ifx\reserved@c\relax% hyperref.sty and nameref.sty has helped us
   \def\reserved@c{subsubparagraph}\edef \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
   \def\reserved@c{subparagraph}\edef    \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
   \def\reserved@c{paragraph}\edef       \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
@@ -3113,7 +3143,7 @@
   \def\reserved@c{subsection}\edef      \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
   \def\reserved@c{section}\edef         \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
   \def\reserved@c{chapter}\edef         \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
-  \def\reserved@c{appendix}\edef        \reserved@b{\@Alph\c@chapter}\ifx\reserved@a\reserved@b\else% Imp: do this without changing counters in \appendix
+  \def\reserved@c{appendix}\edef        \reserved@b{\expandafter\ifx\csname c@chapter\endcsname\relax\else\@Alph\c@chapter\fi}\ifx\reserved@a\reserved@b\else% Imp: do this without changing counters in \appendix
   \def\reserved@c{part}\edef            \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
   %%\show\@chapapp \show\@@magyar@chapapp
   \ifx\@chapapp\@@magyar@chapapp% we're in an appendix referring to a normal chapter
@@ -3131,7 +3161,7 @@
     \reserved@b}\@ehc%
   \def\reserved@c{??}% Dat: must be expandable
   \let\reserved@b\@empty
-  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
 }
 
 \def\@@magyar@refstruc@hu#1{\@@magyar@refstruc@name{#1}1}%
