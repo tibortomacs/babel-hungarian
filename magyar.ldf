@@ -55,6 +55,10 @@
 % of TeX in Hungary'', presented at EuroBachoTeX 2002.
 %
 % Most of the code and comments in this file are written by P\'eter Szab\'o.
+% The newest version is available from http://www.math.bme.hu/latex/
+%
+% The version of this file is 1.5, even when new releases come out. Please see
+% the \expandafter\ProvidesLanguage line for the release date.
 %
 
 \expandafter\ifx\csname CurrentOption\endcsname\relax
