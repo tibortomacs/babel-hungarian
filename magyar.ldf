@@ -3095,6 +3095,7 @@
   \edef\reserved@a{\expandafter\@@magyar@nonumbers@a\reserved@a\hfuzz}%
   %\expandafter\lowercase\expandafter{\expandafter\def\expandafter\reserved@a\expandafter{\reserved@a}}%
   % ^^^ Dat: don't do lowercasing, deliberately.
+  % Imp: referring from \@alph sections such as the appendix
   \@@magyar@refstruc@setcnt{c@part}1
   \@@magyar@refstruc@setcnt{c@chapter}1
   \@@magyar@refstruc@setcnt{c@section}1
