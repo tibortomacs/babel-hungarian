@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/02/21 v1.5a Magyar support from the babel system]
+%%        [2004/02/24 v1.5a Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/02/21 v1.5a Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/02/24 v1.5a Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -4211,20 +4211,21 @@
 
 \if0\magyar@opt@@varioref \@@magyar@skiplong\fi
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
-  \@@magyar@setup@varioref} % Imp: are we late enough so we override varioref.sty?
+  \@@magyar@setup@varioref} % Dat: we are we late enough so we override varioref.sty
+% vvv don't apply changes if varioref.sty wasn't loaded 
+\AtBeginDocument{\expandafter\ifx\csname vpagerefrange\endcsname\relax
+  \let\@@magyar@setup@varioref\@empty\fi}
 \def\@@magyar@setup@varioref{% Dat: must be a separate macro for suggestions= not to find our \reftextfaceafter etc.
-  \expandafter\ifx\csname reftextfaceafter\endcsname\relax\else
-    \def\reftextfaceafter {\reftextvario{a t\'ul\-ol\-da\-lon}{a k\"o\-vet\-kez\H{o} ol\-da\-lon}}%
-    \def\reftextfacebefore{\reftextvario{a t\'ul\-ol\-da\-lon}{az el\H{o}\-z\H{o} ol\-da\-lon}}%
-    \def\reftextafter     {a k\"o\-vet\-kez\H{o} ol\-da\-lon}%
-    \def\reftextbefore    {az el\H{o}\-z\H{o} ol\-da\-lon}%
-    \def\reftextcurrent   {ezen az ol\-da\-lon}%
-    \def\reftextfaraway##1{a~\csname @@magyar@az@lowxu\endcsname{\pageref{##1}}.~ol\-da\-lon}%
-    \def\reftextpagerange##1##2{a~\csname @@magyar@az@lowxu\endcsname{\pageref{##1}}%
-      --\pageref{##2}.~ol\-da\-la\-kon}%
-    \def\reftextlabelrange##1##2{{}\csname @@magyar@told\endcsname\ref{##1}+tol
-      \ref{##2}-ig}% Dat: `{}' is here for anti-\capitalize
-  \fi
+  \def\reftextfaceafter {\reftextvario{a t\'ul\-ol\-da\-lon}{a k\"o\-vet\-kez\H{o} ol\-da\-lon}}%
+  \def\reftextfacebefore{\reftextvario{a t\'ul\-ol\-da\-lon}{az el\H{o}\-z\H{o} ol\-da\-lon}}%
+  \def\reftextafter     {a k\"o\-vet\-kez\H{o} ol\-da\-lon}%
+  \def\reftextbefore    {az el\H{o}\-z\H{o} ol\-da\-lon}%
+  \def\reftextcurrent   {ezen az ol\-da\-lon}%
+  \def\reftextfaraway##1{a~\csname @@magyar@az@lowxu\endcsname{\pageref{##1}}.~ol\-da\-lon}%
+  \def\reftextpagerange##1##2{a~\csname @@magyar@az@lowxu\endcsname{\pageref{##1}}%
+    --\pageref{##2}.~ol\-da\-la\-kon}%
+  \def\reftextlabelrange##1##2{{}\csname @@magyar@told\endcsname\ref{##1}+tol
+    \ref{##2}-ig}% Dat: `{}' is here for anti-\capitalize
 }
 \@gobble
 {^}%
@@ -4320,6 +4321,8 @@
 % !! \huphy ifmmode?
 % !! french.ldf \CyrillicGuillemets
 % !! french.ldf \LasyGuillemets
+% !! huplain.bst   editor = "Wizar{\BN dj} V. Oz and Mihalis Yannakakis",
+% !! huplain.bst w/o magyar.ldf
 %
 % Dat: \mathcode`\,="013B     % és így a tizedes törtekben matematikai módban sem lesz köz
 % Dat:  \mathchardef\comma="613B  % a veszõ (,) ami matematikai módban elválasztó karakterként használható
