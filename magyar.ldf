@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/05/14 v1.5b Magyar support from the babel system]
+%%        [2004/05/18 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/05/14 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/05/18 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -428,6 +428,7 @@
 %** simplistically.
 \dMf magyar@opt@defaults@@hu-min {%
   \csname magyar@opt@defaults@@over-1.4\endcsname
+  % Dat: no openqq=unchanged (!)
   \magyar@doopt activespace=safe,amstocnumskip=\enskip,frenchspacing=yes,
     captions=hu,classmod=yes,figurecaptions=hu,
     footnote=huplain,frenchspacing=yes,hyphenmins=22,
@@ -2234,7 +2235,7 @@
   \@@magyar@declare@shorthandx T{\@@magyar@disc TY}
   \@@magyar@declare@shorthandx z{\@@magyar@disc zs}% rizzsel --> rizs-zsel (ri`zzsel)
   \@@magyar@declare@shorthandx Z{\@@magyar@disc ZS}
-  \def\magyar@fixddzs{\@@magyar@declare@shorthandx d{%
+  \def\magyar@fixddzs{\@@magyar@declare@shorthandx d{% bridzs-dzsel
     % vvv doesn't handle the rare combination dzs-dzs
     %\@@magyar@declare@shorthandx D}{\@@magyar@disc DZ}
     %\@@magyar@declare@shorthandx d}{\@@magyar@disc dz}% eddz\"unk (felsz. m.) --> edz-dz\"unk (e`ddz\"unk)
@@ -2858,6 +2859,7 @@
   %     `\@@magyar@toldas{42}' must be the very end of #1
   \let\@@magyar@toldas\@gobbletwo
   \let\-\relax
+  \let~\relax% influenced by \@safe@activestrue
   \let\refstruc\relax
   \let \ref\relax \let \pageref\relax \let \cite\relax % all unexpandable, even for \@@magyar@the
   \let\aref\relax \let\apageref\relax \let\acite\relax
@@ -3035,9 +3037,9 @@
 \def\@@magyar@strucname@chapter{fejezet\@@magyar@toldas{9}}% !! fejezettel
 \def\@@magyar@strucname@appendix{f\"ug\-gel\'ek\@@magyar@toldas{4}}% !! fuggelekkel
 \def\@@magyar@strucname@section{szakasz\@@magyar@toldas{20}}%
-\def\@@magyar@strucname@subsection{alszakasz\@@magyar@toldas{20}}%
-\def\@@magyar@strucname@subsubsection{alalszakasz\@@magyar@toldas{20}}%
-\def\@@magyar@strucname@subsubsubsection{alalalszakasz\@@magyar@toldas{20}}%
+\def\@@magyar@strucname@subsection{al\-sza\-kasz\@@magyar@toldas{20}}%
+\def\@@magyar@strucname@subsubsection{al\-al\-szakasz\@@magyar@toldas{20}}%
+\def\@@magyar@strucname@subsubsubsection{al\-al\-al\-szakasz\@@magyar@toldas{20}}%
 \def\@@magyar@strucname@paragraph{bekezd\'es\@@magyar@toldas{4}}%
 \def\@@magyar@strucname@subparagraph{albekezd\'es\@@magyar@toldas{4}}%
 \def\@@magyar@strucname@subsubparagraph{alalbekezd\'es\@@magyar@toldas{4}}%
@@ -3393,10 +3395,12 @@
   \begingroup
     \@@magyar@parsedate{#3}%
     % Imp: error message if \@@magyar@told is undefined
+    %\show\reserved@a
     \edef\reserved@a{%
       \ifx\vfuzz#1\vfuzz            \expandafter\noexpand\csname @@magyar@date@#2\endcsname\reserved@a
       \else \noexpand\@@magyar@told{\expandafter\noexpand\csname @@magyar@date@#2\endcsname\reserved@a}+#1{}\fi
     }%
+    %\show\reserved@a
     %%\show~
     %\show\reserved@a% \told {\@@magyar@date@g {1848}{3}{15}}+e{}
     \reserved@a
