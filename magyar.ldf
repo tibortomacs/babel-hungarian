@@ -4133,6 +4133,7 @@
 %  % ^^^ \def`{\abbreviation}, but with active `
 %  \@@magyar@saved@mathoptions@on
 %}
+% !! \told\ref{foo}+ban{}, if \foo expands to empty (no \section etc. in .tex file)
 % !! varioref.sty (2001/09/04 v1.3c) mustn't be loaded with option
 %    [magyar], because that option contains a stupid \AtBeginDocument hook
 %    added to \extrasmagyar
