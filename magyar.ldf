@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/02/17 v1.5a Magyar support from the babel system]
+%%        [2004/02/19 v1.5a Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -69,7 +69,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/02/17 v1.5a Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/02/19 v1.5a Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -157,6 +157,7 @@
 %**     figurecaptions=hu,         % or =us or =unchanged
 %**     frenchspacing=unchanged,   % or =no or =yes
 %**     hang=weak,                 % or =no or =yes
+%**     hunnewlabel=yes,           % or =no or =only-hu
 %**     hunumbers=yes,             % or =no
 %**     hutoday=yes,               % or =no
 %**     hyphenmins=22,             % or =unchanged or two chars: \lefthyphenmin\righthyphenmin
@@ -171,9 +172,9 @@
 %**     mond=weak,                 % or =no or =yes
 %**     openqq=maybedown,          % or =up or =down or =unchanged
 %**     partnumber=unchanged,      % or =huordinal or =Huordinal
-%**     postdescription=unchanged, % see postpara
+%**     postdescription=unchanged, % see postpara=
 %**     postpara=unchanged,        % or =bfdot or =dot or =quad or =diamond or =enskip or =quad or =em or =empty ... (\magyar@post@...)
-%**     postsubpara=unchanged,     % see postpara
+%**     postsubpara=unchanged,     % see postpara=
 %**     refstruc=weak,             % or =no or =yes
 %**     %safest=no,                % or =yes (safest=no has no effect, safest=yes is equivalent to defaults=safest)
 %**     sectiondot=safe,           % or =none or =problematic
@@ -542,7 +543,8 @@
 \def\magyar@opt@mathmuskips@@hu{\def\magyar@opt@@mathmuskips{2}}
 \let\magyar@opt@mathmuskips\magyar@enumarg
 \def\magyar@opt@hunnewlabel@@no {\def\magyar@opt@@hunnewlabel{0}}
-\def\magyar@opt@hunnewlabel@@yes{\def\magyar@opt@@hunnewlabel{1}}
+\dMf magyar@opt@hunnewlabel@@only-hu {\def\magyar@opt@@hunnewlabel{1}}
+\def\magyar@opt@hunnewlabel@@yes{\def\magyar@opt@@hunnewlabel{2}}
 \let\magyar@opt@hunnewlabel\magyar@enumarg
 \def\magyar@opt@partnumber@@unchanged{}
 \def\magyar@opt@partnumber@@huordinal{\def\thepart{\@huordinal\c@part}\let\magyar@needopt@hunumbers\@empty}
@@ -556,8 +558,8 @@
 \def\magyar@opt@accents@@low{\def\magyar@opt@@umlaut{\umlautlow\umlautelow}}
 \def\magyar@opt@accents@@defaulthigh{\let\magyar@opt@@umlaut\@empty}
 \let\magyar@opt@accents\magyar@enumarg
-\def\magyar@opt@longcaption@@centered{\def\magyar@caption@centering{\centering}\def\magyar@caption@newline{ }}
-\def\magyar@opt@longcaption@@justified{\def\magyar@caption@centering{\relax}\def\magyar@caption@newline{ }}
+\def\magyar@opt@longcaption@@centered{\def\magyar@caption@centering{\centering}\def\magyar@caption@newline{\ }}
+\def\magyar@opt@longcaption@@justified{\def\magyar@caption@centering{\relax}\def\magyar@caption@newline{\ }}
 \def\magyar@opt@longcaption@@centernewline{\def\magyar@caption@centering{\centering}\def\magyar@caption@newline{\\\relax}}
 \def\magyar@opt@longcaption@@none{\let\magyar@caption@centering\@empty}
 \def\magyar@opt@longcaption@@unchanged{\let\magyar@caption@centering\@empty}
@@ -826,10 +828,6 @@
     \babel@save\"\umlautlow \magyar@opt@@umlaut}
 \fi
 
-% --- accents=
-
-\magyar@opt@@umlaut
-
 % --- theorem title number ordering and the dot; theoremtitle=
 %
 % Dat: \ref{mytheorem} never appends a dot
@@ -911,9 +909,11 @@
 \def\@@magyar@textqq@hu#1{\ifmmode\expandafter\mbox\fi{%
   % Imp: \textqq{\textqq{foo}} -> \textqq{\textqq{foo}\,}
   % Dat: \showhyphens{\textqq{hello bello}} --> hel-lo bel-lo
+  % Dat: \guillemotleft is provided by babel.def even for the OT1 encoding
   \ifcase\magyar@textqq@level
     \def\magyar@textqq@level{1}%
-    \quotedblbase\nobreak\hskip-.06em#1\kern\z@\textquotedblright% skip OK for the CM and EC fonts
+    % Dat: \hskip instead of \kern to allow hyphenation
+    \quotedblbase\nobreak\hskip-.06em\nobreak#1\kern\z@\textquotedblright% skip OK for the CM and EC fonts
     \def\magyar@textqq@level{0}%
   \or
     \def\magyar@textqq@level{2}%
@@ -1090,6 +1090,7 @@
 \def\@@magyar@azrb@stop#1#2\fi{#1}%
 %** Strips spaces and braces automatically
 %** @expands to `z' or nothing (last char of definite article)
+%** @example \message{R:\removebraces {{foo}{{}{b}{{{{a\fi}}}}r}}\hfuzz;}
 \def\@@magyar@azrb#1{%
   \ifx\hfuzz#1\@@magyar@azrb@stop\fi
   \expandafter\@@magyar@azrb\expandafter{%
@@ -1165,10 +1166,10 @@
 % --- hunnewlabel=
 
 \if0\magyar@opt@@hunnewlabel
-  %\let\hunnewlabel\@gobbletwo
+  \let\hunnewlabel\@gobbletwo
   % ^^^ with this the user would be able to switch from hunnewlabel=yes
   %     to hunnewlabel=no without removing the .aux file. But now I have a
-  %     better solution to that.
+  %     better solution to that. (??) !!
   \@@magyar@skiplong\fi
 
 % vvv commented out by pts@fazekas.hu at Fri Aug  1 01:24:59 CEST 2003
@@ -1242,6 +1243,7 @@
       \def\@Huordinal{\noexpand\noexpand\noexpand\@Huordinal}%
       \def\@hunumeral{\noexpand\noexpand\noexpand\@hunumeral}%
       \def\@Hunumeral{\noexpand\noexpand\noexpand\@Hunumeral}%
+      % Imp: other numbering schemes...
       \edef\reserved@b##1{\noexpand\protected@write\@auxout{}{%
 	\string\hunnewlabel{##1}{{\reserved@b}{\thepage}}%
       }}%
@@ -1251,8 +1253,10 @@
 
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   %%\message{--EXTRAS--}\show\label
-  \let\@@magyar@orig@label\label
-  \let\label\@@magyar@labela
+  \ifx\label\@@magyar@labela\else
+    \let\@@magyar@orig@label\label
+    \let\label\@@magyar@labela
+  \fi
 }
 \expandafter\addto\csname noextras\CurrentOption\endcsname{%
   %%\message{--NO--}%
@@ -1271,7 +1275,9 @@
     % 8. \let\@@magyar@orig@label\label
     % 9. \RequirePackage{nameref}:
     % 10. \def\label#1{...}
-    \let\label\@@magyar@orig@label
+    \if1\magyar@opt@@hunnewlabel % only hunnewlabel=only-hu
+      \let\label\@@magyar@orig@label
+    \fi
   \fi
   \let\@@magyar@orig@label\relax
 }
@@ -1302,9 +1308,9 @@
   \def\listtablename{T\'abl\'azatok jegyz\'eke}%
   \def\indexname{T\'argymutat\'o}%
   \def\enclname{Mell\'eklet}%
-  \def\ccname{K\"orlev\'el--c\'\i mzettek}%
+  \def\ccname{K\"orlev\'el--c\'\i mzettek}% ??
   \def\headtoname{C\'\i mzett}%
-  \def\proofname{Bizony\'\i t\'as}%
+  \def\proofname{Bizony\'\i t\'as}% AMS-\LaTeX
   \def\glossaryname{Sz\'ojegyz\'ek}% glosszárium, (magyarázatos) szójegyzék
   % vvv All these are start with a small letter
   \def\figurename{\'abra}%
@@ -1500,7 +1506,7 @@
   \@gobble
 {^}%
 
-% --- postpara= and postsubpara=
+% --- postpara= and postsubpara= and postdescription=
 
 \expandafter\ifx\csname magyar@opt@@paragraphs\endcsname\relax\@@magyar@skiplong\fi
   % Dat: We make sure that hspaces emitted by \magyar@post@... are unstretchable
@@ -1533,6 +1539,7 @@
     \fi
     {#2}{#3}{#4}%
   }%
+  % !! a less obscure way for \paragraph, without -1sp etc.
   %** Calls \magyar@pf@lowb, and never emits code resulting from #3 to TOC
   %** @param #1 \@startsection{...}{...}... call
   %** @param #2 \paragraph or \subparagraph (selects one of \magyar@post@...)
@@ -1553,11 +1560,14 @@
     % Dat: \ignorespaces is superflous here, it also doesn't ignore \par
   }%
   \def\magyar@paragraphfix#1#2#3#4#5#6#7#8#9\vfuzz{%
-    % Dat: \unskip doesn't work, have to change \hskip to -1sp
+    % Dat: \unskip doesn't work, have to change \hskip to -1sp: 1sp is the
+    %      amount of horizontal space between the diamond and the paragraph text
+    %      0sp would be bad, because it isn't negative (positive skips are
+    %      interpreted as vertical).
     \def\reserved@a{#9}%
     \ifx\reserved@a\@empty\ifx#2\@startsection\if-\magyar@first#7\vfuzz
       \def#1{\@ifstar
-        {\magyar@pf@lowa *{#2{#3}{#4}{#5}{#6}{-1sp}{#8}}#1}% Dat: -1sp must be negative
+        {\magyar@pf@lowa *{#2{#3}{#4}{#5}{#6}{-1sp}{#8}}#1}%
         {\@ifnextchar[%]
           {\magyar@pf@lowc{#2{#3}{#4}{#5}{#6}{-1sp}{#8}}#1}%
           {\magyar@pf@lowa{}{#2{#3}{#4}{#5}{#6}{-1sp}{#8}}#1}%
@@ -1607,7 +1617,7 @@
   \@gobble
 {^}
 
-% --- default \frenchspacing; =frenchspacing
+% --- default \frenchspacing; frenchspacing=
 
 \if0\magyar@opt@@frenchspacing \@@magyar@skiplong\fi
   \if1\magyar@opt@@frenchspacing% =no
@@ -1893,19 +1903,47 @@
 % --- suggestions=
 
 \ifnum\magyar@opt@@suggestions=0 \@@magyar@skiplong\fi
+  % Dat: buggy varioref.sty adds this to extrasmagyar (\AtBeginDocument is
+  %      buggy, can be used only in the preamble.
+  %     \def\reftextfaceafter {a k\"o\-vet\-kez\H{o} ol\-da\-lon}%
+  %     \def\reftextfacebefore{az el\H{o}\-z\H{o} ol\-da\-lon}%
+  %     \def\reftextafter     {a k\"o\-vet\-kez\H{o} ol\-da\-lon}%
+  %     \def\reftextbefore    {az el\H{o}\-z\H{o} ol\-da\-lon}%
+  %     \def\reftextcurrent   {ezen az ol\-da\-lon}%
+  %     \def\reftextfaraway#1{\aza{\pageref{#1}} \pageref{#1}.~ol\-da\-lon}%
+  %     \def\reftextpagerange#1#2{\vref@stringwarning\reftextpagerange
+  %                               on pages~\pageref{#1}--\pageref{#2}}%
+  %     \def\reftextlabelrange#1#2{\vref@stringwarning\reflabelpagerange
+  %                                \ref{#1} to~\ref{#2}}%
+  %     \AtBeginDocument{\providecommand\aza[1]{a/az%
+  %        \PackageError{varioref}{%
+  %          Proper definition for command \noexpand\aza missing}%
+  %         {You need to (re)define the command \noexpand\aza that
+  %          takes one argument (a number or a \noexpand\pageref command)
+  %          and produces the string `a' or `az' depending on the argument
+  %          value. It should also accept an optional argument (default `l')
+  %          to denote whether or not the string should be lowercase or
+  %          uppercase.}}}%
+  \def\@@magyar@ignorehbox@pree#1\hbox$#2{}%
   %\def\@@magyar@grep@reftextcurrent#1\def\reftextcurrent#2\hbox$
-  \def\@@magyar@grep@reftextcurrent#1\def\reftextcurrent#2\hbox$#3{% Dat: no need for \long
-    \ifx\hbox#2\hbox\else
-      \PackageWarningNoLine{#3.ldf}{Do not load buggy \string\usepackage[magyar]{verioref},\MessageBreak load simply \string\usepackage{verioref}}%
-      \expandafter\gdef\expandafter\@preamblecmds\expandafter{\@preamblecmds
-        \global\let\AtBeginDocument\@gobble}%
-      % ^^^ avoid `! LaTeX Error: Can be used only in preamble.' by \AtBeginDocument in `magyar' for varioref.sty
-      % Imp: why do we get `Can be ...' once?
-      %\global\let\AtBeginDocument\@gobble
+  \def\@@magyar@grep@reftextbegin#1\def\reftextfaceafter#2\hfuzz\hfuzz\hfuzz#3\hbox$#4{%
+    \toks@={#1#3}% Dat: # -> ## conversion for \def
+    \expandafter\global\expandafter\edef\csname extras#4\endcsname
+      {\the\toks@}%
+  }
+  \def\@@magyar@grep@reftextcurrent#1\def\reftextlabelrange#2#3#4#5#6%
+    \AtBeginDocument#7#8\hbox$#9{% Dat: no need for \long\def
+    % ^^^ Dat: Don't use `#21', because then #2 would match multiple tokens
+    \ifx#31% found real data, not sentinel
+      \PackageWarningNoLine{#9.ldf}{Do not load buggy \string\usepackage[magyar]{varioref},\MessageBreak load simply \string\usepackage{varioref}}%
+      % vvv remove code inserted by varioref.sty
+      \@@magyar@grep@reftextbegin#1\hfuzz\hfuzz\hfuzz#8\hbox${#9}%
     \fi
   }
   \def\magyar@sugg@vr#1{%
-    \expandafter\expandafter\expandafter\@@magyar@grep@reftextcurrent\csname extras#1\endcsname\def\reftextcurrent\hbox${#1}%
+    \expandafter\expandafter\expandafter\@@magyar@grep@reftextcurrent
+       \csname extras#1\endcsname\hbox${#1}\@@magyar@ignorehbox@pree
+       \def\reftextlabelrange23456\AtBeginDocument78\hbox${#1}%
   }
   \def\magyar@sugg@to#1{%
     \def\reserved@a{T1}
@@ -1965,7 +2003,7 @@
   \@gobble
 {^}%
 
-% --- Active characters and shorthands; active=, activeprefix=
+% --- Active characters and shorthands; active=, activeprefix=, activespace=
 
 \ifnum0=\magyar@opt@@activespace\magyar@opt@@active\space
   \def\@@magyar@declare@shorthandx#1#2{%
@@ -3787,7 +3825,7 @@
     \noexpand\ifnum9<1#5 \noexpand\if#1t\noexpand\if#3c%
     \noexpand\mathord\noexpand\fi\noexpand\fi\noexpand\fi\mathchar
     \ifnum\mathcode`,="8000 "613B \else\the\mathcode`, \space\fi% immed expand
-    % Dat: "613B is the operator, "013B is ordinary
+    % Dat: "613B is the punctuation, "013B is ordinary
   }%
   %%\show\@@magyar@hucomma@lowa
   \def\@@magyar@hucomma@lowb{\expandafter\@@magyar@hucomma@lowa\meaning\reserved@a/ / /\hfuzz}%
@@ -3894,6 +3932,7 @@
     \let\ps@headings\@@magyar@book@psheadings
     % ^^^ Dat: the user has to run \pagestyle{headings} after \selectlanguage{magyar} -- for performance reasons
   }
+  % vvv !! Imp: make this conditional, based on the changes made by \ps@empty etc.
   \def\@@magyar@psheadings{\ps@headings}% not \let
   \def\magyar@ulladik{ulladik0}% [Nn]ulladik, `0' at end is intentional
   % Part: inserting dot, changing order, toc
@@ -4161,16 +4200,20 @@
 
 \if0\magyar@opt@@varioref \@@magyar@skiplong\fi
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
-  \def\reftextfaceafter {\reftextvario{a t\'ul\-ol\-da\-lon}{a k\"o\-vet\-kez\H{o} ol\-da\-lon}}%
-  \def\reftextfacebefore{\reftextvario{a t\'ul\-ol\-da\-lon}{az el\H{o}\-z\H{o} ol\-da\-lon}}%
-  \def\reftextafter     {a k\"o\-vet\-kez\H{o} ol\-da\-lon}%
-  \def\reftextbefore    {az el\H{o}\-z\H{o} ol\-da\-lon}%
-  \csname def\endcsname\reftextcurrent   {ezen az ol\-da\-lon}% Dat: \csname because of suggestions=
-  \def\reftextfaraway#1{a~\csname @@magyar@az@lowxu\endcsname{\pageref{#1}}.~ol\-da\-lon}%
-  \def\reftextpagerange#1#2{a~\csname @@magyar@az@lowxu\endcsname{\pageref{#1}}%
-    --\pageref{#2}.~ol\-da\-la\-kon}%
-  \def\reftextlabelrange#1#2{{}\csname @@magyar@told\endcsname\ref{#1}+tol
-    \ref{#2}-ig}% Dat: `{}' is here for anti-\capitalize
+  \@@magyar@setup@varioref} % Imp: are we late enough so we override varioref.sty?
+\def\@@magyar@setup@varioref{% Dat: must be a separate macro for suggestions= not to find our \reftextfaceafter etc.
+  \expandafter\ifx\csname reftextfaceafter\endcsname\relax\else
+    \def\reftextfaceafter {\reftextvario{a t\'ul\-ol\-da\-lon}{a k\"o\-vet\-kez\H{o} ol\-da\-lon}}%
+    \def\reftextfacebefore{\reftextvario{a t\'ul\-ol\-da\-lon}{az el\H{o}\-z\H{o} ol\-da\-lon}}%
+    \def\reftextafter     {a k\"o\-vet\-kez\H{o} ol\-da\-lon}%
+    \def\reftextbefore    {az el\H{o}\-z\H{o} ol\-da\-lon}%
+    \def\reftextcurrent   {ezen az ol\-da\-lon}%
+    \def\reftextfaraway##1{a~\csname @@magyar@az@lowxu\endcsname{\pageref{##1}}.~ol\-da\-lon}%
+    \def\reftextpagerange##1##2{a~\csname @@magyar@az@lowxu\endcsname{\pageref{##1}}%
+      --\pageref{##2}.~ol\-da\-la\-kon}%
+    \def\reftextlabelrange##1##2{{}\csname @@magyar@told\endcsname\ref{##1}+tol
+      \ref{##2}-ig}% Dat: `{}' is here for anti-\capitalize
+  \fi
 }
 \@gobble
 {^}%
@@ -4188,7 +4231,7 @@
 
 \ldf@finish\CurrentOption% \input \CurrentOption.cfg
 
-% !! gam
+% !! \itemize identation
 % !! layout.sty
 %\DeclareOption{magyar}{%
 %  \def\Headertext{Fejl\'ec}
@@ -4206,6 +4249,7 @@
 %  % ^^^ \def`{\abbreviation}, but with active `
 %  \@@magyar@saved@mathoptions@on
 %}
+% !! \MathReal, frenchb.ldf, \nombre
 % !! \told\ref{foo}+ban{}, if \foo expands to empty (no \section etc. in .tex file)
 % !! varioref.sty (2001/09/04 v1.3c) mustn't be loaded with option
 %    [magyar], because that option contains a stupid \AtBeginDocument hook
@@ -4277,7 +4321,8 @@
 % !! \mathcode`\,="013B     % és így a tizedes törtekben matematikai módban sem lesz köz
 % !! \mathchardef\comma="613B  % a veszõ (,) ami matematikai módban elválasztó karakterként használható
 % !! magyar.ldf defaults=hu-min $x+116=\break x-97$ adds space only! to BOL
-
+% !! french.ldf \CyrillicGuillemets
+% !! french.ldf \LasyGuillemets
 %
 % Dat: additive \PassOptionsToPackage{foo=bar}{magyar.ldf}
 % Dat: for book.cls and article.cls: the user has to run \pagestyle{headings} after \selectlanguage{magyar} -- for performance reasons
