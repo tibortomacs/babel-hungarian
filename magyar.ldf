@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/02/12 v1.5a Magyar support from the babel system]
+%%        [2004/02/17 v1.5a Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -69,7 +69,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/02/12 v1.5a Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/02/17 v1.5a Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -187,6 +187,7 @@
 %**     titles=\enskip,            % TeX code: =unchanged, =\quad or other
 %**     toclang=good,              % or =badfloat or =badall or =unchanged
 %**     told=weak,                 % or =no or =yes
+%**     varioref=hu,              % or =unchanged
 %**   }\usepackage[magyar]{babel}
 \dMf magyar@opt@defaults@@over-1.4 {%
   \magyar@opt@accents@@defaulthigh
@@ -239,6 +240,7 @@
   \magyar@opt@titles{}{\enskip}% change over 1.4
   \magyar@opt@toclang@@good
   \magyar@opt@told{told}{weak}%
+  \magyar@opt@varioref@@hu
 }
 
 %** These defaults try to be compatible with magyar.ldf v1.4 as much as
@@ -298,6 +300,7 @@
   \magyar@opt@titles{}{\quad}% OK -- ugly, but compatible
   \magyar@opt@toclang@@good% we don't want weird errors and mischosen languages (would be =badall)
   \magyar@opt@told{told}{no}% OK
+  \magyar@opt@varioref@@hu% was =unchanged, but varioref.sty (2000) is buggy
 }
 
 %** These defaults turn of most features -- the effect is similar to as if
@@ -353,6 +356,7 @@
   \magyar@opt@titles{}{unchanged}%
   \magyar@opt@toclang@@unchanged
   \magyar@opt@told{told}{no}%
+  \magyar@opt@varioref@@unchanged
 }
 
 %** These defaults load almost all features, and try to do their best to make
@@ -411,6 +415,7 @@
   \magyar@opt@titles{}{\enskip}%
   \magyar@opt@toclang@@good
   \magyar@opt@told{told}{yes}%
+  \magyar@opt@varioref@@hu
 }
 
 %** Matches Hungarian typographic orders most closely -- and most
@@ -504,6 +509,9 @@
 \def\magyar@opt@captions@@unchanged{\def\magyar@opt@@captions{0}}
 \def\magyar@opt@captions@@hu{\def\magyar@opt@@captions{1}}
 \let\magyar@opt@captions\magyar@enumarg
+\def\magyar@opt@varioref@@unchanged{\def\magyar@opt@@varioref{0}}
+\def\magyar@opt@varioref@@hu{\def\magyar@opt@@varioref{1}}
+\let\magyar@opt@varioref\magyar@enumarg
 \def\magyar@opt@figurecaptions@@unchanged{\def\magyar@opt@@figurecaptions{0}}
 \def\magyar@opt@figurecaptions@@hu{\def\magyar@opt@@figurecaptions{1}}
 \def\magyar@opt@figurecaptions@@us{\def\magyar@opt@@figurecaptions{2}}
@@ -666,7 +674,7 @@
     \magyar@doopt@low#1,=,%
   \fi
 }
-\iftrue\csname fi\endcsname% \def\magyar@doopt@low contains `\fi'. Make it skippable.
+\@gobble\iftrue% \def\magyar@doopt@low contains `\fi'. Make it skippable.
 %** @param #1 is here for gobbling space tokens
 \def\magyar@doopt@low#1#2=#3,#4\fi{%
   % Dat: Normal case: #1#2 is key, #3 is value, #4 is `=,'
@@ -677,7 +685,8 @@
     \ifx#1\hfuzz% Terminator
     \else
       \if,\noexpand#1\else% OnlySpace case
-        \magyar@doopt@missingval#1#2% #2 already contains comma at end
+        \if=\noexpand#1\magyar@doopt@missingkey#2% #2 already contains comma at end
+        \else          \magyar@doopt@missingval#1#2\fi
       \fi
       \expandafter\expandafter\expandafter\magyar@doopt
     \fi
@@ -690,8 +699,11 @@
     \expandafter\magyar@doopt
   \fi
 }
+\def\magyar@doopt@missingkey#1,{%
+  \@@magyar@error{Key missing for value: #1}%
+}
 \def\magyar@doopt@missingval#1,{%
-  \@@magyar@error{Value (=) missing for option: #1}\@ehc
+  \@@magyar@error{Value (=) missing for option: #1}%
 }
 %** Dat: Spaces and newlines at end of #1 are not ignored, so please prefix
 %**      them with a comma, e.g \magyar@doopts{foo=bar, }
@@ -740,6 +752,7 @@
 \fi
 % Imp: undef \magyar\@opt@* to save memory
 
+\@gobble\iftrue
 %** Usage: `\if...\else\@@magyar@skiplong\fi ... \@gobble{^}', where {^} is in
 %** its own line
 \def\@@magyar@skiplong#1{%
@@ -753,6 +766,7 @@
   \catcode\string`$14
   \iffalse
 }
+\@gobble\fi
 
 \@namedef{extras\CurrentOption}{}%
 
@@ -965,12 +979,26 @@
   \expandafter}\vfuzz
 }
 
-%** Usage: \az{alma} -> `az alma'; \Az*{alma} -> `az'
-%\def\az{a\@ifstar{\@@magyar@az@lowy}{\@@magyar@az@lowx}}
+%** Makes \az etc. not emit the definite article.
+%** Unused.
+\def\@@magyar@noaz{%
+  \def\@@magyar@az@lowt{\@ifstar\@gobble\@firstofone}%
+  \def\az{\@@magyar@az@lowt}%
+  \let\Az\az
+  \def\aref{\@ifstar\@gobble\@@magyar@az@lowa}%
+  \let\Aref\aref
+  \def\apageref{\@ifstar\@gobble\firstoftwo}%
+  \let\Apageref\apageref
+  \def\acite{\@ifstar\@gobble\cite}%
+  \let\Acite\acite
+}
 
-\def\@@magyar@az@lowt{\@ifstar{\@@magyar@az@lowy}{\@ifnextchar+\@@magyar@az@lowz\@@magyar@az@lowx}}
+%** Usage: \az{alma} -> `az alma'; \Az*{alma} -> `az'
 %** Usage: \az+\ref{foo} is equivalent to \az{\ref{foo}}
+\def\@@magyar@az@lowt{\@ifstar{\@@magyar@az@lowy}{\@ifnextchar+\@@magyar@az@lowz\@@magyar@az@lowx}}
 \def\@@magyar@az@lowz#1#2#3{\@@magyar@az@lowy{#2{#3}}~#2{#3}}
+%** Used by new varioref.sty
+\def\@@magyar@az@lowxu{\unskip\@@magyar@az@lowx}%
 \def\@@magyar@az@lowx#1{\@@magyar@az@lowy{#1}~#1}
 \def\@@magyar@az@lowy#1{{%
   \begingroup
@@ -983,8 +1011,8 @@
   \@@magyar@az@set\vfuzz\hbox$% \vfuzz is already expanded
 }}
 
-%** \Aref({e:foo}) -> `az (5)'; \aref*{e:foo}: `az'
-\def\@@magyar@az@lowa{\@ifnextchar ({\@@magyar@az@lowb}{\@@magyar@az@lowb\@empty}}
+%** \Aref({e:foo}) -> `az~(5)'; \aref*{e:foo}: `az'
+\def\@@magyar@az@lowa{\@ifnextchar({\@@magyar@az@lowb}{\@@magyar@az@lowb\@empty}}
 \def\@@magyar@az@lowb#1#2{\@@magyar@az@ref\@firstoftwo{#2}~#1\ref{#2}}
 %** @param #1 \@firstoftwo (for \ref) or \@secodoftwo (for \pageref)
 \def\@@magyar@az@ref#1#2{%
@@ -1078,24 +1106,26 @@
   \fi
 }
 
-%** @param #1 might not be \cs
+%** @param #1 might not be \cs -- and isn't empty
 \def\@@magyar@aznospace@short#1{%
   \if5\noexpand#1z% Dat: emit `az 5'
     \@@magyar@swaprelax\@@magyar@ignorehbox@pre
-  \else\if1\noexpand#1\noexpand\@empty
+  \else\if1\noexpand#1%
     % Dat: properly handle `az 1001 éjszaka', `az 1234567 éves bolygó'
     \@@magyar@swaprelax\@@magyar@eatddd@pre
   \else\ifnum1<1\noexpand#1 % a different digit, emit `a '
     \@@magyar@swaprelax\@@magyar@ignorehbox@pre
-  \else\ifcat\string*\noexpand#1\noexpand\@empty% ignore non-digit (non-letter) `other' char
-    % Wizardary:
+  \else\if-\noexpand#1% \az{-5} yields `a~-5'
+    \@@magyar@swaprelax\@@magyar@ignorehbox@pre
+  \else\ifcat\string*\noexpand#1% ignore non-digit (non-letter) `other' char
+    % Wizardary: (undocumented)
     % This is a really smart way to ignore control sequence chars resulting
     % from \string\textrm etc. Fortunately, most control sequences don't
     % contain digits.
     \@@magyar@swaprelax\@@magyar@aznospace
   \else
     \@@magyar@swaprelax{\@@magyar@azuc@pre#1}% safe to call, no \cs
-  \fi\fi\fi\fi\relax
+  \fi\fi\fi\fi\fi\relax
 }
 
 %** Typesets `z' or nothing (last char of definite article). Is _not_
@@ -1108,7 +1138,7 @@
   \expandafter\@@magyar@aznospace\reserved@a[b][][] \hbox$%
   % ^^^ Wizardry: [b][][] is a smart sentinel for \@@magyar@azuc and `b' for
   %	\@@magyar@aznospace@short. First `[' is there for aesthetics. Space
-  %     is there for \@@magyar@eatddd@pre \hbox$ is something that will not
+  %     is there for \@@magyar@eatddd@pre. \hbox$ is something that will not
   %     occur in normal text.
 }
 
@@ -1863,7 +1893,21 @@
 % --- suggestions=
 
 \ifnum\magyar@opt@@suggestions=0 \@@magyar@skiplong\fi
-  \def\magyar@sugg@t1#1{%
+  %\def\@@magyar@grep@reftextcurrent#1\def\reftextcurrent#2\hbox$
+  \def\@@magyar@grep@reftextcurrent#1\def\reftextcurrent#2\hbox$#3{% Dat: no need for \long
+    \ifx\hbox#2\hbox\else
+      \PackageWarningNoLine{#3.ldf}{Do not load buggy \string\usepackage[magyar]{verioref},\MessageBreak load simply \string\usepackage{verioref}}%
+      \expandafter\gdef\expandafter\@preamblecmds\expandafter{\@preamblecmds
+        \global\let\AtBeginDocument\@gobble}%
+      % ^^^ avoid `! LaTeX Error: Can be used only in preamble.' by \AtBeginDocument in `magyar' for varioref.sty
+      % Imp: why do we get `Can be ...' once?
+      %\global\let\AtBeginDocument\@gobble
+    \fi
+  }
+  \def\magyar@sugg@vr#1{%
+    \expandafter\expandafter\expandafter\@@magyar@grep@reftextcurrent\csname extras#1\endcsname\def\reftextcurrent\hbox${#1}%
+  }
+  \def\magyar@sugg@to#1{%
     \def\reserved@a{T1}
     \edef\reserved@b{\encodingdefault}% \encodingdefault is \long for t1enc.sty, but not for fontenc.sty
     \ifx\reserved@a\reserved@b\else
@@ -1914,8 +1958,9 @@
     \noexpand\magyar@sugg@pa{\CurrentOption}%
     \noexpand\magyar@sugg@af{\CurrentOption}%
     \noexpand\magyar@sugg@ap{\CurrentOption}%
-    \noexpand\magyar@sugg@t1{\CurrentOption}%
+    \noexpand\magyar@sugg@to{\CurrentOption}%
     \noexpand\magyar@sugg@ie{\CurrentOption}%
+    \noexpand\magyar@sugg@vr{\CurrentOption}%
   }}\reserved@a
   \@gobble
 {^}%
@@ -3105,7 +3150,7 @@
 \def\@@magyar@stripdot@lowb#1\relax#2\relax{#1}%
 %** by pts@fazekas.hu at Sun Jul 27 15:17:57 CEST 2003
 %** Expands to #1, with a single optional dot (token `.') at the end removed.
-%** @param #1 a token list not containing `.\relax'
+%** @param #1 a token list not containing `\relax' (sic)
 \def\@@magyar@stripdot#1{\expandafter\@@magyar@stripdot@lowb\@@magyar@stripdot@lowa#1\relax.\relax}%
 
 %** Definies \reserved@a to {{YYYY}{MM}{DD}} (possibly fewer digits). Parsing
@@ -3123,7 +3168,7 @@
   \expandafter\endgroup\reserved@b
   \edef\reserved@b{\expandafter\@@magyar@stripdot\expandafter{\reserved@b}}%
   %%\show\reserved@b\tracingmacros1
-  % vvv Wizardry: deep
+  % vvv Wizardry: deep, parsing dates
   \let\reserved@a\@empty \expandafter\@@magyar@parsedate@a\reserved@b!--!\hfuzz
   \ifx\reserved@a\@empty \expandafter\@@magyar@parsedate@f\reserved@b!//:!\hfuzz \fi
   \ifx\reserved@a\@empty \expandafter\@@magyar@parsedate@b\reserved@b!//!\hfuzz \fi
@@ -3154,7 +3199,7 @@
                         \def\reserved@a{0}\@@magyar@error{Year too large: #1}%
   \fi\fi\fi\fi\fi
   \ifnum#2<1  \@@magyar@error{Month too small: #2}\fi% Imp: reset to 0?
-  \ifnum#2>12 \zzzz\@@magyar@error{Month too large: #2}\fi
+  \ifnum#2>12 \@@magyar@error{Month too large: #2}\fi
   \ifnum#3<1  \@@magyar@error{Day of month too small: #3}\fi% Imp: reset to 0?
   \ifnum#3>31 \@@magyar@error{Day of month too large: #3}\fi
   \edef\reserved@a{{\reserved@a}{\number#2}{\number#3}}%
@@ -3752,6 +3797,7 @@
 {^}
 
 \if2\magyar@opt@@mathhucomma\else \@@magyar@skiplong\fi
+  % !! \extrasmagyar
   \expandafter\addto\csname \expandafter\ifx\csname mathoptions@on\endcsname
    \relax check@mathfonts\else mathoptions@on\fi\endcsname{% detect nath.sty
     \catcode`,12 \mathcode`,"8000
@@ -4104,14 +4150,32 @@
 \@gobble
 {^}%
 
-% vvv =hyphenmins
+% vvv hyphenmins=
 
 \ifx\magyar@opt@@hyphenmins\@empty\else
   \edef\reserved@a{\noexpand\@namedef{\CurrentOption hyphenmins}{\magyar@opt@@hyphenmins}}
   \reserved@a
 \fi
 
-% vvv =extras
+% vvv varioref=
+
+\if0\magyar@opt@@varioref \@@magyar@skiplong\fi
+\expandafter\addto\csname extras\CurrentOption\endcsname{%
+  \def\reftextfaceafter {\reftextvario{a t\'ul\-ol\-da\-lon}{a k\"o\-vet\-kez\H{o} ol\-da\-lon}}%
+  \def\reftextfacebefore{\reftextvario{a t\'ul\-ol\-da\-lon}{az el\H{o}\-z\H{o} ol\-da\-lon}}%
+  \def\reftextafter     {a k\"o\-vet\-kez\H{o} ol\-da\-lon}%
+  \def\reftextbefore    {az el\H{o}\-z\H{o} ol\-da\-lon}%
+  \csname def\endcsname\reftextcurrent   {ezen az ol\-da\-lon}% Dat: \csname because of suggestions=
+  \def\reftextfaraway#1{a~\csname @@magyar@az@lowxu\endcsname{\pageref{#1}}.~ol\-da\-lon}%
+  \def\reftextpagerange#1#2{a~\csname @@magyar@az@lowxu\endcsname{\pageref{#1}}%
+    --\pageref{#2}.~ol\-da\-la\-kon}%
+  \def\reftextlabelrange#1#2{{}\csname @@magyar@told\endcsname\ref{#1}+tol
+    \ref{#2}-ig}% Dat: `{}' is here for anti-\capitalize
+}
+\@gobble
+{^}%
+
+% vvv extras=, must be last
 
 \ifnum\magyar@opt@@extras=0
   % Dat: \extrasmagyar might break compatibility with future LaTeX packages.
