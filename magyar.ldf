@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/02/10 v1.5a Magyar support from the babel system]
+%%        [2004/02/12 v1.5a Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -69,7 +69,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/02/10 v1.5a Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/02/12 v1.5a Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -413,7 +413,7 @@
   \magyar@opt@told{told}{yes}%
 }
 
-%** Matces Hungarian typographic orders most closely -- and most
+%** Matches Hungarian typographic orders most closely -- and most
 %** simplistically.
 \dMf magyar@opt@defaults@@hu-min {%
   \csname magyar@opt@defaults@@over-1.4\endcsname
@@ -3742,6 +3742,7 @@
     \noexpand\ifnum9<1#5 \noexpand\if#1t\noexpand\if#3c%
     \noexpand\mathord\noexpand\fi\noexpand\fi\noexpand\fi\mathchar
     \ifnum\mathcode`,="8000 "613B \else\the\mathcode`, \space\fi% immed expand
+    % Dat: "613B is the operator, "013B is ordinary
   }%
   %%\show\@@magyar@hucomma@lowa
   \def\@@magyar@hucomma@lowb{\expandafter\@@magyar@hucomma@lowa\meaning\reserved@a/ / /\hfuzz}%
@@ -4209,6 +4210,9 @@
 % !! \huphy{-3331234.5678pF^{-1}} -> $-$3\,331\,234,5678\,pF^{-1}
 % !! \huphy if non-Hungarian is the lang {,}->{.}
 % !! \huphy ifmmode?
+% !! \mathcode`\,="013B     % és így a tizedes törtekben matematikai módban sem lesz köz
+% !! \mathchardef\comma="613B  % a veszõ (,) ami matematikai módban elválasztó karakterként használható
+% !! magyar.ldf defaults=hu-min $x+116=\break x-97$ adds space only! to BOL
 
 %
 % Dat: additive \PassOptionsToPackage{foo=bar}{magyar.ldf}
