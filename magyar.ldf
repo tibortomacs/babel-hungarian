@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/05/02 v1.5b Magyar support from the babel system]
+%%        [2004/05/12 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/05/02 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/05/12 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -166,7 +166,7 @@
 %**     hutoday=yes,               % or =no
 %**     hyphenmins=22,             % or =unchanged or two chars: \lefthyphenmin\righthyphenmin
 %**     hyphenation=huhyph3,       % or =none or =composite or =phonetic
-%**     labelenums=unchanged,      % or =hu-a or =hu-A
+%**     labelenums=unchanged,      % or =hu-a or =hu-A or =hu-d
 %**     labelitems=unchanged,      % or =hu
 %**     longcaption=justified,     % or =centered or =centernewline or =none (=unchanged)
 %**     mathbrk=define,            % or =unchanged or =fix
@@ -431,7 +431,7 @@
   \magyar@doopt activespace=safe,amstocnumskip=\enskip,frenchspacing=yes,
     captions=hu,classmod=yes,figurecaptions=hu,
     footnote=huplain,frenchspacing=yes,hyphenmins=22,
-    labelenums=hu-a,labelitems=hu,
+    labelenums=hu-d,labelitems=hu,
     longcaption=centered,mathbrk=fix,mathhucomma=fix,
     postpara=diamond,postsubpara=star,postdescription=dot,
     sectiondot=safe,tablecaptions=hu,theoremtitle=hu,
@@ -636,6 +636,7 @@
 \def\magyar@opt@labelenums@@unchanged{\def\magyar@opt@@labelenums{0}}
 \dMf magyar@opt@labelenums@@hu-a     {\def\magyar@opt@@labelenums{1}}
 \dMf magyar@opt@labelenums@@hu-A     {\def\magyar@opt@@labelenums{2}}
+\dMf magyar@opt@labelenums@@hu-d     {\def\magyar@opt@@labelenums{3}}
 \let\magyar@opt@labelenums\magyar@enumarg
 \def\magyar@opt@labelitems@@unchanged{\def\magyar@opt@@labelitems{0}}
 \def\magyar@opt@labelitems@@hu       {\def\magyar@opt@@labelitems{1}}
@@ -965,6 +966,7 @@
 
 %** modified by pts at Fri Oct  3 22:19:13 CEST 2003
 \def\@@magyar@az@vfuzzdef#1#2#3{{%
+  \@safe@activestrue% allow active `:' inside labels
   \let\romannumeral\number% by pts@fazekas.hu at Mon Oct 27 23:44:06 CET 2003
   % Dat: deliberately no \autoref for hyperref.sty !!
   \let\ref\@@magyar@zeroref \let\pageref\@@magyar@zeropageref
@@ -1455,20 +1457,28 @@
     \or\(\lambda\)\or\(\mu\)\or\(\nu\)\or\(\xi\)\or\(\varphi\)\or\(\varpi\)\or\(\varrho\)%
     \or\(\varsigma\)\or\(\tau\)\or\(\upsilon\)\or\(\chi\)\or\(\psi\)\or\(\omega\)%
     \else\@ctrerr\fi}
-  \def\theenumi{\@Roman\c@enumi}       \def\labelenumi{\theenumi.}
-  \def\theenumii{\@arabic\c@enumii}    \def\labelenumii{\theenumii.}
   \expandafter\ifx\csname c@enumv\endcsname\relax
     \@definecounter{enumv}% call this before \def\theenumv
   \fi
-  % !! correct \ref style for \the
-  \if1\magyar@opt@@labelenums % hu-a
-    \def\theenumiii{\@alph\c@enumiii}    \def\labelenumiii{\itshape\theenumiii)}
-    \def\theenumiv{\@greekalph\c@enumiv} \def\labelenumiv{\itshape\theenumiv)}
-    \def\theenumv{\@Alph\c@enumv}        \def\labelenumv {\itshape\theenumv)}
-  \else% hu-A
-    \def\theenumiii{\@Alph\c@enumiii}    \def\labelenumiii{\itshape\theenumiii)}
-    \def\theenumiv{\@alph\c@enumiv}      \def\labelenumiv{\itshape\theenumiv)}
-    \def\theenumv{\@greekalph\c@enumv}   \def\labelenumv {\itshape\theenumv)}
+  \if3\magyar@opt@@labelenums
+    \def\theenumi  {\@arabic   \c@enumi}  \def\labelenumi  {\theenumi.}
+    \def\theenumii {\@alph     \c@enumii} \def\labelenumii {\itshape\theenumii)}
+    \def\theenumiii{\@greekalph\c@enumiii}\def\labelenumiii{\itshape\theenumiii)}
+    \def\theenumiv {\@Alph     \c@enumiv} \def\labelenumiv {\itshape\theenumiv)}
+    \def\theenumv  {\@Roman    \c@enumv}  \def\labelenumc  {\theenumv.} % Dat: I'm not sure
+  \else
+    \def\theenumi{\@Roman\c@enumi}       \def\labelenumi{\theenumi.}
+    \def\theenumii{\@arabic\c@enumii}    \def\labelenumii{\theenumii.}
+    % !! correct \ref style for \the
+    \if1\magyar@opt@@labelenums % hu-a
+      \def\theenumiii{\@alph\c@enumiii}    \def\labelenumiii{\itshape\theenumiii)}
+      \def\theenumiv{\@greekalph\c@enumiv} \def\labelenumiv{\itshape\theenumiv)}
+      \def\theenumv{\@Alph\c@enumv}        \def\labelenumv {\itshape\theenumv)}
+    \else% hu-A
+      \def\theenumiii{\@Alph\c@enumiii}    \def\labelenumiii{\itshape\theenumiii)}
+      \def\theenumiv{\@alph\c@enumiv}      \def\labelenumiv{\itshape\theenumiv)}
+      \def\theenumv{\@greekalph\c@enumv}   \def\labelenumv {\itshape\theenumv)}
+    \fi
   \fi
   \def\reserved@a{% copied from latex.ltx
     \ifnum \@enumdepth >\thr@@\@toodeep\else
@@ -2834,6 +2844,7 @@
   % Dat: a level of braces has already been stripped from #1
   % Dat: negative sign isn't important, because it is skipped by \@@magyar@classify@none
   \begingroup\begingroup
+  \@safe@activestrue% allow active `:' inside labels
   \let\@safe@activesfalse\@empty \let\@safe@activestrue\@empty% inside \b@... emitted by \cite
   % vvv Dat: gobbles its arg and `-' below
   %     `\@@magyar@toldas{42}' must be the very end of #1
@@ -3063,52 +3074,77 @@
   \else\csname#1\endcsname\fi
 }%
 
+%** May not touch \reserved@a
 \def\@@magyar@refstruc@split#1+#2\vfuzz#3{%
   \if\noexpand#30\else\ref{#1}.~\fi
   \ifx\vfuzz#2%
     \textbf{??}%
     \G@refundefinedtrue
   \else
-    \expandafter\ifx\csname r@#1\endcsname\relax
-      \textbf{??+#2}%
-      \G@refundefinedtrue
+    \begingroup
+      \@safe@activestrue% so active `:' etc. will work inside \csname...
+      \edef\reserved@c{\noexpand\@@magyar@refstruc@splitlow
+	\expandafter\ifx\csname r@#1\endcsname\relax\relax\else
+	\expandafter\noexpand\csname r@#1\endcsname\fi}%
+      % ^^^ Dat: would emit `undefined' instead of `\relax' w/o \ifx
+    \expandafter\endgroup\reserved@c{#2}%
+  \fi
+}
+
+%** @param #1 csname \r@foo:bar
+%** @param #2 suffix to add
+\def\@@magyar@refstruc@splitlow#1#2{%
+  \ifx#1\relax
+    \textbf{??+#2}%
+    \G@refundefinedtrue
+  \else
+    \expandafter\@@magyar@refstruc@parse#1..\vfuzz%
+    \@@magyar@refstruc@work#1%
+    \let\@@magyar@save@m\-%
+    \let\-\relax
+    \let\@@magyar@toldas\relax
+    \edef\reserved@c{\expandafter\@@magyar@strucname\expandafter{\reserved@c}}%
+    \let\-\@@magyar@save@m
+    \let\@@magyar@suffix@at\@@magyar@suffix@st% fix the -t suffix
+    \ifx\reserved@b\@empty
     \else
-      \expandafter\expandafter\expandafter
-      \@@magyar@refstruc@parse\csname r@#1\endcsname..\vfuzz%
-      \@@magyar@refstruc@work{#1}%
-      \let\@@magyar@save@m\-%
-      \let\-\relax
-      \let\@@magyar@toldas\relax
-      \edef\reserved@c{\expandafter\@@magyar@strucname\expandafter{\reserved@c}}%
-      \let\-\@@magyar@save@m
-      \let\@@magyar@suffix@at\@@magyar@suffix@st% fix the -t suffix
-      \ifx\reserved@b\@empty
-      \else
-        \@@magyar@refstruc@splitb#2\vfuzz% strip `+' from the end of #2
-      \fi
+      \@@magyar@refstruc@splitb#2\vfuzz% strip `+' from the end of #2
     \fi
   \fi
 }
+
 \def\@@magyar@refstruc@splitb#1+\vfuzz{%
   \expandafter\@@magyar@told\reserved@c+#1{}% fejezet -> fejezetben
 }
 
 %** The +val suffix does not produce the desired result.
 %** @param #1 \ref id or with \told
-%** @param #2 1 to prefix with 1\ref{...}.~' in Hungarian order
+%** (@param #2 1 to prefix with 1\ref{...}.~' in Hungarian order)
 %** @example \refstruc{sec:foo}
 %** @example \refstruc{sec:foo+as+an} 
-\def\@@magyar@refstruc@name#1#2{%
+%** May not touch \reserved@a
+\def\@@magyar@refstruc@name#1{%
   \begingroup
-  \expandafter\expandafter\expandafter
-  \@@magyar@refstruc@parse\csname r@#1\endcsname..\vfuzz%
-  % ^^^ sets \reserved@a to the reference target
-  %%\show\reserved@a% first arg of ref, i.e section number, eg. `1.2.3' -- or \relax
-  \ifx\reserved@a\relax
-    \@@magyar@refstruc@split#1+\vfuzz#2% ends by +suffix, needs \told
+  \begingroup
+    \@safe@activestrue% so active `:' etc. will work inside \csname...
+    \edef\reserved@c{\noexpand\@@magyar@refstruc@namelow
+      \expandafter\ifx\csname r@#1\endcsname\relax\relax\else
+      \expandafter\noexpand\csname r@#1\endcsname\fi}%
+    % ^^^ Dat: would emit `undefined' instead of `\relax' w/o \ifx
+  \expandafter\endgroup\reserved@c{#1}%
+}
+
+%** @param #1 csname \r@foo:bar
+%** @param #2 foo:bar
+%** @param #3 1 to prefix with 1\ref{...}.~' in Hungarian order)
+\def\@@magyar@refstruc@namelow#1#2#3{%
+  \ifx#1\relax
+    \@@magyar@refstruc@split#2+\vfuzz#3% ends by +suffix, needs \told
   \else
-    \if\noexpand#20\else{\ref{#1}.}~\fi% Dat: \ref might redefine \reserved@a, especially in hyperref.sty
-    \@@magyar@refstruc@work{#1}%
+    \expandafter\@@magyar@refstruc@parse#1..\vfuzz% sets \reserved@a to ref target
+    %%\show\reserved@a% first arg of ref, i.e section number, eg. `1.2.3' -- or \relax
+    \if\noexpand#30\else{\ref{#2}.}~\fi% Dat: \ref might redefine \reserved@a, especially in hyperref.sty
+    \@@magyar@refstruc@work#1%
     \expandafter\@@magyar@strucname\expandafter{\reserved@c}%
   \fi
   \endgroup
@@ -3117,6 +3153,7 @@
 \def\@@magyar@chapapp{\appendixname}%
 
 %** Input is \reserved@a, output is \reserved@c
+%** @param #1 the control sequence \r@foo:bar
 \def\@@magyar@refstruc@work#1{%
   \edef\reserved@a{\expandafter\@@magyar@nonumbers@a\reserved@a\hfuzz}%
   %\expandafter\lowercase\expandafter{\expandafter\def\expandafter\reserved@a\expandafter{\reserved@a}}%
@@ -3132,8 +3169,7 @@
   \@@magyar@refstruc@setcnt{c@subparagraph}1
   \@@magyar@refstruc@setcnt{c@subsubparagraph}1
   \let\reserved@c\relax
-  \expandafter\expandafter\expandafter
-  \@@magyar@refstruc@parsehyname\csname r@#1\endcsname....\vfuzz%
+  \expandafter\@@magyar@refstruc@parsehyname#1....\vfuzz%
   \ifx\reserved@c\relax% hyperref.sty and nameref.sty has helped us
   \def\reserved@c{subsubparagraph}\edef \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
   \def\reserved@c{subparagraph}\edef    \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
@@ -3489,7 +3525,7 @@
 
   % !! indent=article must work within \maketitle for article.cls etc.
 
-  %** Coped from article.cls
+  %** Copied from article.cls
   %** Has #1, but partially applied here
   \def\magyar@fo@indent@articlesp{%
     \parindent1em % SUXX: impossible to acquire default value
