@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2003/12/09 v1.5a Magyar support from the babel system]
+%%        [2003/12/29 v1.5a Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -47,6 +47,15 @@
 %      \usepackage{t1enc}% for automatic hyphenation of accented chars
 %      \usepackage[latin2]{inputenc}% for typing chars
 %
+% This file is quite long, because it implements a lot of parametric features
+% related to typesetting Hungarian text with \LaTeX. Sorry.
+%
+% Motto: ``There is a lot to do in the future'' -- by Gyöngyi Bujdosó and
+% Ferenc Wettl in their conference proceedings article ``On the localization
+% of TeX in Hungary'', presented at EuroBachoTeX 2002.
+%
+% Most of the code and comments in this file are written by P\'eter Szab\'o.
+%
 
 \expandafter\ifx\csname CurrentOption\endcsname\relax
   \def\CurrentOption{magyar}%
@@ -60,7 +69,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2003/12/09 v1.5a Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2003/12/29 v1.5a Magyar support from the babel system]
 
 % Find the best of available Hungarian hyphenation patterns.
 \expandafter\ifx\csname l@\CurrentOption\endcsname\relax
@@ -141,49 +150,57 @@
 
 %** These defaults load most of the new functionality, but try not to
 %** introduce visible typographical changes over magyar.ldf v1.4. These
-%** are the ovarall defaults of magyar.ldf v1.5, in case
-%** \def\magyarOptions{} is missing.
+%** are the ovarall defaults of magyar.ldf v1.5, in case of
+%** \def\magyarOptions{} (or if is missing).
 %**
 %** These are the defaults:
 %**   \def\magyarOptions{
-%**     accents=defaulthigh,     % or =high or =low
-%**     active=safe,             % or =problematic or =none or =onlycs
-%**     activeprefix=babelopt2,  % or =none or =babelopt3 or =grave or =acute or =quotedbl
-%**     activespace=none,        % or =safe or =problematic
-%**     afterindent=unchanged,   % or =force-no or =force-yes
-%**     amslevelfix=fix-ams,     % or =unchanged or =fix-all
-%**     amstocnumskip=\quad,     % TeX code or --empty--
-%**     captions=hu,             % or =unchanged
-%**     chapternumber=unchanged, % see partnumber
-%**     classmod=yes,            % or =unchanged(=no) or TeX class name
-%**     %defaults=over-1.4,      % or =compat-1.4 or =safest or =prettiest
-%**     dottedtocline=fix,       % or =unchanged
-%**     emitdate=weak,           % or =no or =yes
-%**     extras=yes,              % or =no
-%**     figurecaptions=hu,       % or =us or =unchanged
-%**     frenchspacing=no,        % or =unchanged=no or yes
-%**     hang=weak,               % or =no or =yes
-%**     hunumbers=yes,           % or =no
-%**     hutoday=yes,             % or =no
-%**     hyphenmins=22,           % or =unchanged or two chars: \lefthyphenmin\righthyphenmin
-%**     longcaption=justified,   % or =centered or =centernewline or =none (=unchanged)
-%**     mond=weak,               % or =no or =yes
-%**     openqq=maybeup,          % or =up or =down or =unchanged
-%**     partnumber=unchanged,    % or =huordinal or =Huordinal
-%**     postpara=unchanged,      % or =bfdot or =dot or =quad or =diamond or =enskip or =quad or =em or =empty ... (\magyar@post@...)
-%**     postsubpara=unchanged,   % see postpara
-%**     refstruc=weak,           % or =no or =yes
-%**     %safest=no,              % or =yes (safest=no has no effect, safest=yes is equivalent to defaults=safest)
-%**     sectiondot=safe,         % or =none or =problematic
-%**     shorthandcs=none,        % or =? or a csname or a \cs, e.g shorthandcs=\shu
-%**     shortrefcmds=no,         % or =yes
-%**     suggestions=yes,         % or =no
-%**     tablecaptions=hu,        % or =us or =unchanged
-%**     textqq=weak,             % or =no or =yes
-%**     theoremtitle=hu,         % or =unchanged
-%**     titles=\enskip,          % TeX code: =unchanged, =\quad or other
-%**     toclang=good,            % or =badfloat or =badall or =unchanged
-%**     told=weak,                % or =no or =yes
+%**     accents=defaulthigh,       % or =high or =low
+%**     active=safe,               % or =problematic or =none or =onlycs
+%**     activeprefix=babelopt2,    % or =none or =babelopt3 or =grave or =acute or =quotedbl
+%**     activespace=none,          % or =safe or =problematic
+%**     afterindent=unchanged,     % or =force-no or =force-yes
+%**     amslevelfix=fix-ams,       % or =unchanged or =fix-all
+%**     amstocnumskip=\enskip,     % TeX code or --empty--
+%**     captions=hu,               % or =unchanged
+%**     chapternumber=unchanged,   % see partnumber
+%**     classmod=yes,              % or =unchanged(=no) or TeX class name
+%**     %defaults=over-1.4,        % or =compat-1.4 or =safest or =prettiest
+%**     dottedtocline=fix,         % or =unchanged
+%**     emitdate=weak,             % or =no or =yes
+%**     extras=yes,                % or =no
+%**     figurecaptions=hu,         % or =us or =unchanged
+%**     frenchspacing=unchanged,   % or =no or =yes
+%**     hang=weak,                 % or =no or =yes
+%**     hunumbers=yes,             % or =no
+%**     hutoday=yes,               % or =no
+%**     hyphenmins=22,             % or =unchanged or two chars: \lefthyphenmin\righthyphenmin
+%**     labelenums=unchanged,      % or =hu-a or =hu-A
+%**     labelitems=unchanged,      % or =hu
+%**     longcaption=justified,     % or =centered or =centernewline or =none (=unchanged)
+%**     mathbrk=define,            % or =unchanged or =fix
+%**     mathreal=weak,             % or =no or =yes
+%**     mathmuskips=unchanged,     % or =latex or =hu
+%**     mathfactorial=define,      % or =unchanged or =fix
+%**     mond=weak,                 % or =no or =yes
+%**     openqq=maybedown,          % or =up or =down or =unchanged
+%**     partnumber=unchanged,      % or =huordinal or =Huordinal
+%**     postdescription=unchanged, % see postpara
+%**     postpara=unchanged,        % or =bfdot or =dot or =quad or =diamond or =enskip or =quad or =em or =empty ... (\magyar@post@...)
+%**     postsubpara=unchanged,     % see postpara
+%**     refstruc=weak,             % or =no or =yes
+%**     %safest=no,                % or =yes (safest=no has no effect, safest=yes is equivalent to defaults=safest)
+%**     sectiondot=safe,           % or =none or =problematic
+%**     shorthandcs=\shu,          % or =none or a csname or a \cs, e.g shorthandcs=\shu
+%**     shortrefcmds=yes,          % or =no
+%**     suggestions=yes,           % or =no
+%**     tablecaptions=hu,          % or =us or =unchanged
+%**     textqq=weak,               % or =no or =yes
+%**     theoremtitle=hu,           % or =unchanged
+%**     footnote=yes,              % or =unchanged or =huplain
+%**     titles=\enskip,            % TeX code: =unchanged, =\quad or other
+%**     toclang=good,              % or =badfloat or =badall or =unchanged
+%**     told=weak,                 % or =no or =yes
 %**   }\usepackage[magyar]{babel}
 \dMf magyar@opt@defaults@@over-1.4 {%
   \magyar@opt@accents@@defaulthigh
@@ -192,7 +209,7 @@
   \magyar@opt@activespace@@none
   \magyar@opt@afterindent@@unchanged
   \magyar@opt@amslevelfix{amslevelfix}{fix-ams}%
-  \magyar@opt@amstocnumskip{amstocnumskip}{}%
+  \magyar@opt@amstocnumskip{amstocnumskip}{\enskip}% change over 1.4
   \magyar@opt@captions@@hu
   \magyar@opt@chapternumber@@unchanged
   \magyar@opt@classmod@@yes
@@ -201,26 +218,33 @@
   \magyar@opt@extras@@yes
   \magyar@opt@chapterhead@@yes
   \magyar@opt@figurecaptions@@hu
-  \magyar@opt@frenchspacing@@no
+  \magyar@opt@footnote@@yes
+  \magyar@opt@frenchspacing@@unchanged
   \magyar@opt@hang{hang}{weak}%
   \magyar@opt@hunumbers@@yes
   \magyar@opt@hutoday@@yes
-  \magyar@opt@hyphenmins{hyphenmins}{22}% Dat: Default LaTeX is {23}
+  \magyar@opt@hyphenmins{hyphenmins}{22}% change over 1.4 Dat: Default LaTeX is {23}
+  \magyar@opt@labelenums@@unchanged
+  \magyar@opt@labelitems@@unchanged
   \magyar@opt@longcaption@@justified
+  \magyar@opt@mathbrk@@define
+  \magyar@opt@mathfactorial@@define
+  \magyar@opt@mathmuskips@@unchanged
+  \magyar@opt@mathreal{mathreal}{weak}%
   \magyar@opt@mond{mond}{weak}%
-  \magyar@opt@openqq@@maybeup
+  \magyar@opt@openqq@@maybedown
   \magyar@opt@partnumber@@unchanged
   \magyar@opt@postpara{}{unchanged}%
   \magyar@opt@postsubpara{}{unchanged}%
   \magyar@opt@refstruc{refstruc}{weak}%
   \magyar@opt@sectiondot@@safe
   \magyar@opt@shorthandcs{shorthandcs}{\shu}%
-  \magyar@opt@shortrefcmds@@no
+  \magyar@opt@shortrefcmds@@yes
   \magyar@opt@suggestions@@yes
   \magyar@opt@tablecaptions@@hu
   \magyar@opt@textqq{textqq}{weak}%
   \magyar@opt@theoremtitle@@hu
-  \magyar@opt@titles{}{\enskip}%
+  \magyar@opt@titles{}{\enskip}% change over 1.4
   \magyar@opt@toclang@@good
   \magyar@opt@told{told}{weak}%
 }
@@ -237,24 +261,31 @@
   \magyar@opt@activeprefix@@grave% OK
   \magyar@opt@activespace@@none% OK
   \magyar@opt@afterindent@@unchanged% OK
-  \magyar@opt@amslevelfix@@none% OK
+  \magyar@opt@amslevelfix@@unchanged% OK
   \magyar@opt@amstocnumskip{amstocnumskip}{}% OK
   \magyar@opt@captions@@hu% OK
+  \magyar@opt@chapterhead@@yes% OK
   \magyar@opt@chapternumber@@unchanged% OK
   \magyar@opt@classmod@@yes% OK
   \magyar@opt@dottedtocline@@unchanged% OK
   \magyar@opt@emitdate{emitdate}{no}% OK
   \magyar@opt@extras@@yes% OK
-  \magyar@opt@chapterhead@@yes% OK
+  \magyar@opt@footnote@@unchanged% OK
   \magyar@opt@figurecaptions@@hu% OK
-  \magyar@opt@frenchspacing@@no% OK
+  \magyar@opt@frenchspacing@@unchanged% OK
   \magyar@opt@hang{hang}{no}% OK
   \magyar@opt@hunumbers@@no% OK
   \magyar@opt@hutoday@@yes% OK
   \magyar@opt@hyphenmins{hyphenmins}{unchanged}%
+  \magyar@opt@labelenums@@unchanged% OK
+  \magyar@opt@labelitems@@unchanged% OK
   \magyar@opt@longcaption@@justified% OK
+  \magyar@opt@mathbrk@@unchanged% OK
+  \magyar@opt@mathfactorial@@unchanged% OK
+  \magyar@opt@mathmuskips@@unchanged% OK
+  \magyar@opt@mathreal{mathreal}{unchanged}%
   \magyar@opt@mond{mond}{no}% OK
-  \magyar@opt@openqq@@maybeup% OK
+  \magyar@opt@openqq@@maybedown% OK
   \magyar@opt@partnumber@@unchanged% OK
   \magyar@opt@postpara{}{unchanged}% OK
   \magyar@opt@postsubpara{}{unchanged}% OK
@@ -289,12 +320,19 @@
   \magyar@opt@extras@@no
   \magyar@opt@chapterhead@@no
   \magyar@opt@figurecaptions@@unchanged
+  \magyar@opt@footnote@@unchanged
   \magyar@opt@frenchspacing@@unchanged
   \magyar@opt@hang{hang}{no}%
   \magyar@opt@hunumbers@@no
   \magyar@opt@hutoday@@no
   \magyar@opt@hyphenmins{hyphenmins}{unchanged}%
+  \magyar@opt@labelenums@@unchanged
+  \magyar@opt@labelitems@@unchanged
   \magyar@opt@longcaption@@unchanged
+  \magyar@opt@mathbrk@@unchanged
+  \magyar@opt@mathfactorial@@unchanged
+  \magyar@opt@mathmuskips@@unchanged
+  \magyar@opt@mathreal{mathreal}{unchanged}%
   \magyar@opt@mond{mond}{no}%
   \magyar@opt@openqq@@unchanged
   \magyar@opt@partnumber@@unchanged
@@ -317,7 +355,7 @@
 %** the document comply to the Hungarian typography standards. Full compliance
 %** is not achieved yet, and as new features are implemented, they will be
 %** added to these defaults.
-\dMf magyar@opt@defaults@@prettiest {% !!
+\def\magyar@opt@defaults@@prettiest{%
   \magyar@opt@accents@@defaulthigh% {low} would have no effect with \usepackage{t1enc}
   \magyar@opt@active@@safe
   \magyar@opt@activeprefix{activeprefix}{babelopt2}%
@@ -333,15 +371,23 @@
   \magyar@opt@extras@@yes
   \magyar@opt@chapterhead@@yes
   \magyar@opt@figurecaptions@@hu
+  \magyar@opt@footnote@@yes
   \magyar@opt@frenchspacing@@yes
   \magyar@opt@hang{hang}{yes}%
   \magyar@opt@hunumbers@@yes
   \magyar@opt@hutoday@@yes
   \magyar@opt@hyphenmins{hyphenmins}{22}% Dat: Default LaTeX is {23}
+  \magyar@opt@labelenums{labelenums}{hu-a}%
+  \magyar@opt@labelitems@@hu
   \magyar@opt@longcaption@@centered
+  \magyar@opt@mathbrk@@fix
+  \magyar@opt@mathfactorial@@fix
+  \magyar@opt@mathmuskips@@hu
+  \magyar@opt@mathreal{mathreal}{yes}%
   \magyar@opt@mond{mond}{yes}%
-  \magyar@opt@openqq@@maybeup
+  \magyar@opt@openqq@@maybedown
   \magyar@opt@partnumber@@Huordinal
+  \magyar@opt@postdescription{}{dot}%
   \magyar@opt@postpara{}{diamond}%
   \magyar@opt@postsubpara{}{star}%
   \magyar@opt@refstruc{refstruc}{yes}%
@@ -355,6 +401,20 @@
   \magyar@opt@titles{}{\enskip}%
   \magyar@opt@toclang@@good
   \magyar@opt@{told}{yes}%
+}
+
+%** Matces Hungarian typographic orders most closely -- and most
+%** simplistically.
+\dMf magyar@opt@defaults@@hu-min {%
+  \csname magyar@opt@defaults@@over-1.4\endcsname
+  \magyar@doopt activespace=safe,amstocnumskip=\enskip,frenchspacing=yes,
+    captions=hu,classmod=yes,figurecaptions=hu,
+    footnote=huplain,frenchspacing=yes,hyphenmins=22,
+    labelenums=hu-a,labelitems=hu,
+    longcaption=centered,mathbrk=fix,
+    postpara=diamond,postsubpara=star,postdescription=dot,
+    sectiondot=safe,tablecaptions=hu,theoremtitle=hu,
+    titles=\enskip,\hfuzz,%
 }
 
 \let\magyar@opt@defaults\magyar@enumarg
@@ -427,6 +487,18 @@
 \def\magyar@opt@toclang@@badfloat{\def\magyar@opt@@toclang{1}}
 \def\magyar@opt@toclang@@good{\def\magyar@opt@@toclang{2}}
 \let\magyar@opt@toclang\magyar@enumarg
+\def\magyar@opt@mathbrk@@unchanged{\def\magyar@opt@@mathbrk{0}}
+\def\magyar@opt@mathbrk@@define{\def\magyar@opt@@mathbrk{1}}
+\def\magyar@opt@mathbrk@@fix{\def\magyar@opt@@mathbrk{2}}
+\let\magyar@opt@mathbrk\magyar@enumarg
+\def\magyar@opt@mathfactorial@@unchanged{\def\magyar@opt@@mathfactorial{0}}
+\def\magyar@opt@mathfactorial@@define{\def\magyar@opt@@mathfactorial{1}}
+\def\magyar@opt@mathfactorial@@fix{\def\magyar@opt@@mathfactorial{2}}
+\let\magyar@opt@mathfactorial\magyar@enumarg
+\def\magyar@opt@mathmuskips@@unchanged{\def\magyar@opt@@mathmuskips{0}}
+\def\magyar@opt@mathmuskips@@latex{\def\magyar@opt@@mathmuskips{1}}
+\def\magyar@opt@mathmuskips@@hu{\def\magyar@opt@@mathmuskips{2}}
+\let\magyar@opt@mathmuskips\magyar@enumarg
 \def\magyar@opt@partnumber@@unchanged{}
 \def\magyar@opt@partnumber@@huordinal{\def\thepart{\@huordinal\c@part}\let\magyar@needopt@hunumbers\@empty}
 \def\magyar@opt@partnumber@@Huordinal{\def\thepart{\@Huordinal\c@part}\let\magyar@needopt@hunumbers\@empty}
@@ -467,9 +539,12 @@
 \def\magyar@opt@shorthandcs#1#2{%
   \def\reserved@a{#2}%
   \def\reserved@b{none}%
-  \ifx\reserved@a\reserved@b\else
+  \ifx\reserved@a\reserved@b
+    \def\magyar@opt@@shorthandcs{0}% overridable
+  \else
+    \def\magyar@opt@@shorthandcs{1}%
     \ifcat\hfuzz\noexpand#2\relax% #2 is \shu
-      \def#2##1{\protect\@@magyar@shorthand}% Dat: ##1 is usually ?_12
+      \def#2##1{\protect\@@magyar@shorthand}% Dat: ##1 is usually `_12
     \else
       \@namedef{#2}{\protect\@@magyar@shorthand}%
     \fi
@@ -481,33 +556,45 @@
 \let\magyar@opt@told\magyar@yesweaknoarg
 \let\magyar@opt@textqq\magyar@yesweaknoarg
 \let\magyar@opt@emitdate\magyar@yesweaknoarg
+\let\magyar@opt@mathreal\magyar@yesweaknoarg
 \let\magyar@opt@refstruc\magyar@yesweaknoarg
 \let\magyar@opt@mond\magyar@yesweaknoarg
 \let\magyar@opt@hang\magyar@yesweaknoarg
 \def\magyar@opt@theoremtitle@@unchanged{\def\magyar@opt@@theoremtitle{0}}
 \def\magyar@opt@theoremtitle@@hu{\def\magyar@opt@@theoremtitle{1}}
 \let\magyar@opt@theoremtitle\magyar@enumarg
+\def\magyar@opt@footnote@@unchanged{\def\magyar@opt@@footnote{0}}
+\def\magyar@opt@footnote@@yes{\def\magyar@opt@@footnote{1}}
+\def\magyar@opt@footnote@@huplain{\def\magyar@opt@@footnote{2}}
+\let\magyar@opt@footnote\magyar@enumarg
 \def\magyar@opt@hutoday@@no{\def\magyar@opt@@hutoday{0}}
 \def\magyar@opt@hutoday@@yes{\def\magyar@opt@@hutoday{1}}
 \let\magyar@opt@hutoday\magyar@enumarg
 \def\magyar@opt@shortrefcmds@@no{\def\magyar@opt@@shortrefcmds{0}}
 \def\magyar@opt@shortrefcmds@@yes{\def\magyar@opt@@shortrefcmds{1}}
 \let\magyar@opt@shortrefcmds\magyar@enumarg
-\def\magyar@opt@dottedtocline@@fix{\def\magyar@opt@@dottedtocline{0}}
-\def\magyar@opt@dottedtocline@@unchanged{\def\magyar@opt@@dottedtocline{1}}
+\def\magyar@opt@dottedtocline@@fix{\def\magyar@opt@@dottedtocline{1}}
+\def\magyar@opt@dottedtocline@@unchanged{\def\magyar@opt@@dottedtocline{0}}
 \let\magyar@opt@dottedtocline\magyar@enumarg
 \def\magyar@opt@amslevelfix@@unchanged{\def\magyar@opt@@amslevelfix{0}}
 \dMf magyar@opt@amslevelfix@@fix-ams  {\def\magyar@opt@@amslevelfix{1}}
 \dMf magyar@opt@amslevelfix@@fix-all  {\def\magyar@opt@@amslevelfix{2}}
+\def\magyar@opt@labelenums@@unchanged{\def\magyar@opt@@labelenums{0}}
+\dMf magyar@opt@labelenums@@hu-a     {\def\magyar@opt@@labelenums{1}}
+\dMf magyar@opt@labelenums@@hu-A     {\def\magyar@opt@@labelenums{2}}
+\let\magyar@opt@labelenums\magyar@enumarg
+\def\magyar@opt@labelitems@@unchanged{\def\magyar@opt@@labelitems{0}}
+\def\magyar@opt@labelitems@@hu       {\def\magyar@opt@@labelitems{1}}
+\let\magyar@opt@labelitems\magyar@enumarg
 \let\magyar@opt@amslevelfix\magyar@enumarg
 \def\magyar@opt@openqq@@unchanged{\def\magyar@opt@@openqq{0}}
 \def\magyar@opt@openqq@@up{\def\magyar@opt@@openqq{1}}
 \def\magyar@opt@openqq@@down{\def\magyar@opt@@openqq{2}}
-\def\magyar@opt@openqq@@maybeup{\def\magyar@opt@@openqq{3}}
+\def\magyar@opt@openqq@@maybedown{\def\magyar@opt@@openqq{3}}
 \let\magyar@opt@openqq\magyar@enumarg
 \def\magyar@opt@frenchspacing@@unchanged{\def\magyar@opt@@frenchspacing{0}}% same as =no
-\def\magyar@opt@frenchspacing@@no {\def\magyar@opt@@frenchspacing{0}}
-\def\magyar@opt@frenchspacing@@yes{\def\magyar@opt@@frenchspacing{1}}
+\def\magyar@opt@frenchspacing@@no {\def\magyar@opt@@frenchspacing{1}}
+\def\magyar@opt@frenchspacing@@yes{\def\magyar@opt@@frenchspacing{2}}
 \let\magyar@opt@frenchspacing\magyar@enumarg
 \dMf magyar@opt@afterindent@@force-no {\def\magyar@opt@@afterindent{0}}
 \dMf magyar@opt@afterindent@@force-yes {\def\magyar@opt@@afterindent{1}}
@@ -523,6 +610,7 @@
   \fi
 }
 \let\magyar@opt@postsubpara\magyar@opt@postpara
+\let\magyar@opt@postdescription\magyar@opt@postpara
 
 % --- Option processing code of \magyarOptions
 %
@@ -557,7 +645,7 @@
     \fi
   \else% Normal
     \expandafter\ifx\csname magyar@opt@#1#2\endcsname\relax
-      \@@magyar@error{Unknown option: #1#2 (= #3)}\@ehc
+      \@@magyar@error{Unknown option: #1#2 (= #3)}%
     \else
       \csname magyar@opt@#1#2\endcsname{#1#2}{#3}%
     \fi
@@ -570,13 +658,14 @@
 %** Dat: Spaces and newlines at end of #1 are not ignored, so please prefix
 %**      them with a comma, e.g \magyar@doopts{foo=bar, }
 %** @param #1 comma-separated optoinname=value pairs
-\def\magyar@doopts#1{\magyar@doopt #1,\hfuzz,}%
+%\def\magyar@doopts#1{\magyar@doopt #1,\hfuzz,}%
 
 \def\magyar@dooptions{%
   \expandafter\ifx\csname opt@\CurrentOption.ldf.sty\endcsname\relax\else
     % Usage: \PassOptionsToPackage{foo=bar}{magyar.ldf}
     \expandafter\expandafter\expandafter
     \magyar@doopt\csname opt@\CurrentOption.ldf.sty\endcsname,\hfuzz,%
+   \expandafter\let\csname opt@\CurrentOption.ldf.sty\endcsname\relax
   \fi
   \expandafter\ifx\csname \CurrentOption Options\endcsname\relax\else
     \expandafter\expandafter\expandafter
@@ -594,7 +683,7 @@
 
 \magyar@opt@defaults{defaults}{over-1.4}
 \magyar@dooptions% in \magyarOptions
-\ifnum\magyar@opt@@openqq=3 % =maybeup
+\ifnum\magyar@opt@@openqq=3 % =maybedown
   \ifnum\magyar@opt@@active=0
     \def\magyar@opt@@openqq{0}% =unchanged
   \else
@@ -604,6 +693,11 @@
 \expandafter\ifx\csname magyar@needopt@hunumbers\endcsname\relax\else
   \ifnum\magyar@opt@@hunumbers=0
     \@@magyar@error{(chapter|part)number=... implies hunumbers=yes}%
+  \fi
+\fi
+\if0\magyar@opt@@shorthandcs\else
+  \if\magyar@opt@@active0%
+    \@@magyar@error{active=none implies shorthandcs=none}%
   \fi
 \fi
 \magyar@opt@@umlaut
@@ -741,12 +835,13 @@
 \@gobble
 {^}%
 
-% --- Definite articles (\pageref -> \apageref etc.)
+% --- Definite articles (\pageref -> \apageref etc.) !! make modular
 
 %** modified by pts at Fri Oct  3 22:19:13 CEST 2003
 \def\@@magyar@az@vfuzzdef#1#2#3{{%
   \let\romannumeral\number% by pts@fazekas.hu at Mon Oct 27 23:44:06 CET 2003
-  \let\ref\@@magyar@zeroref \let\pageref\@@magyar@zeropageref \let\cite\@@magyar@zerocite
+  \let\ref\@@magyar@zeroref \let\pageref\@@magyar@zeropageref
+  \let\cite\@@magyar@zerocite \let\eqref\@@magyar@zeroeqref
   % ^^^ fix so \az{\ref{...}} works
   \let\refstruc\@@magyar@zerorefplus
   \def\setbox ##1{}% to get rid of accents and special letters
@@ -758,6 +853,7 @@
   \def\ae{a}\def\AE{A}\def\oe{o}\def\OE{O}%
   \def\ss{s}\def\L{L}%
   \def\d{}\def\b{}\def\c{}\def\t{}% Dat: no need to redefine \H and \.
+  \let\mdseries\@empty% Imp: more
   \let\@safe@activestrue\@empty% babel puts these inside \b@...
   \let\@safe@activesfalse\@empty
   \edef\vfuzz{\def\noexpand\vfuzz{%
@@ -782,10 +878,9 @@
   %\def\protect{\noexpand\protect\noexpand}%
   \set@display@protect% screws up \r
   \@@magyar@az@vfuzzdef{relax}{relax}{#1}%
-  %\show\vfuzz
   \expandafter\endgroup\expandafter
   \set@display@protect\expandafter% fixes \r; why??
-  \@@magyar@az\vfuzz\hbox$% \vfuzz is already expanded
+  \@@magyar@az@set\vfuzz\hbox$% \vfuzz is already expanded
 }}
 
 %** \Aref({e:foo}) -> `az (5)'; \aref*{e:foo}: `az'
@@ -798,7 +893,7 @@
   \begingroup
     \@@magyar@az@vfuzzdef{@@magyar@r@#2}{r@#2}{}%
     \ifx\vfuzz\@empty\else% a speed boost
-      \edef\vfuzz{\noexpand\@@magyar@az\expandafter#1\vfuzz\hbox$}%
+      \edef\vfuzz{\noexpand\@@magyar@az@set\expandafter#1\vfuzz\hbox$}%
     \fi
   \expandafter\endgroup\vfuzz
 }
@@ -821,7 +916,7 @@
   \begingroup
   \@@magyar@az@vfuzzdef{@@magyar@b@#1}{b@#1}{}% Dat: @@magyar@b@... is never used
   \expandafter\endgroup\expandafter
-  \@@magyar@az\vfuzz\hbox$% \vfuzz is already expanded
+  \@@magyar@az@set\vfuzz\hbox$% \vfuzz is already expanded
 }
 
 %** Changes spaces (catcode 10) to catcode 12.
@@ -902,9 +997,9 @@
 %** This is (mostly) written by David Carlisle.
 %** @expands to `z' or nothing (last char of definite article)
 \def\@@magyar@aznospace#1{%
-  \if\noexpand#15z% Dat: emit `az 5'
+  \if5\noexpand#1z% Dat: emit `az 5'
     \@@magyar@swaprelax\@@magyar@ignorehbox@pre
-  \else\if\noexpand#11%
+  \else\if1\noexpand#1%
     % Dat: properly handle `az 1001 éjszaka', `az 1234567 éves bolygó'
     \@@magyar@swaprelax\@@magyar@eatddd@pre
   \else\ifnum1<1\noexpand#1 % a different digit, emit `a '
@@ -917,7 +1012,7 @@
 }
 
 %** @expands to `z' or nothing (last char of definite article)
-\def\@@magyar@az#1\hbox#2${% by pts
+\def\@@magyar@az@set#1\hbox#2${% by pts
   % ^^^ Dat: we have `$' instead of `!' because of catcode changes
   %%\def\reserved@a{\@@magyar@unspace#1 }\show\reserved@a
   \edef\reserved@a{\@@magyar@unspace#1 }%
@@ -925,7 +1020,7 @@
   \expandafter\@@magyar@aznospace\reserved@a[b][][]\hbox% Dat: [b][][] is a smart sentinel
 }
 
-% --- Labels
+% --- Labels !! make it modular
 
 % vvv commented out by pts@fazekas.hu at Fri Aug  1 01:24:59 CEST 2003
 % [pts] Code commented out causes the strange `Package hyperref Warning: No
@@ -956,6 +1051,10 @@
   % Now output \hunnewlabel: similar to \newlabel{sectionStructNr}{pageNr},
   % but roman numbers are converted to arabic, so \aref and \apageref work.
   \begingroup
+    % vvv We mustn't wait \shipout for \@currentlabel, but we should for
+    % \thepage, in case of \pagenumbering{roman}. But its effect is immediate,
+    % (42 -> xlii), only \c@page might be incorrect.
+    \edef\reserved@a{{\@currentlabel}{\thepage}}%
     % Now \@currentlabel is something like
     % `\csname p@subsubsection\endcsname \csname thesubsubsection\endcsname'
     % \p@subsubsection is usually empty, and \thesubsubsection begins with
@@ -968,29 +1067,37 @@
     \let\@roman\@arabic% Dat: latex.ltx defines \def\@arabic#1{\number #1}
     \let\@Roman\@arabic
     \let\protect\@unexpandable@protect % so \H and other accents won't expand in the section title
-    \edef\@tempb{\@currentlabel}%
-    % Converting the page number (\thepage) is trickier than a simple \edef,
-    % because \@roman\c@page has to be converted to \noexpand\number\c@page,
-    % so \protected@write will expand it to \number\c@page, and a whatsit
-    % node will be created, and \number\c@page will be expanded to 42 when
-    % the page is shipped out to the DVI. Luckily \@alph and \@Alph don't
-    % contain \number. Also note that \rommanumeral, \@roman and \@Roman has
-    % already been redefined.
-    %   We don't want to say `\let\thepage\relax' here, because we want to
-    % expand the _formatting_ of \thepage, but not the number.
-    \def\number{\noexpand\noexpand\noexpand\number}%
-    \def\@arabic##1{\noexpand\noexpand\noexpand\number##1}% Dat: macro expansion eats a brace; no space in latex.ltx
-    \def\@alph{\noexpand\noexpand\noexpand\@alph}%
-    \def\@Alph{\noexpand\noexpand\noexpand\@Alph}%
-    \def\@huordinal{\noexpand\noexpand\noexpand\@huordinal}%
-    \def\@Huordinal{\noexpand\noexpand\noexpand\@Huordinal}%
-    \def\@hunumeral{\noexpand\noexpand\noexpand\@hunumeral}%
-    \def\@Hunumeral{\noexpand\noexpand\noexpand\@Hunumeral}%
-    % !! \@auxout: define \hunnewlabel if missing (removing babel)
-    \edef\@tempb##1{\noexpand\protected@write\@auxout{}{%
-      \string\hunnewlabel{##1}{{\@tempb}{\thepage}}%
-    }}%
-  \expandafter\endgroup\@tempb{#1}% clever hack to pass arg unexpanded
+    \edef\reserved@b{\@currentlabel}%
+    \edef\reserved@c{{\@currentlabel}{\thepage}}% arabic instead of roman
+    \ifx\reserved@a\reserved@c
+      \let\reserved@b\@gobble
+    \else
+      % Emit \hunnewlabel only if \@currentlabel or \thepage contained roman
+      % numbers.
+      %
+      % Converting the page number (\thepage) is trickier than a simple \edef,
+      % because \@roman\c@page has to be converted to \noexpand\number\c@page,
+      % so \protected@write will expand it to \number\c@page, and a whatsit
+      % node will be created, and \number\c@page will be expanded to 42 when
+      % the page is shipped out to the DVI. Luckily \@alph and \@Alph don't
+      % contain \number. Also note that \rommanumeral, \@roman and \@Roman has
+      % already been redefined.
+      %   We don't want to say `\let\thepage\relax' here, because we want to
+      % expand the _formatting_ of \thepage, but not the number.
+      \def\number{\noexpand\noexpand\noexpand\number}%
+      \let\romannumeral\number
+      \def\@arabic##1{\noexpand\noexpand\noexpand\number##1}% Dat: macro expansion eats a brace; no space in latex.ltx
+      \def\@alph{\noexpand\noexpand\noexpand\@alph}%
+      \def\@Alph{\noexpand\noexpand\noexpand\@Alph}%
+      \def\@huordinal{\noexpand\noexpand\noexpand\@huordinal}%
+      \def\@Huordinal{\noexpand\noexpand\noexpand\@Huordinal}%
+      \def\@hunumeral{\noexpand\noexpand\noexpand\@hunumeral}%
+      \def\@Hunumeral{\noexpand\noexpand\noexpand\@Hunumeral}%
+      \edef\reserved@b##1{\noexpand\protected@write\@auxout{}{%
+	\string\hunnewlabel{##1}{{\reserved@b}{\thepage}}%
+      }}%
+    \fi
+  \expandafter\endgroup\reserved@b{#1}% clever hack to pass arg unexpanded
 }%
 
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
@@ -1051,6 +1158,7 @@
   \def\figurename{\'abra}%
   \def\chaptername{fejezet}%
   \def\tablename{t\'abl\'azat}%
+  \def\notesname{Jegyzetek}% endnotes.sty
   \def\partname{r\'esz}%
   \def\pagename{oldal}%
   \def\seename{l\'asd}%
@@ -1084,7 +1192,9 @@
 
 % --- dottedtocline=
 
-\if\magyar@opt@@dottedtocline1\fi
+\if0\magyar@opt@@dottedtocline1\@@magyar@skiplong\fi
+  % Dat: It is quite safe to re-defined \@dottedtocline, because it isn't
+  % redefined in standard packages of teTeX 1.
   %** Overrides latex.ltx. Allows the page number extend beyond \@pnumwidth.
   \def\@dottedtocline#1#2#3#4#5{%
     \ifnum #1>\c@tocdepth \else
@@ -1101,7 +1211,7 @@
           mu$}\hfill
        \nobreak
        \setbox\@tempboxa\hbox{\normalfont \normalcolor #5}% ****pts****
-       \ifdim\wd\@tempboxa<\@pnumwidth\setbox\@tempboxa\hb@xt@\@pnumwidth{\hfil\box\@tempboxa}\fi
+       \ifdim\wd\@tempboxa<\@pnumwidth\setbox\@tempboxa\hb@xt@\@pnumwidth{\hfil\unhbox\@tempboxa}\fi
        \box\@tempboxa
        \par}%
     \fi}
@@ -1147,13 +1257,13 @@
   % We don't emit the two dots of `1. táblázat.' here, because
   % has already been emitted by \fnum@table etc.
   % We apply some formatting depending on the longcaption= option.
-  % Dat: Gyurgyák, p95. says: `11. ábra. Hajtási változatok.
+  % Dat: Gyurgyák, p95. says: `11. ábra. Hajtási változatok.'
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@makecaption
     %** @param #1 \fnum@table or \fnum@figure
     \def\@makecaption#1#2{%
       \vskip\abovecaptionskip
-      \sbox\@tempboxa{#1.\ #2}% Dat: `: ' changed to `. '
+      \sbox\@tempboxa{#1.\ #2}% Dat: `: ' changed to `. ' to match Hungarian typography
       \ifdim \wd\@tempboxa >\hsize
         {\magyar@caption@centering #1.\magyar@caption@newline #2\csname par\endcsname}%
       \else
@@ -1164,14 +1274,88 @@
   \@gobble
 {^}%
 
+% --- labelenums=
+
+\if0\magyar@opt@@labelenums \@@magyar@skiplong\fi
+  \providecommand\@greekalph[1]{\relax\ifcase#1\or$\alpha$\or$\beta$\or$\gamma$\or$\delta$%
+    \or$\varepsilon$\or$\zeta$\or$\eta$\or$\vartheta$\or$\iota$\or$\kappa$%
+    \or$\lambda$\or$\mu$\or$\nu$\or$\xi$\or$\varphi$\or$\varpi$\or$\varrho$%
+    \or$\varsigma$\or$\tau$\or$\upsilon$\or$\chi$\or$\psi$\or$\omega$%
+    \else\@ctrerr\fi}
+  \def\theenumi{\@Roman\c@enumi}       \def\labelenumi{\theenumi.}
+  \def\theenumii{\@arabic\c@enumii}    \def\labelenumii{\theenumii.}
+  \expandafter\ifx\csname c@enumv\endcsname\relax
+    \@definecounter{enumv}% call this before \def\theenumv
+  \fi
+  \if1\magyar@opt@@labelenums % hu-a
+    \def\theenumiii{\@alph\c@enumiii}    \def\labelenumiii{\itshape\theenumiii)}
+    \def\theenumiv{\@greekalph\c@enumiv} \def\labelenumiv{\itshape\theenumiv)}
+    \def\theenumv{\@Alph\c@enumv}        \def\labelenumv {\itshape\theenumv)}
+  \else% hu-A
+    \def\theenumiii{\@Alph\c@enumiii}    \def\labelenumiii{\itshape\theenumiii)}
+    \def\theenumiv{\@alph\c@enumiv}      \def\labelenumiv{\itshape\theenumiv)}
+    \def\theenumv{\@greekalph\c@enumv}   \def\labelenumv {\itshape\theenumv)}
+  \fi
+  \def\reserved@a{% copied from latex.ltx
+    \ifnum \@enumdepth >\thr@@\@toodeep\else
+      \advance\@enumdepth\@ne
+      \edef\@enumctr{enum\romannumeral\the\@enumdepth}%
+	\expandafter\list
+	  \csname label\@enumctr\endcsname
+	  {\usecounter\@enumctr\def\makelabel##1{\hss\llap{##1}}}%
+    \fi}
+  \ifx\reserved@a\enumerate
+    \def\enumerate{% no \@enumdepth>3
+      \advance\@enumdepth\@ne
+      \expandafter\ifx\csname labelenum\romannumeral\the\@enumdepth\endcsname\relax
+        \@toodeep\advance\@enumdepth\m@ne\else
+	\edef\@enumctr{enum\romannumeral\the\@enumdepth}%
+	  \expandafter\list
+	    \csname label\@enumctr\endcsname
+	    {\usecounter\@enumctr\def\makelabel##1{\hss\llap{##1}}}%
+      \fi}
+  \fi
+  \@gobble
+{^}%
+
+% --- labelitems=
+
+\if0\magyar@opt@@labelitems \@@magyar@skiplong\fi
+  \def\labelitemi{\textendash}
+  \def\labelitemii{\raise2.5pt\hbox{\scriptsize\textbullet}}
+  \def\labelitemiii{\raise2.5pt\hbox{$\scriptstyle\circ$}}
+  \def\labelitemiv{\raise2.5pt\hbox{\scriptsize\textasteriskcentered}}
+  \def\labelitemv{\raise2.5pt\hbox{\scriptsize\textperiodcentered}}
+  \def\reserved@a{% copied from latex.ltx
+    \ifnum \@itemdepth >\thr@@\@toodeep\else
+      \advance\@itemdepth\@ne
+      \edef\@itemitem{labelitem\romannumeral\the\@itemdepth}%
+      \expandafter\list
+	\csname\@itemitem\endcsname
+	{\def\makelabel##1{\hss\llap{##1}}}%
+    \fi}
+  \ifx\reserved@a\itemize
+    \def\itemize{% no \@itemdepth>3
+      \advance\@itemdepth\@ne
+      \expandafter\ifx\csname labelitem\romannumeral\the\@itemdepth\endcsname\relax
+        \@toodeep\advance\@enumdepth\m@ne\else
+	\edef\@itemitem{labelitem\romannumeral\the\@itemdepth}%
+	\expandafter\list
+	  \csname\@itemitem\endcsname
+	  {\def\makelabel##1{\hss\llap{##1}}}%
+      \fi}
+  \fi
+  \@gobble
+{^}%
+
 % --- postpara= and postsubpara=
 
 \expandafter\ifx\csname magyar@opt@@paragraphs\endcsname\relax\@@magyar@skiplong\fi
   % Dat: We make sure that hspaces emitted by \magyar@post@... are unstretchable
   \def\magyar@post@dot{.\enskip}%
   \def\magyar@post@bfdot{\textbf.\enskip}%
-  \let\magyar@post@quad\quad
-  \let\magyar@post@enskip\enskip
+  \let\magyar@post@quad\quad% not recommended in Hungarian
+  \let\magyar@post@enskip\enskip% not recommended in Hungarian
   \def\magyar@post@em{\hskip1em\relax}%
   \let\magyar@post@empty\@empty
   %** from Gyurgy\'ak J\'anos: Szerkeszt\H{o}k \'es szerz\H{o}k k\'ezik\"onyve.
@@ -1181,6 +1365,8 @@
     %{\usefont{U}{msa}{m}{n}\small\char7}
   }
   \def\magyar@post@star{\enskip${}^*$\enskip}%
+  \def\magyar@post@endash{ -- }%
+  \def\magyar@post@semicolon{:\enskip}%
   \def\magyar@first#1#2\vfuzz{\noexpand#1}%
   %** Calls \magyar@pf@lowb, and never emits code resulting from #3 to TOC
   %** @param #1 empty or `*'
@@ -1231,12 +1417,25 @@
   \expandafter\ifx\csname magyar@opt@@postpara\endcsname\relax\else
     \expandafter\magyar@paragraphfix\expandafter\paragraph\paragraph\vfuzz
     \expandafter\let\expandafter\magyar@post@paragraph\csname magyar@post@\magyar@opt@@postpara\endcsname
+    \ifx\magyar@post@paragraph\relax
+      \@@magyar@error{Invalid arg for option: postpara = \magyar@opt@@postpara}%
+    \fi
   \fi
   \expandafter\ifx\csname magyar@opt@@postsubpara\endcsname\relax\else
     \expandafter\magyar@paragraphfix\expandafter\subparagraph\subparagraph\vfuzz
     \expandafter\let\expandafter\magyar@post@subparagraph\csname magyar@post@\magyar@opt@@postsubpara\endcsname
+    \ifx\magyar@post@subparagraph\relax
+      \@@magyar@error{Invalid arg for option: postsubpara = \magyar@opt@@postsubpara}%
+    \fi
   \fi
-  % Imp: error if \magyar@post@*paragraph is \relax (undefined)
+  \expandafter\ifx\csname magyar@opt@@postdescription\endcsname\relax\else
+    \expandafter\let\expandafter\magyar@post@description\csname magyar@post@\magyar@opt@@postdescription\endcsname
+    \ifx\magyar@post@description\relax
+      \@@magyar@error{Invalid arg for option: postdescription = \magyar@opt@@postdescription}%
+    \fi
+    \def\magyar@@descriptionfont{\normalfont\bfseries}%
+    \def\descriptionlabel#1{\hskip\labelsep{\magyar@@descriptionfont#1}\magyar@post@description\hskip-\labelsep}%
+  \fi
   \@gobble
 {^}%
 
@@ -1255,14 +1454,29 @@
     }%
   \fi
   \@gobble
-{^}%
+{^}
 
 % --- default \frenchspacing; =frenchspacing
 
-\ifnum\magyar@opt@@frenchspacing>0
-  \expandafter\addto\csname   extras\CurrentOption\endcsname{\bbl@frenchspacing}
-  \expandafter\addto\csname noextras\CurrentOption\endcsname{\bbl@nonfrenchspacing}
-\fi
+\if0\magyar@opt@@frenchspacing \@@magyar@skiplong\fi
+  \if1\magyar@opt@@frenchspacing% =no
+    \def\@@magyar@antifrenchspacing{% only does some caching
+      \ifnum\the\sfcode`\.=\@m
+	\nonfrenchspacing
+	\let\@@magyar@nonfrenchspacing\frenchspacing
+      \else
+	\let\@@magyar@nonfrenchspacing\relax
+      \fi}
+    \let\@@magyar@@nonantifrenchspacing\frenchspacing
+    \expandafter\addto\csname   extras\CurrentOption\endcsname{\@@magyar@antifrenchspacing}
+    \expandafter\addto\csname noextras\CurrentOption\endcsname{\@@magyar@nonantifrenchspacing}
+  \else
+    \expandafter\addto\csname   extras\CurrentOption\endcsname{\bbl@frenchspacing}
+    \expandafter\addto\csname noextras\CurrentOption\endcsname{\bbl@nonfrenchspacing}
+  \fi
+  \@gobble
+{^}
+
 
 % --- Putting dots after section number in \section; sectiondot=
 
@@ -1378,7 +1592,7 @@
   \@gobble
 {^}%
 
-% --- Fixup Babel language selection glitches (=toclang)
+% --- Fixup Babel language selection glitches; toclang=
 
 % There is a fundamental problem of emitting \select@language items in LOT
 % files. When using \begin{table}...\end{table} \selectlanguage{foo}
@@ -1405,7 +1619,7 @@
     % then most packages will use 12 as \catcode\string``, which is intended.
     \expandafter\gdef\expandafter\@preamblecmds\expandafter{\@preamblecmds
       \select@language{\languagename}% force initial language
-      \@@magyar@psheadings% !! don't put inside toclang
+      \@@magyar@psheadings% !! don't put inside toclang=
     }%
     % Solve problem (1) and assist solving problem (2) by not emitting
     % \select@language twice.
@@ -1464,7 +1678,7 @@
   \@gobble
 {^}%
 
-% --- =suggestions
+% --- suggestions=
 
 \ifnum\magyar@opt@@suggestions=0 \@@magyar@skiplong\fi
   \expandafter\ifx\csname magyar@nopatterns\endcsname\relax\else
@@ -1511,15 +1725,22 @@
       please move it before \string\usepackage[#1]{babel}}%
     \fi
   }%
+  \def\magyar@sugg@ap#1{%
+    \expandafter\ifx\csname opt@#1.ldf.sty\endcsname\relax\else
+      \PackageWarningNoLine{#1.ldf}{No effect of \@backslashchar PassOptionsToPackage{?}{#1.ldf}\MessageBreak
+      please move it before \string\usepackage[#1]{babel}}%
+    \fi
+  }%
   \edef\reserved@a{\noexpand\AtBeginDocument{%
     \noexpand\magyar@sugg@af{\CurrentOption}%
+    \noexpand\magyar@sugg@ap{\CurrentOption}%
     \noexpand\magyar@sugg@t1{\CurrentOption}%
     \noexpand\magyar@sugg@ie{\CurrentOption}%
   }}\reserved@a
   \@gobble
 {^}%
 
-% --- Active characters and shorthands
+% --- Active characters and shorthands; active=, activeprefix=
 
 \ifnum0=\magyar@opt@@activespace\magyar@opt@@active\space
   \def\@@magyar@declare@shorthandx#1#2{%
@@ -1607,10 +1828,11 @@
 
 \ifnum\magyar@opt@@activespace=0 \@@magyar@skiplong\fi
   %** @param #1 any of : ; ! ?
-  \def\magyar@thinspaced#1{
+  \def\magyar@thinspaced#1{%
     % Dat: `!' at the end of the word is OK, but at the beginning it makes the
-    % word unhyphenatable.
-    \ifhmode
+    %      word unhyphenatable. Imp: maybe \nobreak\hskip\z@skip?
+    % Dat: this is math-mode safe, because \ifhmode is false in math mode 
+    \ifhmode% \ifhmode and \ifmmode are never true
       \ifdim\lastskip>\z@
         \unskip\penalty\@M\kern.1em% \thinspace is .16667em
       \else
@@ -1623,7 +1845,11 @@
   \magyar@activate@char;\magyar@opt@@activespace
   \declare@shorthand{\CurrentOption}{;}{\magyar@thinspaced;}
   \magyar@activate@char!\magyar@opt@@activespace
-  \declare@shorthand{\CurrentOption}{!}{\magyar@thinspaced!}
+  \declare@shorthand{\CurrentOption}{!}{%
+    \ifmmode
+      \expandafter\ifx\csname factorial\endcsname\relax\mathchar"5021 \else\factorial\fi
+    \else\magyar@thinspaced!\fi}
+  % ^^^ compatibility with nath.sty
   \magyar@activate@char?\magyar@opt@@activespace
   \declare@shorthand{\CurrentOption}{?}{\magyar@thinspaced?}
   \magyar@activate@char:\magyar@opt@@activespace
@@ -1645,35 +1871,39 @@
     \expandafter\magyar@activate@char\magyar@opt@@activeprefix\magyar@opt@@active
   \fi
   %
-  \ifnum\magyar@opt@@openqq>1
+  \ifnum\magyar@opt@@openqq>1 % =down
     % Same as in in ukraineb.ldf
     \@@magyar@declare@shorthandx`{\glqq}% down 99
     \@@magyar@declare@shorthandx'{\grqq}% up 66
-  \else\ifnum\magyar@opt@@openqq>0
+  \else\ifnum\magyar@opt@@openqq>0 % =up
     \@@magyar@declare@shorthandx`{\grqq}% up 66
     \@@magyar@declare@shorthandx'{\glqq}% down 99
   \else
     \dMf @@magyar@shorthand@\string` {\string`\string`}% unchanged -- expect a ligature in font
+    \dMf @@magyar@shorthand@\string' {\string`\string'}% unchanged -- expect a ligature in font
   \fi\fi
   %
   %** A hyphen, but hyphenation is OK at both sides
   %** reported and asked by Józsa Márton <jozsineni@freemail.hu>
   \@@magyar@declare@shorthandx ={\leavevmode\nobreak-\hskip\z@skip}
+  % ^^^ Dat: no need for \nobreak\hskip\z@skip, because of the empty discretionary
   %** \shu?-- typesets an endash (--) with a small space around it (the one to
   %** the right is breakable). \shu?- typesets a normal hyphen, having
   %** hyphenation OK at both sides.
   %** @example Kiss Elõd\shu?--Nagy Pál
   %** @example közgazdaság\shu?-tudományi
   \def\@@magyar@shorthandminus{%
-    \if-\noexpand\@Lang@tmp \leavevmode\nobreak\,\nobreak\hbox{--}\,\expandafter\@gobble
-    \else                   \leavevmode\nobreak-\hskip\z@skip
+    \ifmmode \mskip2.4mu plus3.6mu minus1.8mu \else
+      \if-\noexpand\@Lang@tmp \leavevmode\nobreak\,\nobreak\hbox{--}\,\expandafter\expandafter\expandafter\@gobble% Dat: \@gobble -
+      \else                   \leavevmode\nobreak-\hskip\z@skip\fi
     \fi
   }
   \@@magyar@declare@shorthandx -{\futurelet\@Lang@tmp\@@magyar@shorthandminus}%
   %** A hyphen that is displayed in both next and current lines. Hyphenation
   %** is OK at both sides. This differs from ukraineb.ldf.
   %** \showhyphens{nátrium`|klorid} -> nát-ri-um--klo-rid
-  \@@magyar@declare@shorthandx |{\nobreak-\discretionary{}{-}{}\bbl@allowhyphens}
+  \@@magyar@declare@shorthandx |{\leavevmode\nobreak-\discretionary{}{-}{}\nobreak\hskip\z@skip}
+  \@@magyar@declare@shorthandx _{\leavevmode\nobreak\-\nobreak\hskip\z@skip}
   \@@magyar@declare@shorthandx <{\flqq}
   \@@magyar@declare@shorthandx >{\frqq}
   \@@magyar@declare@shorthandx "{\hskip\z@skip}% \allowbreak, but hyphenation is OK at both sides
@@ -1896,17 +2126,6 @@
 {^}%
 
 % --- Appending suffixes to numbers; told=
-
-% !! \aref-{bar}es tétel; \apageref-{foo}edik oldalon
-% !! should \told insert \, ?? (no, only \told*??)
-% !! \told45{-ed-hez} ??
-% !! \told{45}-ed-hez ??
-% !! \told45\od\hoz \told45+\od\hoz
-% !! \told45+adik+val +ad+val etc.
-% !! \azhuphy
-% !! \huphy{-3331234.5678pF^{-1}} -> $-$3\,331\,234,5678\,pF^{-1}
-% !! \huphy if non-Hungarian is the lang {,}->{.}
-% !! \huphy ifmmode?
 
 \ifnum\magyar@opt@@told=0 \@@magyar@skiplong\fi
 % Dat: double accent combinations: +adik,+a,+as,+ad  +hoz,+an,+on,+at,+ban...
@@ -2252,7 +2471,8 @@
 \def\@@magyar@firsthfuzz#1#2\hfuzz{#1}
 \def\@@magyar@secondhfuzz#1#2#3\hfuzz{#2}
 %** @param #1 a single citation reference (no commas)
-\def\@@magyar@zerocite#1{%
+\def\@@magyar@zerocite#1{\@@magyar@zerocite@low#1,\hbox$}% keep only first cited material
+\def\@@magyar@zerocite@low#1,#2\hbox${%
   \expandafter\ifx\csname b@#1\endcsname\relax0\else
     \csname b@#1\endcsname
   \fi
@@ -2262,6 +2482,7 @@
     \expandafter\expandafter\expandafter\@@magyar@firsthfuzz\csname r@#1\endcsname00\hfuzz
   \fi
 }%
+\def\@@magyar@zeroeqref#1{(\@@magyar@zeroref{#1})}%
 \def\@@magyar@zerorefplus#1{\@@magyar@zerorefplus@low#1+\vfuzz}
 \def\@@magyar@zerorefplus@low#1+#2\vfuzz{%
   \expandafter\ifx\csname r@#1\endcsname\relax0\else
@@ -2322,7 +2543,8 @@
   \let \ref\relax \let \pageref\relax \let \cite\relax % all unexpandable, even for \@@magyar@the
   \let\aref\relax \let\apageref\relax \let\acite\relax
   \let\Aref\relax \let\Apageref\relax \let\Acite\relax
-  \set@display@protect% doesn't seem to screw up \r
+  %\set@display@protect% \string. Why?? doesn't seem to screw up \r
+  \set@typeset@protect% \relax.
   \edef\reserved@c{#1-}%
   \edef\reserved@c{\def\noexpand\reserved@c{\expandafter\@@magyar@the\reserved@c\@empty}}% `\expandafter' is here so `the' and `number' take place
   %
@@ -2337,7 +2559,7 @@
   \if0#2\else
     #2% a or A
     % vvv Dat: we do \az with \romannumeral changed to \number
-    \expandafter\@@magyar@az\expandafter{\reserved@a}\hbox$~%
+    \expandafter\@@magyar@az@set\expandafter{\reserved@a}\hbox$~%
   \fi
   \edef\reserved@a{\noexpand\reserved@c\def\noexpand\reserved@a{\reserved@a}}%
   %
@@ -2410,12 +2632,12 @@
    21-\'en\or 22-\'en\or 23-\'an\or 24-\'en\or 25-\'en\or
    26-\'an\or 27-\'en\or 28-\'an\or 29-\'en\or 30-\'an\or
    31-\'en\fi}
-  \edef\reserved@a{%
-    \noexpand\addto\expandafter\noexpand\csname extras\CurrentOption\endcsname{%
-    \noexpand\babel@save\noexpand\ontoday
-    \let\noexpand\ontoday\expandafter\noexpand\csname ondate\CurrentOption\endcsname}
-  }
-  \reserved@a
+\edef\reserved@a{%
+  \noexpand\addto\expandafter\noexpand\csname extras\CurrentOption\endcsname{%
+  \noexpand\babel@save\noexpand\ontoday
+  \let\noexpand\ontoday\expandafter\noexpand\csname ondate\CurrentOption\endcsname}
+}
+\reserved@a
 \@gobble
 {^}%
 
@@ -2781,7 +3003,8 @@
       \ifx\vfuzz#1\vfuzz            \expandafter\noexpand\csname @@magyar@date@#2\endcsname\reserved@a
       \else \noexpand\@@magyar@told{\expandafter\noexpand\csname @@magyar@date@#2\endcsname\reserved@a}+#1{}\fi
     }%
-    %%\show\reserved@a% \told {\@@magyar@date@g {1848}{3}{15}}+e{}
+    %%\show~
+    %\show\reserved@a% \told {\@@magyar@date@g {1848}{3}{15}}+e{}
     \reserved@a
   \endgroup
 }
@@ -2815,7 +3038,546 @@
   \@gobble
 {^}%
 
-% --- \documentclass-specific modifications; =classmod
+% --- footnote=
+
+\if0\magyar@opt@@footnote \@@magyar@skiplong\fi
+  %** Overrides latex.ltx. Expand old contents of \cl@#2 only once.
+  \def\@addtoreset#1#2{%
+    \begingroup
+      \edef\reserved@a{\noexpand\@elt{#1}}%
+      \expandafter\magyar@fo@consra\csname cl@#2\endcsname\gdef
+    \endgroup
+  }
+  %** Similar to \@cons in latex.ltx
+  %** Appends first-level expansion of \reserved@a
+  %** @param #1 a \cs
+  %** @param #2 \def or \gdef
+  \def\magyar@fo@consra{\expandafter\magyar@fo@cons\expandafter{\reserved@a}}%
+  %** @param #1 tokens to append
+  %** @param #2 a \cs
+  %** @param #3 \def or \gdef
+  \def\magyar@fo@cons#1#2#3{\expandafter#3\expandafter#2\expandafter{#2#1}}%
+
+  \newcounter{footnote@add}
+  %** Number of times footnote numbering has been reset
+  \newcounter{footnote@ch}
+
+  \def\magyar@fo@pickzero#1#2#3\hfuzz#4{%
+    \ifx\relax#1\else \def#4{{#1}{#2}}\fi% pick {#1}{#2}
+  }
+  %** Dat: footnotes inside \begin{minipage} are not affected -- intentionally.
+  %** Will be called by \stepcounter{...} after `\advance\c@footnote1'
+  \def\magyar@fo@resetzero@afterpage{%
+    \begingroup
+    \@tempcnta\c@footnote@add
+    \advance\@tempcnta\c@footnote
+    \let\reserved@a\@empty% default
+    % Dat: we ignore \@roman etc. in \thefootnote
+    \expandafter\expandafter\expandafter\magyar@fo@pickzero\csname r@footnote&\the\c@footnote@ch&\the\@tempcnta\endcsname00\hfuzz\reserved@a% this footnote
+    \ifx\reserved@a\@empty \G@refundefinedtrue\fi
+    %
+    \def\magyar@fo@@prevfn{-}% default
+    \advance\@tempcnta\m@ne
+    \expandafter\expandafter\expandafter\magyar@fo@pickzero\csname r@footnote&\the\c@footnote@ch&\the\@tempcnta\endcsname00\hfuzz\magyar@fo@@prevfn% previous footnote
+    \advance\@tempcnta\@ne
+    %
+    \ifx\reserved@a\magyar@fo@@prevfn\else
+      % Restart footnote numbering (from 1) if \label is missing for previous
+      % footnote, or \label reports that prev and this footnotes aren't on the
+      % same page.
+      \global\advance\c@footnote@add\c@footnote
+      \global\advance\c@footnote@add\m@ne
+      \global\c@footnote\@ne
+    \fi
+    \def\@currentlabel{\noexpand\number\c@page}%
+    % ^^^ Dat: \noexpand is here to make \number\c@page expanded during \shipout
+    \ifx\@listdepth\@mplistdepth% inside \begin{minipage}
+      % vvv Dat: expand \thepage both early (minipage) and late (real page)
+      \edef\@currentlabel{\@currentlabel-\thepage}%
+    \fi
+    \edef\reserved@a{\noexpand\label{footnote&\the\c@footnote@ch&\the\@tempcnta}}%
+    % ^^^ Dat: the \label command above produces correct warning (LaTeX
+    %     Warning: Label(s) may have changed. Rerun to get cross-references
+    %     right.), and it also produces `LaTeX Warning: There were undefined
+    %     references.' in case a footnote is removed or changed, and also for
+    %     the very first run. Fine.
+    \reserved@a
+    \endgroup
+  }  
+
+  \let\magyar@fo@resetzero\relax
+
+  %\magyar@fo@cons{XY}\cl@footnote\gdef
+  \magyar@fo@cons{\magyar@fo@resetzero}\cl@footnote\gdef
+
+  %\def\magyar@fo@resetadd{%
+  %  \global\advance\c@footnote\c@footnote@add
+  %  \global\c@footnote@add\z@
+  %}
+  \def\magyar@fo@aftergrouprelax#1{%
+    \ifx#1\relax\else
+      \aftergroup#1%
+      \expandafter\magyar@fo@aftergrouprelax
+    \fi
+  }
+
+  \def\magyar@fo@mtostar#1{%
+    \if#1m%
+      *\expandafter\magyar@fo@mtostar
+    \fi
+  }
+  %** Producing `m's based on the idea of David Kastrup.
+  %** The default `*' character is in raised position, and we also move it to
+  %** \@textsuperscript, so it will be double raised. But never mind.
+  \def\magyar@fo@thefootnote@stars{\expandafter\magyar@fo@mtostar\romannumeral\number\c@footnote000 A}%
+  \def\magyar@fo@thefootnote@starsspmax{\ifcase\c@footnote\or*\or**\or***\or\dag\or\dag\dag\or\dag\dag\dag\else*\the\c@footnote\fi}%
+  \def\magyar@fo@thefootnote@arabic{\@arabic\c@footnote}
+  \def\magyar@fo@thempfootnote@stars{\expandafter\magyar@fo@mtostar\romannumeral\number\c@mpfootnote000 A}%
+  \def\magyar@fo@thempfootnote@starsspmax{\ifcase\c@mpfootnote\or*\or**\or***\or\dag\or\dag\dag\or\dag\dag\dag\else*\the\c@mpfootnote\fi}%
+  \def\magyar@fo@thempfootnote@arabic{\@arabic\c@mpfootnote}
+
+  % !! indent=article must work within \maketitle for article.cls etc.
+
+  %** Coped from article.cls
+  %** Has #1, but partially applied here
+  \def\magyar@fo@indent@articlesp{%
+    \parindent1em % SUXX: impossible to acquire default value
+    % Dat: don't use \@makefnmark here, because it puts the footnote mark
+    %      only to the main text
+    \noindent\hb@xt@1.8em{\hss\@textsuperscript{\normalfont\@thefnmark\,}}%
+  }
+  %** Same as \@makefntext in article.cls
+  %** Has #1, but partially applied here
+  \def\magyar@fo@indent@articlenosp{%
+    \parindent1em % SUXX: impossible to acquire default value
+    % Dat: don't use \@makefnmark here, because it puts the footnote mark
+    %      only to the main text
+    \noindent\hb@xt@1.8em{\hss\@textsuperscript{\normalfont\@thefnmark}}%
+  }
+  \def\magyar@fo@indent@dimensetup{%
+    \parindent1em % SUXX: impossible to acquire default value
+    %\advance\leftskip1.8em % SUXX: impossible to acquire default value
+    \leftskip\leftmargini % SUXX: impossible to acquire default value
+  }
+  %** Has #1, but partially applied here
+  \def\magyar@fo@indent@hulist{%
+    % Dat: superscript is emitted by \@makefnmark
+    % Dat: \parindent doesn't apply for the 1st par of the footnote
+    \magyar@fo@indent@dimensetup
+    \ifvmode\noindent\hb@xt@\z@\else\hbox\fi
+    % ^^^ \usepackage[para]{footmisc} emits footnotes in horizontal mode
+      {\hss\@textsuperscript{\normalfont\@thefnmark\,}}%
+  }
+
+  %** Limit the size of the footnote mark (in main text) to \normalsize.
+  %** Overrides latex.ltx
+  \def\magyar@fo@makefnmark{%
+    \hbox{% has \begingroup
+      \edef\reserved@a{\f@size}%
+      {\normalsize\edef\reserved@b{\def\noexpand\reserved@b{\f@size}}\expandafter}\reserved@b
+      \ifdim\reserved@a pt>\reserved@b pt
+           %\normalsize\@textsuperscript{\normalfont\footnotesize\@thefnmark}% Dat: would place index too low
+           \@textsuperscript{\normalfont\scriptsize\@thefnmark}%
+      \else\@textsuperscript{\normalfont\@thefnmark}\fi
+    }%
+  }
+  \let\magyar@fo@@cont@number\@empty
+  \def\magyar@fo@savecont{\global\edef\magyar@fo@@cont@number{\global\c@footnote\the\c@footnote\space}}
+
+  %** \footnoterule, as defined in latex.ltx
+  \def\magyar@fo@defaultrule{\kern-3\p@
+    \hrule \@width 2in \kern 2.6\p@} % the \hrule is .4pt high
+  \def\magyar@fo@fourthrule{\kern-3\p@%\hrule\hrule\hrule
+    \hrule \@width .25\textwidth \kern 2.6\p@} % the \hrule is .4pt high
+  \def\magyar@fo@onelinerule{%
+    \unskip% undo \vskip\skip\footins
+    {\normalsize% Dat: \normalfont is superfluous
+      \vskip1\baselineskip plus.1\baselineskip minus .1\baselineskip}%
+    % ^^^ Dat: plus,minus is necessary to avoid `Overfull \vbox (8.86676pt too high)'
+  }
+  \def\magyar@fo@chooserule{\relax
+    \ifx \@listdepth\@mplistdepth \mpfootnoterule \else
+      \ifnum\split@prev=\z@ \pagefootnoterule \else \splitfootnoterule
+      \fi
+      %\show\splitfootnoterule
+      \typeout{\string\split@prev=\split@prev}%
+      \xdef\split@prev{\the\insertpenalties}%
+    \fi
+  }
+
+  % `Szerkesztõk és szerzõk kézikönyve, p. 116' says this about Hungarian
+  % footnotes. Implementation notes are marked with [...]. See better docs
+  % in magyarldf-doc.tex
+  %
+  % (1) Use numbering and/or stars (in upper index) for footnote marks.
+  %     Numbering is recommended.
+  % [1] Use \footnotestyle{mark=...}
+  % (2) You can put footnotes by the editor with a star, and footnotes by the
+  %     author with numbers.
+  % [2] Use \footnotestyle{huplain} in the preamble, and emit each editorial
+  %     footnote with {\footnotestyle{editor}\footnote{Her note.}}
+  % (3) Don't put \footnoterule if the footnote starts on current page.
+  % [3] Use \footnotestyle{rule=none}. Please make sure that the group lasts
+  %     till \shipout.
+  % (4) Put a \footnoterule (1/3\textwidth or 1/4\textwidth) if footnote is
+  %     continued from previous page.
+  % [4] Not supported. Imp: how to?      
+  % (5) Multiple short footnotes may be put into a single line.
+  % [5] \usepackage[para]{footmisc} or \usepackage{fnpara}
+  % (6) Footnotes for \begin{figure} and \begin{table} must be put just under
+  %     them, not at EOP.
+  % [6] The author should enclose the matrial in a \begin{minipage}
+  % (7) The size of the \footnotemark should not be scaled up.
+  % [7] Use \footnotestyle{marksize=max-normal}
+  % (8) It is possible to use either \parindent or \item when starting a
+  %     footnote.
+  % [8] Use \footnotestyle{indent=hulist} 
+  % (9) The footnotemark must be followed by a thin space (only at BOP).
+  % [9] OK, see \@makefntext
+  % (10) Don't emit too much stars. Recommended: * ** *** + ++ +++
+  % [10] OK, see \footnoterule{mark=stars-max}. `\dag' is emitted instead
+  %      of `+', and `*7' is emitted for the 7th footnote on the page.
+  %
+
+  \@namedef{fos@reset=none}{\let\magyar@fo@resetzero\relax}%
+  %** Similar to \@addtoreset{footnote}{section}, but isn't \global.
+  \@namedef{fos@reset=section}{%
+    \let\magyar@fo@resetzero\relax
+    \magyar@fo@cons{\@elt{footnote}}\cl@section\def
+    \magyar@fo@cons{\@elt{footnote}}\cl@chapter\def
+  }%
+  \@namedef{fos@reset=chapter}{%
+    \let\magyar@fo@resetzero\relax
+    \magyar@fo@cons{\@elt{footnote}}\cl@chapter\def
+  }%
+  %** Next footnote-mark will be `*'. The slots of `*'s of \fos@huplain
+  %** were skipped when changing back to \fos@plain. Restarts numbering from
+  %** 1 (`*'). Usually called as \footnotestyle{resume,reset=page-cont}
+  \@namedef{fos@reset=page}{%
+    \stepcounter{footnote@ch}%
+    \global\c@footnote@add\z@%
+    \global\c@footnote\z@%
+    \let\magyar@fo@resetzero\magyar@fo@resetzero@afterpage
+    %\aftergroup\magyar@fo@resetadd% switched off deliberately
+  }
+  %** editorial footnote on the same page
+  \@namedef{fos@reset=page-cont}{%
+    \aftergroup\magyar@fo@savecont
+    \fos@resume% only \aftergroup
+    \magyar@fo@@cont@number
+    \let\magyar@fo@resetzero\magyar@fo@resetzero@afterpage
+  }
+  \@namedef{fos@reset=page-resume}{%
+    \fos@resume \csname fos@reset=page\endcsname
+  }
+  %** Resume to the previous footnote number at the end of the group. (Default: don't resume)	       
+  %** \footnotestyle{resume,reset=page} is the correct order
+  \def\fos@resume{%
+    \aftergroup\global
+    \aftergroup\c@footnote
+    \expandafter\magyar@fo@aftergrouprelax\the\c@footnote\relax
+    \aftergroup\space
+    %\magyar@fo@resetadd% Dat: not needed because \magyar@fo@resetzero@afterpage won't find prev. ref
+  }
+  %
+  \@namedef{fos@indent=article-sp}{\let\@makefntext\magyar@fo@indent@articlesp}%
+  \@namedef{fos@indent=article-nosp}{\let\@makefntext\magyar@fo@indent@articlenosp}%
+  \@namedef{fos@indent=hulist}{\let\@makefntext\magyar@fo@indent@hulist}%
+  %** This is not a 100% solution, because there might be multiple iterations
+  %** of \footnoterule with different \split@prev values.
+  \@namedef{fos@rule=choose}{% ripped from footmisc.sty
+    \ifx\footnoterule\magyar@fo@chooserule
+      \let\footnoterule\magyar@fo@defaultrule
+    \fi
+    \expandafter\ifx\csname  pagefootnoterule\endcsname\relax \let \pagefootnoterule\footnoterule\fi
+    \expandafter\ifx\csname    mpfootnoterule\endcsname\relax \let   \mpfootnoterule\footnoterule\fi
+    \expandafter\ifx\csname splitfootnoterule\endcsname\relax \let\splitfootnoterule\magyar@fo@fourthrule\fi
+    \expandafter\ifx\csname split@prev\endcsname\relax \gdef\split@prev{0}\fi
+    % ^^^ Dat: \split@prev is named the same in footmisc.sty
+    \let\footnoterule\magyar@fo@chooserule
+  }
+  \@namedef{fos@rule=none}{\let\footnoterule\@empty}%
+  \@namedef{fos@rule=fourth}{\let\footnoterule\magyar@fo@fourthrule}%
+  \@namedef{fos@rule=one-line}{\let\footnoterule\magyar@fo@onelinerule}%
+  \@namedef{fos@marksize=max-normal}{\let\@makefnmark\magyar@fo@makefnmark}%
+  \@namedef{fos@mark=arabic}{\let\thefootnote\magyar@fo@thefootnote@arabic}%
+  \@namedef{fos@mark=stars}{\let\thefootnote\magyar@fo@thefootnote@stars}%
+  \@namedef{fos@mark=stars-max}{\let\thefootnote\magyar@fo@thefootnote@starsspmax}%
+  \@namedef{fos@mpmark=arabic}{\let\thempfootnote\magyar@fo@thempfootnote@arabic}%
+  \@namedef{fos@mpmark=stars}{\let\thempfootnote\magyar@fo@thempfootnote@stars}%
+  \@namedef{fos@mpmark=stars-max}{\let\thempfootnote\magyar@fo@thempfootnote@starsspmax}%
+  %\def\fos@globalmark{\expandafter\global\expandafter\let\csname the\@mpfn\endcsname\endcsname\thefootnote}
+  %\def\fos@globalmpmark{\global\let\thempfootnote\thefootnote}
+
+  \def\fos@plain{\csname fos@reset=none\endcsname\csname fos@mark=arabic\endcsname}
+  \def\fos@huplain  {\csname fos@marksize=max-normal\endcsname \csname fos@reset=none\endcsname\csname fos@mark=arabic\endcsname\csname fos@rule=none\endcsname\csname fos@indent=hulist\endcsname}
+  \def\fos@starplain{\fos@huplain\csname fos@reset=page\endcsname\csname fos@mark=stars-max\endcsname}%
+  %\def\fos@editor{\fos@resume\fos@starplain}%
+  \def\fos@editor{\fos@huplain\csname fos@reset=page-cont\endcsname\csname fos@mark=stars-max\endcsname}%
+  
+  \def\footnotestyle#1{%
+    \@for\reserved@a:=#1\do{%
+      \@ifundefined{fos@\reserved@a}{\@latex@error{Undefined footnote style: \reserved@a}\@ehc}%
+      {\csname fos@\reserved@a\endcsname}%
+    }%
+  }
+
+  \def\editorfootnote#1{\begingroup\footnotestyle{editor}%
+    \footnote{#1}\endgroup}%
+  \def\headingfootnote{%
+    \ifx\protect\@typeset@protect\expandafter\footnote
+    \else\expandafter\@gobble\fi
+    % ^^^ Dat: this test is better, because it makes magyar.ldf compatible
+    %     with nath.sty that says \def\protect{\noexpand} in its redefinition
+    %     of \addtocontents
+    %\ifx\protect\@unexpandable@protect\expandafter\@gobble
+    %\else\expandafter\footnote\fi
+  }
+
+  %** @param #1 an end-csname, example: \endfigure
+  \def\magyar@fo@mp@setup#1{%
+    \let\@footnotetext\@mpfootnotetext
+    \def\@mpfn{mpfootnote}\def\thempfn{\thempfootnote}\c@mpfootnote\z@
+    % ^^^ This line is optional, but strongly recommended. Restart numbering
+    %     for each float, and number with \thempfootnote.
+    % vvv Very tricky use of `#' in expansion.
+    % Dat: \magyar@fo@mp@show is idempotent
+    % vvv Prepend \magyat@fo@mp@show to the definition of \@makecaption
+    \expandafter\def\expandafter\@makecaption\expandafter##\expandafter1%
+      \expandafter##\expandafter2\expandafter{\expandafter\magyar@fo@mp@show%
+      \@makecaption{##1}{##2}%
+    }%
+    %%\show\@currenvir
+    % vvv Dat: this prepending has only local effect.
+    \expandafter\def\expandafter#1\expandafter{%
+      \expandafter\magyar@fo@mp@show#1}%
+    %\expandafter\magyar@fo@mp@prepend\csname\@currenvir\endcsname
+    \setbox\@mpfootins\box\voidb@x
+  }
+  \def\magyar@fo@mp@show{% ripped from latex.ltx (\endminipage)
+    \ifvoid\@mpfootins\else
+      \par\unskip \vskip\skip\@mpfootins
+      \normalcolor \footnoterule
+      \expandafter\ifx\csname mpmakefootnoteparagraph\endcsname\relax
+        \unvbox\@mpfootins
+      \else% fnpara.sty
+        \mpmakefootnoteparagraph
+      \fi
+    \fi
+  }
+
+  %** Only works if \cs of #1 doesn't have macro arguments
+  %** @example \makeFootnotable{figure}
+  %** @example \makeFootnotable{} -- current instance of current environment
+  \def\makeFootnotable#1{%
+    \if\relax#1\relax
+      \expandafter\magyar@fo@mp@setup\csname end\@currenvir\endcsname
+    \else
+      \expandafter\expandafter\expandafter\magyar@fo@makef@low
+      \expandafter\expandafter\csname #1\endcsname
+      \csname end#1\endcsname
+    \fi
+  }
+  \def\magyar@fo@makef@low#1#2{\expandafter\def\expandafter#1\expandafter{%
+    #1\magyar@fo@mp@setup#2}}%
+
+  \if2\magyar@opt@@footnote \fos@huplain\fi
+  \@gobble
+{^}
+
+% --- mathbrk=
+
+\if0\magyar@opt@@mathbrk \@@magyar@skiplong\fi
+  %** Similar to \@@magyar@fixmathcmd@low, but inserts symbol immediately.
+  %** @param #1 `\mathchar', all catcodes
+  %** @param #2 hex code
+  %** @param #3 ignored
+  %** @param #4 a \cs
+  \def\@@magyar@breakmathcmd@low#1"#2"#3\hfuzz#4{%
+    \def\reserved@a{#1}%
+    \edef\reserved@b{\string\mathchar}%
+    \ifx\reserved@a\reserved@b
+      \mathchar"#2
+      \ifnum"#2<"8000 % redundant sanity check, trueness implied by #1==\mathchar
+	\discretionary{}{\hbox{\(\mathchar"#2 \)}}{}%
+      \fi
+    \fi
+  }%
+  %** Dat: robustness is tested and works with nath.sty
+  %** @param #1 a \cs or char of a MathBin or MathRel, e.g `\prec' or `+'
+  \DeclareRobustCommand\MathBrkAll[1]{%
+    \ifcat\noexpand#1\relax
+      \expandafter\@@magyar@breakmathcmd@low\meaning#1""\hfuzz#1%
+    \else
+      \ifnum\mathcode`#1="8000
+        \expandafter\expandafter\expandafter#1% keep original meaning
+      \else
+	\mathchar\the\mathcode`#1\relax% disable \active meaning
+	\ifnum\mathcode`#1<"8000 % redundant sanity check
+	  \discretionary{}{\hbox{\(\mathchar\the\mathcode`#1\relax\)}}{}%
+	\fi
+      \fi
+    \fi
+  }
+  \let\MathBrk\relax
+  \expandafter\addto\csname extras\CurrentOption\endcsname{%
+    \babel@save\MathBrk
+    \let\MathBrk\MathBrkAll
+  }
+  \@gobble
+{^}
+
+\if2\magyar@opt@@mathbrk\else \@@magyar@skiplong\fi
+  \def\@@magyar@resetmathchars{%
+    \mathcode`+"202B \catcode`+12
+    \mathcode`-"2200 \catcode`-12
+    \mathcode`*"2203 \catcode`*12
+    \mathcode`/"013D \catcode`/12
+    \mathcode`>"313E \catcode`>12
+    \mathcode`<"313C \catcode`<12
+    \mathcode`="303D \catcode`=12
+    % vvv Dat: leave these chars intact, for compatibility (with nath.sty and others)
+    %\mathcode`:"303A \catcode`:12
+    %\mathcode`;"603B \catcode`;12
+    %\mathcode`,"613B \catcode`,12
+    %\mathcode`!"5021 \catcode`!12
+    %\mathcode`?"503F \catcode`?12
+    %\mathcode`|"026A \catcode`|12
+    %\mathcode`."013A \catcode`.12
+  }
+  %** Dat: don't do `/', because slash is unbreakable
+  \def\@@magyar@domathbins{\do+\do-\do*\do>\do<\do=\do:}%
+  %** @param #1 a char token with \mathcode != "8000, like +
+  \def\@@magyar@fixmathbinchar#1{%
+    \ifnum\mathcode`#1="8000 \else
+      % Dat: \(...\) is safer than `$...$', because \( has a fixed \catcode
+      %      that works with and w/o nath.sty
+      \begingroup\lccode\string`~\string`#1\lowercase{\endgroup\edef~}{%
+	\mathchar\the\mathcode`#1\relax% Dat: would need \space\space
+        \noexpand\ifx\noexpand\MathBrk\noexpand\MathBrkAll% Hungarian language is active
+          \discretionary{}{\hbox{\noexpand\(\mathchar\the\mathcode`#1 \noexpand\)}}{}%
+        \noexpand\fi}%
+      \mathcode`#1"8000
+    \fi
+    \catcode`#112
+  }
+
+  %** @param #1 `\mathchar', all catcodes
+  %** @param #2 hex code
+  %** @param #3 ignored
+  %** @param #4 a \cs
+  \def\@@magyar@fixmathcmd@low#1"#2"#3\hfuzz#4{%
+    \def\reserved@a{#1}%
+    \edef\reserved@b{\string\mathchar}%
+    \ifx\reserved@a\reserved@b
+      \ifnum"#2<"8000 % redundant sanity check, trueness implied by #1==\mathchar
+	\edef#4{\noexpand\protect\csname \expandafter\@gobble\string#4 \endcsname}%
+	% vvv Imp: \def would be better than \edef?
+	\expandafter\edef\csname\expandafter\@gobble\string#4 \endcsname{%
+	  % Dat: \mathchar already produces: `! Missing $ inserted.'
+	  \mathchar"#2
+          \noexpand\ifx\noexpand\MathBrk\noexpand\MathBrkAll% Hungarian language is active
+            \discretionary{}{\hbox{\noexpand\(\mathchar"#2 \noexpand\)}}{}%
+          \noexpand\fi
+	}%
+      \fi
+    \fi
+  }%
+  %** Works even if #1 is undefined (but consumes hash memory)
+  %** @param #1 a \cs of a MathBin or MathRel, e.g \prec
+  \def\@@magyar@fixmathcmd#1{%
+    \expandafter\@@magyar@fixmathcmd@low\meaning#1""\hfuzz#1%
+  }
+
+  \def\@@magyar@fixeverymathcmds@appendto#1{%
+    \expandafter\def\expandafter#1\expandafter{#1% append
+      \@@magyar@resetmathchars
+      \let\do\@@magyar@fixmathbinchar \@@magyar@domathbins% only in math mode start
+    }%
+  }
+  \def\@@magyar@fixeverymathcmds@setup{%
+    \expandafter\ifx\csname mathoptions@on\endcsname\relax% no nath.sty
+	 \@@magyar@fixeverymathcmds@appendto\check@mathfonts
+    \else\@@magyar@fixeverymathcmds@appendto\mathoptions@on\fi
+  }
+
+  \def\@@magyar@fixmathcmds{%
+    \let\do\@@magyar@fixmathcmd
+    % vvv Binary relations listed in Table 3.4 in lshort.dvi
+    \do\leq\do\le\do\ll\do\prec\do\preceq\do\subset\do\subseteq\do\sqsubset
+    \do\sqsubseteq\do\in\do\vdash\do\mid\do\smile\do\geq\do\ge\do\gg\do\succ
+    \do\succeq\do\supset\do\supseteq\do\sqsupset\do\sqsupseteq\do\ni\do\owns
+    \do\dashv\do\parallel\do\frown\do\notin\do\equiv\do\doteq\do\sim\do\simeq
+    \do\approx\do\cong\do\Join\do\bowtie\do\propto\do\models\do\perp\do\asymp
+    \do\neq\do\ne
+    % vvv Binary operators listed in Table 3.5 in lshort.dvi
+    %\do\cdot% unbreakable
+    \do\pm\do\times\do\cup\do\sqcup\do\vee\do\lor\do\oplus\do\odot\do\otimes
+    \do\bigtriangleup\do\lhd\do\unlhd\do\mp\do\div\do\setminus\do\cap\do\sqcap
+    \do\wedge\do\land\do\ominus\do\oslash\do\bigcirc\do\bigtriangledown\do\rhd
+    \do\unrhd\do\triangleleft\do\triangleright\do\star\do\ast\do\circ\do\bullet
+    \do\diamond\do\uplus\do\amalg\do\dagger\do\ddagger\do\wr
+    \edef\cdot{\noexpand\protect\csname cdot \endcsname}%
+    \expandafter\def\csname cdot \endcsname{\nobreak\mathchar"2201\nobreak}%
+    \def\slash{\nobreak/\nobreak}% only in math-mode start, \nobreak
+    % ^^^ Dat: \slash is fragile in latex.ltx
+  }
+  \AtBeginDocument{\@@magyar@fixmathcmds\@@magyar@fixeverymathcmds@setup}
+  \@gobble
+{^}
+
+% --- mathfactorial=
+
+\if0\magyar@opt@@mathfactorial \@@magyar@skiplong\fi
+  % Imp: weak define? It doesn't conflict with nath.sty -- yet.
+  \def\factorial{\mathchar"5021\mathopen{}\mathinner{}}
+  \@gobble
+{^}
+
+\if2\magyar@opt@@mathfactorial\else \@@magyar@skiplong\fi
+  \expandafter\addto\csname \expandafter\ifx\csname mathoptions@on\endcsname
+   \relax check@mathfonts\else mathoptions@on\fi\endcsname{% detect nath.sty
+    \catcode`!12 \mathcode`!"8000
+    \begingroup\lccode`~`!\lowercase{\endgroup\def~}{\factorial}%
+  }
+  \@gobble
+{^}
+
+% --- mathmuskips=
+
+\if1\magyar@opt@@mathmuskips% =latex, as defined in latex.ltx
+  \thickmuskip 5mu plus 5mu
+  \medmuskip   4mu plus 2mu minus 4mu
+  \thinmuskip  3mu
+\fi
+\if2\magyar@opt@@mathmuskips% =hu
+  \thickmuskip 4mu plus 2mu minus 4mu
+  \medmuskip   2mu plus 1.5mu minus 2mu % \medmuskip<\thinmuskip OK
+  \thinmuskip  3mu
+\fi
+
+% --- mathreal=
+
+\if0\magyar@opt@@mathreal \@@magyar@skiplong\fi
+  %** @param #1 a number with a possible decimal digit, e.g `12' or `-12.3'
+  \def\@@magyar@mathreal@lowa#1{\ensuremath{\@@magyar@mathreal@lowb#1\@gobble.}}%
+  \def\@@magyar@mathreal@lowb#1.{%
+    #1%
+    \@secondoftwo\@gobble% \@secondoftwo may be \@gobbled by token before `.'
+    {\mathchar"013B \@@magyar@mathreal@lowb}%
+  }
+  \DeclareRobustCommand\@@magyar@mathreal{\ensuremath}%
+  \expandafter\expandafter\expandafter\addto
+  \expandafter\expandafter\csname extras\CurrentOption\endcsname\expandafter{%
+    \expandafter\babel@save\csname @@magyar@mathreal \endcsname
+    \expandafter\let\csname @@magyar@mathreal \endcsname \@@magyar@mathreal@lowa}%
+  \ifnum\magyar@opt@@mathreal \expandafter\ifx\csname mathreal\endcsname\relax1\fi>1 % 21, 2, 11, 1
+    \let\MathReal\@@magyar@mathreal
+  \fi
+\@gobble
+{^}%
+
+% --- \documentclass-specific modifications; classmod=
 
 \let\@@magyar@psheadings\relax
 
@@ -3084,7 +3846,7 @@
 \@gobble
 {^}%
 
-% --- !! disable
+% --- mond=
 
 \if0\magyar@opt@@mond \@@magyar@skiplong\fi
 %** Dat: `--\enspace' would be too much
@@ -3095,6 +3857,8 @@
 \fi
 \@gobble
 {^}%
+
+% --- hang=
 
 \if0\magyar@opt@@hang \@@magyar@skiplong\fi
 %** Usage: \hang{-- } Foo\par
@@ -3137,6 +3901,41 @@
 
 \ldf@finish\CurrentOption% \input \CurrentOption.cfg
 
+% !! Donald Aresenau:
+% \makeatletter
+% \mathchardef\mathcomma\mathcode`\,
+% \mathcode`\,=32768 % "8000
+%
+% \begingroup
+% \catcode`\_=12
+% \catcode`\,=\active
+% \@firstofone{%
+% \endgroup
+% %
+%  \edef\DC@char{\meaning_}
+%  \def\DC@parse#1 _{\def\DC@parse##1#1 ##2##3\delimiter{##2}}
+%  \expandafter\DC@parse\DC@char
+%  \toks@={\expandafter\DC@parse\meaning\DC@char}
+%  \edef\DC@test{9<2\the\toks@ \DC@char.\delimiter}
+% \DeclareRobustCommand\ActiveComma{\futurelet\DC@char\DC@docomma}
+%  \def\DC@docomma{%
+%    \ifnum\DC@test \mathord \fi
+%    \mathcomma
+%  }
+%  \let,\ActiveComma
+% }
+% The sample in your article would be typed 
+% \[  F_{i}(x,y) = y^i + 1,3x \qquad x,y \in A,\ i = 1, 2, 3,\ldots \]
+% !! vvv this w/ and w/o nathb.sty: $H_{`symm}$, $H_``symm $
+%\let\@@magyar@saved@mathoptions@on\mathoptions@on
+%\def\mathoptions@on{% overrides nath.sty
+%  \catcode``12 % deactivate
+%  \begingroup\lccode`~``\lowercase{\endgroup\def~}{\abbreviation}%
+%  % ^^^ \def`{\abbreviation}, but with active `
+%  \@@magyar@saved@mathoptions@on
+%}
+% !! french.ldf number decimal comma etc.
+% !! \hunnewlabel should store `table', `figure', `section' etc.
 % !! letter.cls
 % !! make others conditional
 % !! \refn{foo}: 5.2.~alszakasz
@@ -3144,25 +3943,26 @@
 % !! should \newlabel emit a `.' ? (now doesn't) -- compatibility
 % !! alternative solutions for meny-nyi (possibly defining ligatures?)
 % !! baseline grid?
-% !! BW postpara symbols
-% !! regular bold -> bold extended in \section title
-% !! \hsize <= 24cc (or 20cc) => parindent:=1quad else 2quad
-% !! length of last line of par... (break line)
-% !! reduce whitespace around \section...
+% !! Bujdosó`--Wettl:
+% !!   some comments not related to magyar.ldf, but to *hyph.tex etc.
+% !!   add their postpara symbols
+% !!   section title sizes
+% !!   baseline grid
+% !!   rigid \parskip=0pt unless in prospestus or other short doc with \parindent=0pt
+% !!   add their {itemize} symbols and {enumerate} styles
+% !!   add their \leftmargini and variations
+% !!   substitute bold-extended fonts with bold fonts
+% !!   no page numbers on blank pages
+% !!   \hsize <= 24cc (or 20cc) => parindent:=1quad else 2quad
+% !!   length of last line of par... (break line)
+% !!   reduce vertical whitespace around \section
+%
+% !! \MathReal{1.25 cm}
 % !! spacing around excl. marks in math mode  ! closing(5) -> punct(6)
-% !! unnumbered lists, enumerated lists (from source)
-% !! no page number on blank pages
-% !! rigid \parskip=0pt ??
-% !! white space \section etc.
-% !! +\\+ in math, no \cdot or \slash break
-% !! footnote text indented, asterisks on pages
-% !! Kiss Elõd\nobreak\,\nobreak--\,Nagy Pál ...
-% !! \mathcode`\,="013B % decimal point comma; !! enumeration
-% !! \thickmuskip=4mu plus 2mu minus 4mu
-%    \medmuskip=2mu plus 1.5mu minus 2mu
-%    \thinmuskip=3mu
+%    better solution (found in nath.sty): \def!{\mathchar20513\relax\mathopen{}\mathinner{}},
+%    because it doesn't need braces
 % !! \H,\. in OT1 \texttt
-% !! \index{|run husort.pl}
+% !! maybe \index{|run husort.pl}
 % !! virtual fonts to support \umlauthigh and \umlautlow in T1 encoding
 %    fnt_def1: scaled size is relative (2^20==1), design size is absolute (same as in local TFM)
 %    disallowed DVI: bop,eop, >=243
@@ -3183,14 +3983,22 @@
 % !! huhyph.tex why sza-badstrand, but szbadsg-rand
 % !! \index{foo|hyperpagearg{\textbf}}
 % !! combine \magyar@opt@@titleskip, amstocnumskip and \magyar@post@...
-% !! \begin{textqq} ?
-% !! doc: inside \begin{index} \selectlanguage
-% !! \nref{1.5} -> `fejezet' etc.
+% !! \begin{textqq} ? combined command and env
 % !! tmagyar.tex \tableofcontents wide \section
 % !! \restoreparindent in \item in \itemize
 %    \edef\restoreparindent{\parindent\the\parindent\relax} in \@listi
-% !! `\aref{ekezetek}. táblázat' shouldn't need `.'
+% !! `\aref{ekezetek}.\ táblázat' shouldn't need `.' -- but it
 % !! 1848 március+ának közepe
+% !! should \told insert \, ?? (no, only \told*??)
+% !! \told45{-ed-hez} ??
+% !! \told{45}-ed-hez ??
+% !! \told45\od\hoz \told45+\od\hoz
+% !! \told45+adik+val +ad+val etc.
+% !! \azhuphy
+% !! \huphy{-3331234.5678pF^{-1}} -> $-$3\,331\,234,5678\,pF^{-1}
+% !! \huphy if non-Hungarian is the lang {,}->{.}
+% !! \huphy ifmmode?
+
 %
 % Dat: additive \PassOptionsToPackage{foo=bar}{magyar.ldf}
 % Dat: for book.cls and article.cls: the user has to run \pagestyle{headings} after \selectlanguage{magyar} -- for performance reasons
@@ -3212,6 +4020,10 @@
 % Dat: Babel \@activated emits a \PackageInfo entry
 % Dat: (` `) is equivalent to (``), because TeX ignores spaces before macro
 %      arguments
+% OK: doc in magyarldf-doc.tex: enumeration in math, see $a,\ b$ in nath.sty
+% OK: mathbrk=fix +\\+ (all binary ops and relations) in math, \nobreak\cdot, \nobreak\slash
+% OK: footnote text indented, asterisks on pages
+% OK: Kiss Elõd\nobreak\,\nobreak--\,Nagy Pál ...
 % OK: \partname in book.cls (seems to work now)
 % OK: Elsõ rész
 % OK: smartly disable active chars in preamble
@@ -3223,7 +4035,7 @@
 % OK: \expandafter\addto\csname extras\CurrentOption\endcsname{\bbl@frenchspacing}
 % OK: provide \magyarhyphenmins
 % OK: compatibility with latex.ltx, theorem.sty, ntheorem.sty, amsthm.sty
-% OK: PackageWarning if \magyarOptions defined too late
+% OK: \PackageWarning if \magyarOptions defined too late
 % OK: like frenchb.ldf \declare@shorthand{french}{;}{
 % OK: \told\ref{hellopart}+es{} részt olvasd el.
 % OK: \told appends suffixes to numbers
