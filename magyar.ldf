@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 \ProvidesLanguage{magyar}
-        [2001/03/05 v1.4cj Magyar support from the babel system]
+        [2001/03/06 v1.4cj Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2001
@@ -29,151 +29,8 @@
 %%           by Johannes Braams, TeXniek
 %%              \'Arp\'ad B\'IR\'O  --1996/12/13
 %%              J\'ozsef B\'ERCES 1997-06-06  (exact date unknown, after 1996-12-13, before 2000-03-15)
-%%              P\'eter SZAB\'O 2000-03-15--2001-01-25
-%% This version is a direct port of 2001/01/25 v1.3hj to Babel 3.7, without changes or bugfixes.
-%
-% Alap használat:
-%
-%	\usepackage[magyar]{babel}
-%	\usepackage[hungarian]{babel}  % Alternatíva, a fenti sor helyett.
-%
-% Ahhoz, hogy a lehetõ legmagyarabb legyen a LaTeX,
-% helyezzük el a \begin{document} elé:
-%
-%	\usepackage{t1enc}
-%	\usepackage[latin2]{inputenc}
-%	\usepackage{usebabel}			% usebabel.sty kell neki
-%	\usebabel{[activegrave,magyar]}		% magyar.ldf kell neki
-%
-% pts (P\'eter SZAB\'O) ezeket változtatta a v1.4ci-hez képest:
-%
-% -- plusz dokumentáció az alábbi kommentekben
-% -- `` és ,, egyaránt a magyar nyitó idézõjelet (alsó 99) adja
-%    (ez a Babel 3.7-beli 2001/03/05 v1.4c-ben is benne van)
-% -- tipográfiai (sorigazítás) a \@makecaption-ben
-% -- tipográfiai javítás (elválasztó szóköz) a \@seccntformat-ban
-% -- tipografiai javítás (\slshape helyett \itshape) a \\@begintheorem-ben
-%    (ez a Babel 3.7-beli 2001/03/05 v1.4c-ben is benne van)
-% -- fordítási javítás (Szójegyzék hozzáadása) a \glossaryname-hez
-%    (ez a Babel 3.7-beli 2001/03/05 v1.4c-ben hibás, mert angol: Glossary)
-% -- kompatibilitási javítás: az .aux fájl elején a ` \catcode-ja other (12)
-%    legyen; enélkül bizonyos .tex dokumentumok nem fordulnak másodjára
-%    (ez a Babel 3.7-beli 2001/03/05 v1.4c-ben is benne van)
-%
-% Nézzük, milyen idézõjelek vannak:
-%
-% -- /quotesingle U+0027: ASCII-ben megszokott, függõleges (tehát nem
-%    görbülõ), szimpla aposztróf (hiányjel), pl. (majd' elfelejtettem) ==
-%    majdnem elfelejtettem. Ez nem elérhetõ, helyette /quoteright-ot
-%    használj. (Azért nem elérhetõ, mert a T1 és OT1 encoding-okból
-%    hiányzik.)
-% -- /quotedbl U+0022: ASCII-ben megszokott, függõleges (tehát nem görbülõ),
-%    dupla idézõjel, pl. (a papírméret 11" x 8.5"), ekkor inch-et (zoll)
-%    jelöl. Elérhetõ \quotedbl néven és egyetlen karakterrel, de ez utóbbit
-%    inkább kerüld! Ha "-et írnál, írj vagy \quotedbl-t, vagy ''-et. Ha
-%    inch-et akarsz gépelni, math módban tedd: $8.5''$, ekkor két \prime
-%    csúszik egymás mellé.
-% -- /grave U+0060: elvileg ez a back-aposztróf, gyakorlatilag francia grave
-%    _ékezet_, tehát nem valódi betû. Elérhetõ: \`{}
-% -- /acute : normál, egyvesszõs ékezet (olyan, mint ami a magyar á, é, í
-%    stb. betûkön van). Nem valódi betû. Senkinek sem jutott eszébe betûként
-%    használni. Helyette: $\prime$, $'$, \quoteright
-% -- /quoteleft: felsõ 6 idézõjel. \textquoteleft. Magyar nyelvben nem
-%    használatos. Helyette: ,, .
-% -- /quoteright: felsõ 9 idézõjel. \textquoteright. Magyar nyelvben nem
-%    használatos. Helyette: '' .
-% -- /quotesinglbase: alsó 9 idézõjel. \quotesinglbase. Magyar nyelvben nem
-%    használatos. Helyette: ,, .
-% -- /quotereversed: ??
-% -- /quotedblleft: felsõ 66 idézõjel. \textquotedblleft vagy ``. Magyar
-%    nyelvben nem használatos. Vigyázat! Ebben a magyar.ldf-ben ``
-%    /quotedblbase-et eredményez.
-% -- /quotedblright: felsõ 99 idézõjel. \textquotedblright vagy ''.
-% -- /quotedblbase: alsó 99 idézõjel. \quotedblbase vagy ,,. OT1 kódolású
-%    cmr fontban nincs! (tehát plain TeX-ben nincs, LaTeX-ben pedig
-%    \usepackage{t1enc} nélkül nincs).
-% -- /quotedblrev: ??
-% -- /guilsinglleft U+2039: \guilsiglsinglleft.  Francia < nyitó idézõjel.
-%    Magyar nyelvben nem használatos. Helyette: <<.
-% -- /guilsinglright U+203A: \guilsiglsinglright. Francia > záró idézõjel.
-%    Magyar nyelvben nem használatos. Helyette: >>.
-% -- /guillemotleft U+00AB: \guillemotleft vagy <<. Francia << nyitó idézõjel.
-%    Magyar nyelvben ritka: csak ,, ''-ek közti belsõ idézõjelként. Baj:
-%    \usepackage{ae} mellett cmr fontban nincs!!
-% -- /guillemotright U+00BB: \guillemotright vagy >>.
-%    Magyar nyelvben ritka: csak ,, ''-ek közti belsõ idézõjelként. Baj:
-%    \usepackage{ae} mellett cmr fontban nincs!!
-%
-% Alap használat:
-%
-%	\usepackage[magyar]{babel}
-%	\usepackage[hungarian]{babel}  % Alternatíva, a fenti sor helyett.
-%
-% Ahhoz, hogy a lehetõ legmagyarabb legyen a LaTeX,
-% helyezzük el a \begin{document} elé:
-%
-%	\usepackage{t1enc}
-%	\usepackage[latin2]{inputenc}
-%	\usepackage{usebabel}			% usebabel.sty kell neki
-%	\usebabel{[activegrave,magyar]}		% magyar.ldf kell neki
-%
-% Az alap-betûtípust megváltoztathatjuk az alábbiak valamelyikével:
-%
-%	\relax					% cmr, .pk fontok, PDF suxx
-%	\usepackage{ae}\usepackage{aecompl}	% cmr, .pfb fontok, PDF jó
-%	\usepackage{times}			% ptm, .pfb fontok, PDF jó
-%	\usepackage{palatcm}			% ppl, .pfb fontok, PDF jó
-%
-% Mit hogyan:
-%
-% -- LaTeX-et használunk, \usepackage{t1enc}
-% -- idézni akarunk valakit: ,,Mondottam ember: küzdj és bízva bázzál!''
-%    Megjegyzés: a mai (2001) helyesírás szerint így kéne írni: ,,Mondottam,
-%    ember: küzdj, és bízva bízzál!''
-% -- idézni akarunk valakit, de ,, ''-en belül vagyunk: (ez a példa erõltetett
-%    lesz): ,,Mondottam ember:: <<küzdj és bízva bízzál!>>''
-% -- nem írjuk le a teljes évszámot: a '90-es évek. (Persze nullanullás éveket
-%    nem mondunk, ehelyett: századforduló vagy ezredforduló.) Az aposztróf
-%    /quoteright-ként jelenik meg.
-% -- nem fejezzük be a szót: majd' elfelejtettem == majdnem elfelejtettem. Az
-%    aposztróf /quoteright-ként jelenik meg. De: Majd ellátom a bajodat! Itt
-%    nincs aposztróf.
-% -- ékezetes betût írunk: \usepackage[latin2]{inputenc}, és utána lehet
-%    áéúõûóüöíÁÉÚÕÛÓÜÖÍ. Simán is lehet: \'a, \'e, \"o (rövid ö), \H o (hosszú
-%    õ). A helyes szóelválasztáshoz \usepackage{t1enc} kell, no meg magyar.hyp
-%    telepítve (tehát nem elég, ha az akt. könyvtárban van!!, a telepítést
-%    máshol írtam le.)
-% -- dupla hosszú mássalhangzót írunk: lehet simán, pl. nny, ddz. De ha van
-%    magyar.ldf (pl. \usepackage[activegrave,magyar]{babel}), akkor érdemes
-%    `nny, `ddz stb.-t írni, mert ekkor az automatikus elválasztás jól
-%    mûködik. A dupla hosszú mássalhangzó közepén is el tudja választani,
-%    meg máshol is a szón belül.
-% -- inch-et írunk: $8.5''$
-% -- deriválunk: $f'(x)=2x$
-% -- kétszer deriválunk: $f''(x)=2$
-% -- egyéb veszõzés: az $A$ pontot $t$-re tükrözve kapjuk $A'$-t.
-%
-% Elkerülendõ:
-%
-% -- ": helyette '' vagy $''$ , legvégsõ esetben \quotedbl
-% -- ': csak az évszám elõtt és a befejezetlen szó után használjuk. Idézésre
-%    ne, arra ott van: ,, '' << >>
-% -- `: helyette ,,
-% -- ``: helyette ,, , bár magyar.ldf mellett tök mindegy, mivel akkor is ,,-t
-%    kapunk, ha ``-t gépelünk
-% -- ---: magyar nyelvben nincs nagykötõjel, helyette: -- gondolatjel, szóköz
-%    elõtte és utána
-% -- \~o \^o \~O \^O \^u \~u \^U \~U \`a \`A stb. Ilyen ékezetes betûk a
-%    magyar nyelvben nincsenek. Magyar szavakban ne használjuk õket. Helyettük
-%    magyar ékezetes betûk (ld. még \usepackage[latin2]{inputenc}...):
-%
-%	\'a  \'e  \'i  \'o  \:o  \H o  \'u  \:u  \H u
-%	\'A  \'E  \'I  \'O  \:O  \H O  \'U  \:U  \H U
-%
-% Mivel a .hyp csak akkor jut érvényre, ha initex-hel .fmt-t gyártunk belõle,
-% ezért ezt meg kell tenni (kb. 'initex "latex.ini \\dump"', pdflatex-nél
-% bonyolultabb).
-%
+%%              P\'eter SZAB\'O 2000-03-15--2001-03-06
+%%
 
 \LdfInit{magyar}{caption\CurrentOption}
 \ifx\l@magyar\@undefined
@@ -188,23 +45,23 @@
   \def\refname{Hivatkoz\'asok}%
   \def\abstractname{Kivonat}%
   \def\bibname{Irodalomjegyz\'ek}%
-  \def\chaptername{fejezet}%             nagy f-fel volt
+  \def\chaptername{fejezet}%
   \def\appendixname{F\"uggel\'ek}%
   \def\contentsname{Tartalomjegyz\'ek}%
   \def\listfigurename{\'Abr\'ak jegyz\'eke}%
   \def\listtablename{T\'abl\'azatok jegyz\'eke}%
   \def\indexname{T\'argymutat\'o}%
   \def\figurename{\'abra}%
-  \def\tablename{t\'abl\'azat}%          ez nagy t-vel volt
-  \def\partname{r\'esz}%                 ez meg nagy r-rel
+  \def\tablename{t\'abl\'azat}%
+  \def\partname{r\'esz}%
   \def\enclname{Mell\'eklet}%
   \def\ccname{K\"orlev\'el--c\'\i mzettek}%
   \def\headtoname{C\'\i mzett}%
   \def\pagename{oldal}%
-  \def\seename{l\'asd}%                  nagy l-lel volt
-  \def\alsoname{l\'asd m\'eg}%               ---"---
+  \def\seename{l\'asd}%
+  \def\alsoname{l\'asd m\'eg}%
   \def\proofname{Bizony\'\i t\'as}%
-  \def\glossaryname{Sz\'ojegyz\'ek}%
+  \def\glossaryname{Glossary}% <-- Needs translation
   }%
 \@namedef{date\CurrentOption}{%
   \def\today{%
@@ -215,53 +72,41 @@
     okt\'ober\or november\or december\fi
     \space\number\day.}}
 \@namedef{ondate\CurrentOption}{%
-    \number\year.~\ifcase\month\or
-    janu\'ar\or febru\'ar\or m\'arcius\or
-    \'aprilis\or m\'ajus\or j\'unius\or
-    j\'ulius\or augusztus\or szeptember\or
-    okt\'ober\or november\or december\fi
+  \number\year.~\ifcase\month\or
+  janu\'ar\or febru\'ar\or m\'arcius\or
+  \'aprilis\or m\'ajus\or j\'unius\or
+  j\'ulius\or augusztus\or szeptember\or
+  okt\'ober\or november\or december\fi
     \space\ifcase\day\or
     1-j\'en\or  2-\'an\or  3-\'an\or  4-\'en\or  5-\'en\or
     6-\'an\or  7-\'en\or  8-\'an\or  9-\'en\or 10-\'en\or
-    11-\'en\or 12-\'en\or 13-\'an\or 14-\'en\or 15-\'en\or
-    16-\'an\or 17-\'en\or 18-\'an\or 19-\'en\or 20-\'an\or
-    21-\'en\or 22-\'en\or 23-\'an\or 24-\'en\or 25-\'en\or
-    26-\'an\or 27-\'en\or 28-\'an\or 29-\'en\or 30-\'an\or
-    31-\'en\fi}
+   11-\'en\or 12-\'en\or 13-\'an\or 14-\'en\or 15-\'en\or
+   16-\'an\or 17-\'en\or 18-\'an\or 19-\'en\or 20-\'an\or
+   21-\'en\or 22-\'en\or 23-\'an\or 24-\'en\or 25-\'en\or
+   26-\'an\or 27-\'en\or 28-\'an\or 29-\'en\or 30-\'an\or
+   31-\'en\fi}
  \@namedef{extras\CurrentOption}{%
    \expandafter\let\expandafter\ontoday
      \csname ondate\CurrentOption\endcsname}
 \@namedef{noextras\CurrentOption}{\let\ontoday\@undefined}
-
-% Changing the order of the figure/table numbers
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   \babel@save\fnum@figure
   \def\fnum@figure{\thefigure.~\figurename}}
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   \babel@save\fnum@table
   \def\fnum@table{\thetable.~\tablename}}
-
-% We need a dot between the figure/table label and caption.
-% Additionally, the caption remain centered even if it does not
-% fit into one line, and in this case the title is typeset into
-% a new line.
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   \babel@save\@makecaption
   \def\@makecaption#1#2{%
     \vskip\abovecaptionskip
     \sbox\@tempboxa{#1. #2}%
     \ifdim \wd\@tempboxa >\hsize
-      {\noindent\hfil #1. %
-        \advance\leftskip by 1cm%
-        \advance\rightskip by 1cm%
-        #2\csname par\endcsname}
+      {#1. #2\csname par\endcsname}
     \else
       \global \@minipagefalse
       \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
     \fi
     \vskip\belowcaptionskip}}
-
-% This is to have a dot after figure/table numbers in lof/lot.
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   \babel@save\@caption
   \long\def\@caption#1[#2]#3{%
@@ -277,16 +122,9 @@
       \@makecaption{\csname fnum@#1\endcsname}%
           {\ignorespaces #3}\csname par\endcsname
     \endgroup}}
-
-
-% Dot after the section number
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   \babel@save\@seccntformat
-  \def\@seccntformat#1{\csname the#1\endcsname.\enskip}}
-  % ^^^ Dat: a betûméretet valahol máshol állítjuk...
-
-% Alas, \@sect must also be redefined to have that dot in toc too.
-% On the other hand, we include a dot after a run-in head.
+  \def\@seccntformat#1{\csname the#1\endcsname.\quad}}
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   \babel@save\@sect
   \def\@sect#1#2#3#4#5#6[#7]#8{%
@@ -321,9 +159,6 @@
           #7}}%
     \fi
     \@xsect{#5}}}
-
-% In order to have that dot after a run-in head when the star form of the
-% sectioning commands is used, we have to redefine \@ssect
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   \babel@save\@ssect
   \def\@ssect#1#2#3#4#5{%
@@ -338,8 +173,6 @@
       \def\@svsechd{#4{\hskip #1\relax #5.}}%
     \fi
     \@xsect{#3}}}
-
-% theorem
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   \babel@save\@begintheorem
   \def\@begintheorem#1#2{\trivlist
@@ -347,12 +180,7 @@
   \babel@save\@opargbegintheorem
   \def\@opargbegintheorem#1#2#3{\trivlist
     \item[\hskip \labelsep{\bfseries #2.\ #1\ (#3).}]\itshape}}
-
-% --- CLASS SPECIFIC MODIFICATIONS
-
-% BOOK
 \@ifclassloaded{book}{%
-  % Headings: inserting dots, changing orders
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\ps@headings}
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
@@ -390,7 +218,6 @@
             \fi
             ##1}}}}
     \fi}
-  % Part: inserting dot, changing order, toc
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@part
     \def\@part[#1]#2{%
@@ -411,7 +238,6 @@
          \fi
          \Huge \bfseries #2\csname par\endcsname}%
         \@endpart}}
-  % Chapter: dot, changing typeout, toc
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@chapter
     \def\@chapter[#1]#2{\ifnum \c@secnumdepth >\m@ne
@@ -435,7 +261,6 @@
                           \@makechapterhead{#2}%
                           \@afterheading
                         \fi}}
-  % Chapter: dot, changing order
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@makechapterhead
     \def\@makechapterhead#1{%
@@ -453,9 +278,7 @@
         \vskip 40\p@
       }}}%
 }{}
-% REPORT
 \@ifclassloaded{report}{%
-  % Headings: inserting dots, changing orders
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\ps@headings}
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
@@ -489,7 +312,6 @@
             \fi
             ##1}}}}
     \fi}
-  % Chapter: dot, changing typeout, toc
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@chapter
     \def\@chapter[#1]#2{\ifnum \c@secnumdepth >\m@ne
@@ -509,7 +331,6 @@
                           \@makechapterhead{#2}%
                           \@afterheading
                         \fi}}
-  % Chapter: dot, changing order
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@makechapterhead
     \def\@makechapterhead#1{%
@@ -525,9 +346,7 @@
         \vskip 40\p@
       }}}%
 }{}
-% ARTICLE
 \@ifclassloaded{article}{%
-  % Headings: inserting dots
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\ps@headings}
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
@@ -540,13 +359,13 @@
         \def\sectionmark##1{%
           \markboth {\MakeUppercase{%
             \ifnum \c@secnumdepth >\z@
-              \thesection.\enskip
+              \thesection.\quad
             \fi
             ##1}}{}}%
         \def\subsectionmark##1{%
           \markright {%
             \ifnum \c@secnumdepth >\@ne
-              \thesubsection.\enskip
+              \thesubsection.\quad
             \fi
             ##1}}}
     \else
@@ -557,14 +376,12 @@
         \def\sectionmark##1{%
           \markright {\MakeUppercase{%
             \ifnum \c@secnumdepth >\m@ne
-              \thesection.\enskip
+              \thesection.\quad
             \fi
             ##1}}}}
     \fi}%
 }{}
-% LETTER
 \@ifclassloaded{letter}{%
-  % Headings: inserting dots
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\ps@headings}
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
@@ -583,11 +400,6 @@
                         \hfil \thepage.~\pagename}}
     \fi}%
 }{}
-
-
-% --- Definite articles
-
-% \az \az* \Az \Az*
 \def\az{a\@ifstar{\@az}{\az@}}
 \def\Az{A\@ifstar{\@az}{\az@}}
 \def\az@#1{\@az{#1}~#1}
@@ -595,7 +407,6 @@
   \hun@tempadef{relax}{relax}{#1}%
   \edef\@tempb{\noexpand\@@az\@tempa\hbox!}%
   \@tempb}
-
 \def\hun@tempadef#1#2#3{%
   \begingroup
     \def\setbox ##1{}% to get rid of accents and special letters
@@ -617,8 +428,6 @@
       \xdef\@tempa{\csname #1\endcsname}%
     \fi
   \endgroup}
-
-% \azr \azr* \Azr \Azr* \azr( \Azr(
 \def\aref{\azr}
 \def\Aref{\Azr}
 \def\azr{a\@ifstar{\@azr}{\azr@}}
@@ -634,8 +443,6 @@
     \@tempb
   \fi
 }
-
-% \azp \azp* \Azp \Azp*
 \def\apageref{\azp}
 \def\Apageref{\Azp}
 \def\azp{a\@ifstar{\@azp}{\azp@}}
@@ -649,15 +456,14 @@
     \@tempb
   \fi
 }
-
-% \azc \azc* \Azc \Azc* \azc[] \Azc[]
 \def\acite{\azc}
 \def\Acite{\Azc}
 \def\azc{a\@ifstar{\@azc}{\azc@}}
 \def\Azc{A\@ifstar{\@azc}{\azc@}}
 \def\azc@{\@ifnextchar [{\azc@@}{\azc@@[]}}
 \def\azc@@[#1]#2{%
-  \@azc{#2}~\def\@tempa{#1}\ifx\@tempa\@empty\cite{#2}\else\cite[#1]{#2}\fi}
+  \@azc{#2}~\def\@tempa{#1}%
+    \ifx\@tempa\@empty\cite{#2}\else\cite[#1]{#2}\fi}
 \def\@azc#1{\@@azc#1,\hbox!}
 \def\@@azc#1,#2\hbox#3!{%
   \hun@tempadef{hun@b@#1}{b@#1}{}%
@@ -665,30 +471,18 @@
   \else
     \edef\@tempb{\noexpand\@@az\@tempa\hbox!}%
     \@tempb
-  \fi
-}
-
-
-% This one counts the number of digits until a nondigit is found.
-% We need this to properly handle eg. 1.3.12 (subsec number)
-% or 3-45 (pagenumber precceded by chapter number).
+  \fi}
 \def\hun@number@lehgth#1#2\hbox#3!{%
   \ifcat\noexpand#11%
     \ifnum\expandafter`\csname#1\endcsname>47
       \ifnum\expandafter`\csname#1\endcsname<58
         \advance\count@ by \@ne
         \hun@number@lehgth#2\hbox\hbox!\fi\fi\fi}
-
-% This counts the number of letters until a nonletter is found.
-% This is used to distinguish single-letter labels from text labels.
 \def\hun@alph@lehgth#1#2\hbox#3!{%
   \ifcat\noexpand#1A%
     \advance\count@ by \@ne
     \hun@alph@lehgth#2\hbox\hbox!\fi}
-
-
-% This is called if the label is expanded into some text
-\def\@@az@szoveg#1#2{%
+\def\@@az@string#1#2{%
   \ifx#1A%
     \let\@tempa\@tempb
   \else\ifx#1E%
@@ -724,9 +518,6 @@
       \fi\fi\fi\fi\fi\fi\fi\fi
     \fi
   \fi}
-
-% \@@az
-% This is (mostly) written by David Carlisle.
 \def\@@az#1#2\hbox#3!{%
   \let\@tempa\@empty
   \def\@tempb{z}%
@@ -744,23 +535,15 @@
         \let\@tempa\@tempb
       \fi
     \else
-      \@@az@szoveg{#1}{#2}%
+      \@@az@string{#1}{#2}%
     \fi\fi
   }%
   \@tempa}
-
-% \refstepcounter must be redefined in order to
-% have \@currentlabel unexpanded
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   \babel@save\refstepcounter
   \def\refstepcounter#1{\stepcounter{#1}%
     \def\@currentlabel{\csname p@#1\endcsname\csname the#1\endcsname}}%
 }
-
-
-% \label is redefined to write another line to aux file:
-% \hunnewlabel{...}{...} where the roman numerals are replaced by their
-% arabic representations
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   \let\old@label\label
   \def\label#1{\@bsphack
@@ -781,7 +564,6 @@
 \expandafter\addto\csname noextras\CurrentOption\endcsname{%
   \let\label\old@label
 }
-
 \def\hunnewlabel#1#2{%
   \def\@tempa{#2}%
   \expandafter\ifx\csname r@#1\endcsname\@tempa
@@ -790,46 +572,31 @@
     \global\expandafter\let\csname hun@r@#1\endcsname\@tempa%
   \fi
 }
-
-% --- Shortcuts
-
-% Improve compatibility in the .aux file: catcode of ` back to other (12).
-\AtBeginDocument{\immediate\write\@mainaux{\string\catcode96=12}}%
-
+\AtBeginDocument{%
+  \if@filesw\immediate\write\@auxout{\catcode096=12}\fi}
 \initiate@active@char{`}
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   \languageshorthands{magyar}%
   \bbl@activate{`}}
 \expandafter\addto\csname noextras\CurrentOption\endcsname{%
   \bbl@deactivate{`}}
-
-\declare@shorthand{magyar}{``}{\quotedblbase}
-% loccsan --> locs-csan (lo`ccsan):
+\declare@shorthand{magyar}{``}{\glqq}
 \declare@shorthand{magyar}{`c}{\textormath{\bbl@disc{c}{cs}}{c}}
 \declare@shorthand{magyar}{`C}{\textormath{\bbl@disc{C}{CS}}{C}}
-% eddz\"unk (felsz. m.) --> edz-dz\"unk (e`ddz\"unk):
 \declare@shorthand{magyar}{`d}{\textormath{\bbl@disc{d}{dz}}{d}}
 \declare@shorthand{magyar}{`D}{\textormath{\bbl@disc{D}{DZ}}{D}}
-% A dzzs annyira ritka, hogy nem definiálom.
-% poggy\'asz --> pogy-gy\'asz (po`ggy\'asz):
 \declare@shorthand{magyar}{`g}{\textormath{\bbl@disc{g}{gy}}{g}}
 \declare@shorthand{magyar}{`G}{\textormath{\bbl@disc{G}{GY}}{G}}
-% Kod\'allyal --> Kod\'aly-lyal (Kod\'a`llyal):
 \declare@shorthand{magyar}{`l}{\textormath{\bbl@disc{l}{ly}}{l}}
 \declare@shorthand{magyar}{`L}{\textormath{\bbl@disc{L}{LY}}{L}}
-% mennyei --> meny-nyei (me`nnyei):
 \declare@shorthand{magyar}{`n}{\textormath{\bbl@disc{n}{ny}}{n}}
 \declare@shorthand{magyar}{`N}{\textormath{\bbl@disc{N}{NY}}{N}}
-% vissza --> visz-sza (vi`ssza):
 \declare@shorthand{magyar}{`s}{\textormath{\bbl@disc{s}{sz}}{s}}
 \declare@shorthand{magyar}{`S}{\textormath{\bbl@disc{S}{SZ}}{S}}
-% pottyan --> poty-tyan (po`ttyan):
 \declare@shorthand{magyar}{`t}{\textormath{\bbl@disc{t}{ty}}{t}}
 \declare@shorthand{magyar}{`T}{\textormath{\bbl@disc{T}{TY}}{T}}
-% rizzsel --> rizs-zsel (ri`zzsel):
 \declare@shorthand{magyar}{`z}{\textormath{\bbl@disc{z}{zs}}{z}}
 \declare@shorthand{magyar}{`Z}{\textormath{\bbl@disc{Z}{ZS}}{Z}}
-
 \ldf@finish\CurrentOption
 %%
 %% \CharacterTable
