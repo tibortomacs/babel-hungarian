@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/03/17 v1.5a Magyar support from the babel system]
+%%        [2004/03/22 v1.5a Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/03/17 v1.5a Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/03/22 v1.5a Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -2167,7 +2167,7 @@
   \def\@@magyar@shorthandminus{%
     \ifmmode \mskip2.4mu plus3.6mu minus1.8mu \else % ,`- is just a space in math mode
       \if-\noexpand\@Lang@tmp \leavevmode\nobreak\,\nobreak\hbox{--}\,\expandafter\expandafter\expandafter\@gobble% Dat: \@gobble -
-      \else                   \leavevmode\nobreak-\hskip\z@skip\fi
+      \else                   \leavevmode\nobreak-\hskip\z@skip\fi% Dat: e.g hegyes`-szögû
     \fi
   }
   \@@magyar@declare@shorthandx -{\futurelet\@Lang@tmp\@@magyar@shorthandminus}%
@@ -4271,6 +4271,7 @@
 %  % ^^^ \def`{\abbreviation}, but with active `
 %  \@@magyar@saved@mathoptions@on
 %}
+% !! doc: hegyes`-szögû
 % !! option to detect new magyar.ldf from a TeX file
 % !! book.cls \appendix \chapter, sub-numbers into TOC, need dot after `A. függelék'? Gyurgyák recommends `1. függelék'.
 % !! \MathReal, frenchb.ldf, \nombre
@@ -4363,6 +4364,12 @@
 %      \PassOptionsToPackage{frenchspacing=no}{hungarian.ldf}
 %      \usepackage[hungarian,magyar]{babel}
 % Dat: argument of \az and \told may not contain \if..., \else and \fi
+% OK: works with article.cls: (mathbrk=fix)
+%    \noindent és ebbõl a további három rész területe
+%    $\displaystyle{1\over3}-{1\over 4}={1\over 12}$,
+%    $\displaystyle{1\over 2}-{1\over 4}={1\over 4}$ és
+%    $\displaystyle{1\over 4}+\bigg({1\over 2}-{1\over 3}\bigg)={1\over 4}+{1\over 6}}=\displaystyle{5\over 12}$
+%    területegység. 
 % OK: doc in magyarldf-doc.tex: enumeration in math, see $a,\ b$ in nath.sty
 % OK: mathbrk=fix +\\+ (all binary ops and relations) in math, \nobreak\cdot, \nobreak\slash
 % OK: footnote text indented, asterisks on pages
