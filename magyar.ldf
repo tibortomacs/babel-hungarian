@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/07/07 v1.5b Magyar support from the babel system]
+%%        [2004/07/23 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/07/07 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/07/23 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -4214,7 +4214,9 @@
     % ^^^ Dat: the user has to run \pagestyle{headings} after \selectlanguage{magyar} -- for performance reasons
   }
   \def\@@magyar@psheadings{\ps@headings}% not \let
+  \def\magyar@ulladik{ulladik0}% [Nn]ulladik, `0' at end is intentional
   % Chapter: dot, changing typeout, toc
+  % Part...
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@chapter
     \def\@chapter[#1]#2{%
@@ -4234,7 +4236,33 @@
       \else
         \@makechapterhead{#2}%
         \@afterheading
-      \fi}}
+      \fi}%
+    \babel@save\@part
+    \def\@part[#1]#2{% added at Fri Jul 23 11:45:57 CEST 2004
+      \ifnum \c@secnumdepth >-2\relax
+	\refstepcounter{part}%
+	\addcontentsline{toc}{part}{\thepart.\hspace{1em}#1}% hu dot
+      \else
+	\addcontentsline{toc}{part}{#1}%
+      \fi
+	\markboth{}{}%
+	{\centering
+	 \interlinepenalty \@M
+	 \normalfont
+	 \ifnum \c@secnumdepth >-2\relax
+	   \begingroup% support \def\thepart{\@Huordinal\c@part}} without dots
+	     \c@part=0
+	     \edef\reserved@a{\thepart}%
+	     \edef\reserved@a{\expandafter\@gobble\reserved@a0}%
+	     \edef\reserved@a{\def\noexpand\reserved@a{\ifx\reserved@a\magyar@ulladik\else.\fi}}%
+	   \expandafter\endgroup\reserved@a
+	   \huge\bfseries \thepart\reserved@a~\partname% hu
+	   \csname par\endcsname
+	   \vskip 20\p@
+	 \fi
+	 \Huge \bfseries #2\csname par\endcsname}%
+	\@endpart}
+  }
   \if0\magyar@opt@@chapterhead\else
     % Chapter: dot, changing order
     \expandafter\addto\csname extras\CurrentOption\endcsname{%
@@ -4291,6 +4319,34 @@
             ##1}}}}%
     \fi}%
   %\def\@@magyar@psheadings{\ps@headings}% don't do this -- \pagestyle{plain} is the default
+  \def\magyar@ulladik{ulladik0}% [Nn]ulladik, `0' at end is intentional
+  \expandafter\addto\csname extras\CurrentOption\endcsname{%
+    \babel@save\@part
+    \def\@part[#1]#2{% added at Fri Jul 23 11:45:57 CEST 2004
+      \ifnum \c@secnumdepth >\m@ne
+	\refstepcounter{part}%
+	\addcontentsline{toc}{part}{\thepart.\hspace{1em}#1}% hu dot
+      \else
+	\addcontentsline{toc}{part}{#1}%
+      \fi
+      {\parindent \z@ \raggedright
+       \interlinepenalty \@M
+       \normalfont
+       \ifnum \c@secnumdepth >\m@ne
+	 \begingroup% support \def\thepart{\@Huordinal\c@part}} without dots
+	   \c@part=0
+	   \edef\reserved@a{\thepart}%
+	   \edef\reserved@a{\expandafter\@gobble\reserved@a0}%
+	   \edef\reserved@a{\def\noexpand\reserved@a{\ifx\reserved@a\magyar@ulladik\else.\fi}}%
+	 \expandafter\endgroup\reserved@a
+	 \Large\bfseries \thepart\reserved@a~\partname% hu
+	 \csname par\endcsname\nobreak
+       \fi
+       \huge \bfseries #2%
+       \markboth{}{}\csname par\endcsname}%
+      \nobreak
+      \vskip 3ex
+      \@afterheading}}%
 }{}
 
 \@@magyar@ifclassloaded{letter}{%
