@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/05/18 v1.5b Magyar support from the babel system]
+%%        [2004/05/23 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/05/18 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/05/23 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -3251,7 +3251,7 @@
 \def\@@magyar@date@f#1#2#3{#1.~\@@magyar@month@b{#2}}% Dat: \hbox is to force \frenchspacing
 \def\@@magyar@date@g#1#2#3{#1.~\@@magyar@month@b{#2} \number#3}% Dat: \told{\@@magyar@date@g{1848}{3}{15}}+e{}
 \def\@@magyar@date@h#1#2#3{#1~\@@magyar@month@b{#2}}% Imp: suffixes to months
-\def\@@magyar@date@i#1#2#3{#1/\@@magyar@month@a{#2}/\two@digits{#3}}
+\def\@@magyar@date@i#1#2#3{#1/\@@magyar@month@a{#2}/\two@digits{#3}}% not Hungarian
 
 \def\@@magyar@parsedate@a#1-#2-#3!#4\hfuzz{% ISO date: YYYY-MM-DD
   \ifx\hfuzz#4\hfuzz\else \ifnum1<1\string#1\relax \ifnum1<1\string#2\relax \ifnum1<1\string#3\relax
@@ -4359,7 +4359,7 @@
   \def\reftextfaraway##1{a~\csname @@magyar@az@lowxu\endcsname{\pageref{##1}}.~ol\-da\-lon}%
   \def\reftextpagerange##1##2{a~\csname @@magyar@az@lowxu\endcsname{\pageref{##1}}%
     --\pageref{##2}.~ol\-da\-la\-kon}%
-  \def\reftextlabelrange##1##2{{}\csname @@magyar@told\endcsname\ref{##1}+tol
+  \def\reftextlabelrange##1##2{{}\csname @@magyar@told\endcsname\ref{##1}+tol{}
     \ref{##2}-ig}% Dat: `{}' is here for anti-\capitalize
 }
 \@gobble
