@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/05/12 v1.5b Magyar support from the babel system]
+%%        [2004/05/14 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/05/12 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/05/14 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -165,7 +165,7 @@
 %**     hunumbers=yes,             % or =no
 %**     hutoday=yes,               % or =no
 %**     hyphenmins=22,             % or =unchanged or two chars: \lefthyphenmin\righthyphenmin
-%**     hyphenation=huhyph3,       % or =none or =composite or =phonetic
+%**     hyphenation=huhyph3,       % or =none or =composite or =phonetic or =huhyphn
 %**     labelenums=unchanged,      % or =hu-a or =hu-A or =hu-d
 %**     labelitems=unchanged,      % or =hu
 %**     longcaption=justified,     % or =centered or =centernewline or =none (=unchanged)
@@ -495,16 +495,20 @@
 \def\magyar@opt@amspostsectiondot@@unchanged{\def\magyar@opt@@amspostsectiondot{0}}
 \let\magyar@opt@amspostsectiondot\magyar@enumarg
 \let\magyar@opt@hyphenation\magyar@enumarg
+\def\magyar@opt@hyphenation@@huhyphf  {\magyar@opt@hyphenation@@phonetic}
+\def\magyar@opt@hyphenation@@huhyphc  {\magyar@opt@hyphenation@@composite}
 \expandafter\ifx\csname @OFWO\endcsname\relax
 \def\magyar@opt@hyphenation@@none     {\def\magyar@opt@@hyphenation{}}
-\dMf magyar@opt@hyphenation@@huhyph3  {\def\magyar@opt@@hyphenation{3mwChn}}
-\def\magyar@opt@hyphenation@@composite{\def\magyar@opt@@hyphenation{cmwChn}}
-\def\magyar@opt@hyphenation@@phonetic {\def\magyar@opt@@hyphenation{fwmChn}}
+\dMf magyar@opt@hyphenation@@huhyph3  {\def\magyar@opt@@hyphenation{3mwChN}}
+\def\magyar@opt@hyphenation@@huhyphn  {\def\magyar@opt@@hyphenation{nmwChN}}
+\def\magyar@opt@hyphenation@@composite{\def\magyar@opt@@hyphenation{cmwChN}}
+\def\magyar@opt@hyphenation@@phonetic {\def\magyar@opt@@hyphenation{fwmChN}}
 \else% report to lafmtgen.pl
   \typeout{--:hyphenation-=\CurrentOption}
   \def\magyar@opt@@hyphenation{}%
   \def\magyar@opt@hyphenation@@none     {\def\magyar@opt@@hypr{}}
   \dMf magyar@opt@hyphenation@@huhyph3  {\def\magyar@opt@@hypr{\typeout{--:hyphenation=magyar3}\typeout{--:hyphenation=magyar}}} % install both for safety
+  \def\magyar@opt@hyphenation@@huhyphn  {\def\magyar@opt@@hypr{\typeout{--:hyphenation=magyarn}\typeout{--:hyphenation=magyar}}}
   \def\magyar@opt@hyphenation@@composite{\def\magyar@opt@@hypr{\typeout{--:hyphenation=magyarc}\typeout{--:hyphenation=magyar}}}
   \def\magyar@opt@hyphenation@@phonetic {\def\magyar@opt@@hypr{\typeout{--:hyphenation=magyarf}}}
 \fi
@@ -785,6 +789,7 @@
 \let\magyar@sugg@pa\@gobble
 %\show\magyar@opt@@hyphenation
 \ifx\magyar@opt@@hyphenation\@empty
+  % Hungarian words won't be hyphenated automatically
   \expandafter\chardef\csname l@\CurrentOption\endcsname255
   \@@magyar@skiplong\fi
 \def\@@magyar@suggpadef{%
@@ -803,7 +808,7 @@
     \@@magyar@hyphenation@last\fi}%
 \def\@@magyar@hyphenation@next#1{%
   \ifx#1\hfuzz
-  \else\if#1n%
+  \else\if#1N% none
     \csname l@\CurrentOption\endcsname255
     \@@magyar@hyphenation@last
   \else\if#1C%
@@ -817,12 +822,14 @@
   \else\if#13\@@magyar@hyphenation@def{magyar3}%
   \else\if#1c\@@magyar@hyphenation@def{magyarc}%
   \else\if#1f\@@magyar@hyphenation@def{magyarf}%
-  \fi\fi\fi\fi\fi\fi\fi\fi\fi\@@magyar@hyphenation@next
+  \else\if#1n\@@magyar@hyphenation@def{magyarn}%
+  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\@@magyar@hyphenation@next
   % Dat: no \adddialect\l@magyar... - it's only a chardef
 }%
 
-%\tracingmacros1
+%\tracingmacros1 \show\magyar@opt@@hyphenation
 \expandafter\@@magyar@hyphenation@next\magyar@opt@@hyphenation\hfuzz
+%\tracingmacros0
 \let\@@magyar@suggpadef\@undefined
 \@gobble
 {^}
@@ -1506,10 +1513,11 @@
 
 \if0\magyar@opt@@labelitems \@@magyar@skiplong\fi
   \def\labelitemi{\textendash}
-  \def\labelitemii{\raise2.5pt\hbox{\scriptsize\textbullet}}
-  \def\labelitemiii{\raise2.5pt\hbox{\(\scriptstyle\circ\)}}
-  \def\labelitemiv{\raise2.5pt\hbox{\scriptsize\textasteriskcentered}}
-  \def\labelitemv{\raise2.5pt\hbox{\scriptsize\textperiodcentered}}
+  % vvv Dat: formerly 2.5pt
+  \def\labelitemii {\raise0.58ex\hbox{\scriptsize\textbullet}}
+  \def\labelitemiii{\raise0.58ex\hbox{\(\scriptstyle\circ\)}}
+  \def\labelitemiv {\raise0.58ex\hbox{\scriptsize\textasteriskcentered}}
+  \def\labelitemv  {\raise0.58ex\hbox{\scriptsize\textperiodcentered}}
   \def\reserved@a{% copied from latex.ltx
     \ifnum \@itemdepth >\thr@@\@toodeep\else
       \advance\@itemdepth\@ne
@@ -4002,6 +4010,13 @@
 \let\@@magyar@psheadings\relax
 
 \ifx\magyar@opt@@classmod\relax\@@magyar@skiplong\fi
+
+%** Emits the rule to the running head. Must put something of zero width
+%** to the horizontal list.
+%** @param #1 0: even page, 1: odd page, 3: page w/o [twoside]
+\def\@@magyar@headrule#1{}
+\def\@@magyar@slshape{}% running head is not slanted
+
 \ifx\magyar@opt@@classmod\@empty
   \let\@@magyar@ifclassloaded\@ifclassloaded
 \else
@@ -4016,8 +4031,8 @@
   \def\@@magyar@book@psheadings{%
     \if@twoside
       \let\@oddfoot\@empty\let\@evenfoot\@empty
-      \def\@evenhead{\thepage\hfil\slshape\leftmark}%
-      \def\@oddhead{{\slshape\rightmark}\hfil\thepage}%
+      \def\@evenhead{\@@magyar@headrule0\thepage\hfil\@@magyar@slshape\leftmark}%
+      \def\@oddhead {\@@magyar@headrule1{\@@magyar@slshape\rightmark}\hfil\thepage}%
       \let\@mkboth\markboth
       \def\chaptermark##1{%
 	\markboth {\MakeUppercase{%
@@ -4036,7 +4051,7 @@
 	  ##1}}}%
     \else
       \let\@oddfoot\@empty
-      \def\@oddhead{{\slshape\rightmark}\hfil\thepage}%
+      \def\@oddhead{\@@magyar@headrule3{\@@magyar@slshape\rightmark}\hfil\thepage}%
       \let\@mkboth\markboth
       \def\chaptermark##1{%
 	\markright {\MakeUppercase{%
@@ -4140,8 +4155,8 @@
   \def\@@magyar@report@psheadings{%
     \if@twoside
       \let\@oddfoot\@empty\let\@evenfoot\@empty
-      \def\@evenhead{\thepage\hfil\slshape\leftmark}%
-      \def\@oddhead{{\slshape\rightmark}\hfil\thepage}%
+      \def\@evenhead{\@@magyar@headrule0\thepage\hfil\@@magyar@slshape\leftmark}%
+      \def\@oddhead {\@@magyar@headrule1{\@@magyar@slshape\rightmark}\hfil\thepage}%
       \let\@mkboth\markboth
       \def\chaptermark##1{%
 	\markboth {\MakeUppercase{%
@@ -4157,7 +4172,7 @@
 	  ##1}}}%
     \else
       \let\@oddfoot\@empty
-      \def\@oddhead{{\slshape\rightmark}\hfil\thepage}%
+      \def\@oddhead{\@@magyar@headrule3{\@@magyar@slshape\rightmark}\hfil\thepage}%
       \let\@mkboth\markboth
       \def\chaptermark##1{%
 	\markright {\MakeUppercase{%
@@ -4221,8 +4236,9 @@
     \if@twoside
       \def\ps@headings{%
           \let\@oddfoot\@empty\let\@evenfoot\@empty
-          \def\@evenhead{\thepage\hfil\slshape\leftmark}%
-          \def\@oddhead{{\slshape\rightmark}\hfil\thepage}%
+	  % Dat: by pts: \slshape -> \relax
+          \def\@evenhead{\@@magyar@headrule0\thepage\hfil\@@magyar@slshape\leftmark}%
+          \def\@oddhead {\@@magyar@headrule1{\@@magyar@slshape\rightmark}\hfil\thepage}%
           \let\@mkboth\markboth
         \def\sectionmark##1{%
           \markboth {\MakeUppercase{%
@@ -4239,7 +4255,7 @@
     \else
       \def\ps@headings{%
         \let\@oddfoot\@empty
-        \def\@oddhead{{\slshape\rightmark}\hfil\thepage}%
+        \def\@oddhead{\@@magyar@headrule3{\@@magyar@slshape\rightmark}\hfil\thepage}%
         \let\@mkboth\markboth
         \def\sectionmark##1{%
           \markright {\MakeUppercase{%
@@ -4258,14 +4274,14 @@
     \if@twoside
       \def\ps@headings{%
           \let\@oddfoot\@empty\let\@evenfoot\@empty
-          \def\@oddhead{\slshape\headtoname{:} \ignorespaces\toname
+          \def\@oddhead{\@@magyar@headrule3\@@magyar@slshape\headtoname{:} \ignorespaces\toname
                         \hfil \@date
                         \hfil \thepage.~\pagename}%
           \let\@evenhead\@oddhead}
     \else
       \def\ps@headings{%
           \let\@oddfoot\@empty
-          \def\@oddhead{\slshape\headtoname{:} \ignorespaces\toname
+          \def\@oddhead{\@@magyar@headrule3\@@magyar@slshape\headtoname{:} \ignorespaces\toname
                         \hfil \@date
                         \hfil \thepage.~\pagename}}
     \fi}%
