@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/03/01 v1.5a Magyar support from the babel system]
+%%        [2004/03/08 v1.5a Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/03/01 v1.5a Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/03/08 v1.5a Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -165,6 +165,7 @@
 %**     hunumbers=yes,             % or =no
 %**     hutoday=yes,               % or =no
 %**     hyphenmins=22,             % or =unchanged or two chars: \lefthyphenmin\righthyphenmin
+%**     hyphenation=huhyph3,       % or =none or =composite or =phonetic
 %**     labelenums=unchanged,      % or =hu-a or =hu-A
 %**     labelitems=unchanged,      % or =hu
 %**     longcaption=justified,     % or =centered or =centernewline or =none (=unchanged)
@@ -503,7 +504,7 @@
   \typeout{--:hyphenation-=\CurrentOption}
   \def\magyar@opt@@hyphenation{}%
   \def\magyar@opt@hyphenation@@none     {\def\magyar@opt@@hypr{}}
-  \dMf magyar@opt@hyphenation@@huhyph3  {\def\magyar@opt@@hypr{\typeout{--:hyphenation=magyar3}\typeout{--:hyphenation=magyar}}}
+  \dMf magyar@opt@hyphenation@@huhyph3  {\def\magyar@opt@@hypr{\typeout{--:hyphenation=magyar3}\typeout{--:hyphenation=magyar}}} % install both for safety
   \def\magyar@opt@hyphenation@@composite{\def\magyar@opt@@hypr{\typeout{--:hyphenation=magyarc}\typeout{--:hyphenation=magyar}}}
   \def\magyar@opt@hyphenation@@phonetic {\def\magyar@opt@@hypr{\typeout{--:hyphenation=magyarf}}}
 \fi
