@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/04/01 v1.5a Magyar support from the babel system]
+%%        [2004/04/06 v1.5a Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/04/01 v1.5a Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/04/06 v1.5a Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -2817,6 +2817,7 @@
   % vvv Dat: gobbles its arg and `-' below
   %     `\@@magyar@toldas{42}' must be the very end of #1
   \let\@@magyar@toldas\@gobbletwo
+  \let\-\relax
   \let\refstruc\relax
   \let \ref\relax \let \pageref\relax \let \cite\relax % all unexpandable, even for \@@magyar@the
   \let\aref\relax \let\apageref\relax \let\acite\relax
@@ -2987,8 +2988,9 @@
 }
 
 \let\@@magyar@toldas\@gobble
-\def\@@magyar@strucname@part{r\'esz\@@magyar@toldas{4}}%
+\def\@@magyar@strucname@part{r\'esz\@@magyar@toldas{4}}% SUXX: may not contain \-; !! résszel (vs. részszel)
 \def\@@magyar@strucname@chapter{fejezet\@@magyar@toldas{9}}% !! fejezettel
+\def\@@magyar@strucname@appendix{f\"ug\-gel\'ek\@@magyar@toldas{4}}% !! fuggelekkel
 \def\@@magyar@strucname@section{szakasz\@@magyar@toldas{20}}%
 \def\@@magyar@strucname@subsection{alszakasz\@@magyar@toldas{20}}%
 \def\@@magyar@strucname@subsubsection{alalszakasz\@@magyar@toldas{20}}%
@@ -3028,11 +3030,13 @@
       \expandafter\expandafter\expandafter
       \@@magyar@refstruc@parse\csname r@#1\endcsname..\vfuzz%
       \@@magyar@refstruc@work
+      \let\@@magyar@save@m\-%
+      \let\-\relax
       \let\@@magyar@toldas\relax
       \edef\reserved@c{\expandafter\@@magyar@strucname\expandafter{\reserved@c}}%
+      \let\-\@@magyar@save@m
       \let\@@magyar@suffix@at\@@magyar@suffix@st% fix the -t suffix
       \ifx\reserved@b\@empty
-        \reserved@c
       \else
         \@@magyar@refstruc@splitb#2\vfuzz% strip `+' from the end of #2
       \fi
@@ -3054,7 +3058,7 @@
   \@@magyar@refstruc@parse\csname r@#1\endcsname..\vfuzz%
   %%\show\reserved@a% first arg of ref, i.e section number, eg. `1.2.3' -- or \relax
   \ifx\reserved@a\relax
-    \@@magyar@refstruc@split#1+\vfuzz#2%
+    \@@magyar@refstruc@split#1+\vfuzz#2% ends by +suffix, needs \told
   \else
     \if\noexpand#20\else\ref{#1}.~\fi
     \@@magyar@refstruc@work
@@ -3085,12 +3089,13 @@
   \def\reserved@c{subsection}\edef      \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
   \def\reserved@c{section}\edef         \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
   \def\reserved@c{chapter}\edef         \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{appendix}\edef        \reserved@b{\@Alph\c@chapter}\ifx\reserved@a\reserved@b\else% Imp: do this without changing counters in \appendix
   \def\reserved@c{part}\edef            \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
   \@latex@error{Unknown structure level for ref \string`\reserved@a';
-  \reserved@b}\@ehc%
+    \reserved@b}\@ehc%
   \def\reserved@c{??}% Dat: must be expandable
   \let\reserved@b\@empty
-  \fi\fi\fi\fi\fi\fi\fi\fi\fi
+  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
 }
 
 \def\@@magyar@refstruc@hu#1{\@@magyar@refstruc@name{#1}1}%
