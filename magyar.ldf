@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2003/12/02 v1.5a Magyar support from the babel system]
+%%        [2003/12/09 v1.5a Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -60,7 +60,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2003/12/02 v1.5a Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2003/12/09 v1.5a Magyar support from the babel system]
 
 % Find the best of available Hungarian hyphenation patterns.
 \expandafter\ifx\csname l@\CurrentOption\endcsname\relax
@@ -748,7 +748,7 @@
   \let\romannumeral\number% by pts@fazekas.hu at Mon Oct 27 23:44:06 CET 2003
   \let\ref\@@magyar@zeroref \let\pageref\@@magyar@zeropageref \let\cite\@@magyar@zerocite
   % ^^^ fix so \az{\ref{...}} works
-  \let\refstruc\ref
+  \let\refstruc\@@magyar@zerorefplus
   \def\setbox ##1{}% to get rid of accents and special letters
   \def\hbox ##1{}%
   \def\accent ##1 ##2{##2}%
@@ -770,15 +770,19 @@
 }
 
 %** Usage: \az{alma} -> `az alma'; \Az*{alma} -> `az'
-\def\az{a\@ifstar{\@@magyar@az@lowy}{\@@magyar@az@lowx}}
-\def\Az{A\@ifstar{\@@magyar@az@lowy}{\@@magyar@az@lowx}}
+%\def\az{a\@ifstar{\@@magyar@az@lowy}{\@@magyar@az@lowx}}
+\def\az{a\@@magyar@az@lowt}%
+\def\Az{A\@@magyar@az@lowt}%
+\def\@@magyar@az@lowt{\@ifstar{\@@magyar@az@lowy}{\@ifnextchar+\@@magyar@az@lowz\@@magyar@az@lowx}}
+%** Usage: \az+\ref{foo} is equivalent to \az{\ref{foo}}
+\def\@@magyar@az@lowz#1#2#3{\@@magyar@az@lowy{#2{#3}}~#2{#3}}
 \def\@@magyar@az@lowx#1{\@@magyar@az@lowy{#1}~#1}
 \def\@@magyar@az@lowy#1{{%
   \begingroup
   %\def\protect{\noexpand\protect\noexpand}%
   \set@display@protect% screws up \r
   \@@magyar@az@vfuzzdef{relax}{relax}{#1}%
-  %%\show\vfuzz
+  %\show\vfuzz
   \expandafter\endgroup\expandafter
   \set@display@protect\expandafter% fixes \r; why??
   \@@magyar@az\vfuzz\hbox$% \vfuzz is already expanded
@@ -887,16 +891,29 @@
   \fi\else z\expandafter\@@magyar@killhfuzz\fi
 }
 
+\def\@@magyar@eatddd@pre#1\hbox{\@@magyar@eatddd#1[]\hfuzz}%
+\def\@@magyar@azuc@pre#1#2#3#4\hbox{%
+  \uppercase{\@@magyar@azuc#1#2#3}% Dat: we map a..z -> A..Z
+}
+\def\@@magyar@ignorehbox@pre#1\hbox{}%
+%** Also defined elsewhere.
+%** @param #2 \else...\else...\fi...\fi etc.
+\def\@@magyar@swaprelax#1#2\relax{#2#1}
 %** This is (mostly) written by David Carlisle.
 %** @expands to `z' or nothing (last char of definite article)
-\def\@@magyar@aznospace#1#2#3#4\hbox{%
+\def\@@magyar@aznospace#1{%
   \if\noexpand#15z% Dat: emit `az 5'
+    \@@magyar@swaprelax\@@magyar@ignorehbox@pre
   \else\if\noexpand#11%
     % Dat: properly handle `az 1001 éjszaka', `az 1234567 éves bolygó'
-    \@@magyar@eatddd #2#3#4[]\hfuzz
+    \@@magyar@swaprelax\@@magyar@eatddd@pre
+  \else\ifnum1<1\noexpand#1 % a different digit, emit `a '
+    \@@magyar@swaprelax\@@magyar@ignorehbox@pre
+  \else\ifcat\string*\noexpand#1% ignore non-digit (non-letter) `other' char
+    \@@magyar@swaprelax\@@magyar@aznospace
   \else
-    \uppercase{\@@magyar@azuc#1#2#3}% Dat: we map a..z -> A..Z
-  \fi\fi
+    \@@magyar@swaprelax{\@@magyar@azuc@pre#1}%
+  \fi\fi\fi\fi\relax
 }
 
 %** @expands to `z' or nothing (last char of definite article)
@@ -905,7 +922,7 @@
   %%\def\reserved@a{\@@magyar@unspace#1 }\show\reserved@a
   \edef\reserved@a{\@@magyar@unspace#1 }%
   %\show\vfuzz
-  \expandafter\@@magyar@aznospace\reserved@a[][]\hbox
+  \expandafter\@@magyar@aznospace\reserved@a[b][][]\hbox% Dat: [b][][] is a smart sentinel
 }
 
 % --- Labels
@@ -1388,7 +1405,7 @@
     % then most packages will use 12 as \catcode\string``, which is intended.
     \expandafter\gdef\expandafter\@preamblecmds\expandafter{\@preamblecmds
       \select@language{\languagename}% force initial language
-      \@@magyar@psheadings
+      \@@magyar@psheadings% !! don't put inside toclang
     }%
     % Solve problem (1) and assist solving problem (2) by not emitting
     % \select@language twice.
@@ -1895,9 +1912,9 @@
 % Dat: double accent combinations: +adik,+a,+as,+ad  +hoz,+an,+on,+at,+ban...
 
 % vvv Terminal suffix variants
-% adik a
 
 % Dat: meaning of classes(#1): {\ifcase 0\or 1\or 2\or 3\or 4\or 5\or 6\or 7\or 8\or 9\or 10\or 11/-1\or 12/-2\or 100\or 1000\or 10^6\or 10^9\or 20\or 30\or 40\or 60\fi}
+% Dat: ...@st is is special for appending +t to \refstruc names
 \def\@@magyar@suffix@adik#1{\ifnum#1=1 s\H o\else
                               \ifcase#1 a\or  e\or  o\or a\or e\or\"o\or o\or e\or a\or e\or e\or e\or  e\or a\or e\or a\or a\or a\or a\or e\or a\or e\or e\fi dik\fi}%
 \def\@@magyar@suffix@a#1{\ifcase     #1 a\or je\or  a\or a\or e\or  e\or a\or e\or a\or e\or e\or e\or  e\or a\or e\or a\or a\or a\or a\or e\or a\fi}%
@@ -1906,6 +1923,7 @@
 \def\@@magyar@suffix@@hoz#1#2{\ifcase#2 o\or  e\or\"o\or o\or e\or\"o\or o\or e\or o\or e\or e\or e\or\"o\or o\or e\or o\or o\or o\or o\or e\or o\fi#1}%
 \def\@@magyar@suffix@@an#1{\ifcase   #1  \or  e\or  e\or a\or e\or  e\or a\or e\or a\or e\or e\or e\or  e\or a\or e\or a\or a\or a\or a\or e\or a\fi n}%
 \def\@@magyar@suffix@on#1{\ifcase    #1  \or  e\or   \or o\or e\or\"o\or o\or e\or a\or e\or e\or e\or  e\or o\or e\or  \or o\or o\or o\or e\or o\fi n}%
+\def\@@magyar@suffix@st#1{\ifcase    #1  \or   \or   \or  \or e\or   \or  \or  \or  \or  \or  \or  \or   \or  \or  \or  \or  \or  \or  \or  \or  \fi t}%
 \def\@@magyar@suffix@@at#1{\ifcase   #1  \or  e\or   \or a\or e\or\"o\or o\or e\or a\or e\or e\or e\or   \or a\or e\or  \or a\or a\or a\or e\or a\fi t}%
 \def\@@magyar@suffix@@a#1#2{\ifcase  #2 a\or  e\or  e\or a\or e\or  e\or a\or e\or a\or e\or e\or e\or  e\or a\or e\or a\or a\or a\or a\or e\or a\fi#1}%
 \def\@@magyar@suffix@nal#1{n\ifcase  #1 \'a\or \'e\or \'e\or\'a\or \'e\or \'e\or\'a\or \'e\or\'a\or \'e\or \'e\or \'e\or \'e\or\'a\or \'e\or \'a\or \'a\or \'a\or\'a\or \'e\or\'a\fi l}%
@@ -1955,6 +1973,7 @@
 
 % vvv Input suffix parser
 
+%** Also defined elsewhere.
 %** @param #2 \else...\else...\fi...\fi etc.
 \def\@@magyar@swaprelax#1#2\relax{#2#1}
 \def\@@magyar@swaprelaxx#1#2#3\relax{#3#1#2}
@@ -2072,7 +2091,8 @@
 }
 \def\@@magyar@fs@s#1{%
   \if z\noexpand#1\@@magyar@swaprelax\@@magyar@fs@sz\else
-  \@@magyar@badsuffix{s#1}\fi\relax
+  \if t\noexpand#1\noexpand\@@magyar@suffix@st\@@magyar@contn\else
+  \@@magyar@badsuffix{s#1}\fi\fi\relax
 }
 \def\@@magyar@fs@sz#1{%
   \if o\noexpand#1\@@magyar@swaprelax\@@magyar@fs@szo\else
@@ -2219,6 +2239,7 @@
 \def\@@magyar@ccheck#1#2\vfuzz#3{%
   \if\noexpand#1c\relax\else
     \@@magyar@error{\string\told\space needs number, not \string`#3'}%
+    \def\reserved@a{c0}%
   \fi
 }
 
@@ -2241,6 +2262,12 @@
     \expandafter\expandafter\expandafter\@@magyar@firsthfuzz\csname r@#1\endcsname00\hfuzz
   \fi
 }%
+\def\@@magyar@zerorefplus#1{\@@magyar@zerorefplus@low#1+\vfuzz}
+\def\@@magyar@zerorefplus@low#1+#2\vfuzz{%
+  \expandafter\ifx\csname r@#1\endcsname\relax0\else
+    \expandafter\expandafter\expandafter\@@magyar@firsthfuzz\csname r@#1\endcsname00\hfuzz
+  \fi
+}%
 \def\@@magyar@zeropageref#1{%
   \expandafter\ifx\csname r@#1\endcsname\relax0\else
     \expandafter\expandafter\expandafter\@@magyar@secondhfuzz\csname r@#1\endcsname00\hfuzz
@@ -2254,6 +2281,7 @@
 %**   \atold\apageref emits double article
 %**   \cite, \acite etc. is allowed, but without comma
 %**   \aref({...}), \aref*, \apageref*, \acite* aren't allowed
+%** \refstruc doesn't work inside it, because \refstruc isn't expandable
 %** @example \told4+a+a+a+a+adik raises strange error
 %** @example no -en is provided for -an/-on, to avoid ambiguity
 %** @example \told4+adik: 0-adik 1-sõ 2-odik 3-adik 12-edik 10^8-adik
@@ -2287,13 +2315,20 @@
   % Dat: negative sign isn't important, because it is skipped by \@@magyar@classify@none
   \begingroup\begingroup
   \let\@safe@activesfalse\@empty \let\@safe@activestrue\@empty% inside \b@... emitted by \cite
+  % vvv Dat: gobbles its arg and `-' below
+  %     `\@@magyar@toldas{42}' must be the very end of #1
+  \let\@@magyar@toldas\@gobbletwo
+  \let\refstruc\relax
   \let \ref\relax \let \pageref\relax \let \cite\relax % all unexpandable, even for \@@magyar@the
   \let\aref\relax \let\apageref\relax \let\acite\relax
   \let\Aref\relax \let\Apageref\relax \let\Acite\relax
-  \edef\reserved@c{#1}%
-  \edef\reserved@c{\def\noexpand\reserved@c{\expandafter\@@magyar@the\reserved@c\@empty-}}% `\expandafter' is here so `the' and `number' take place
+  \set@display@protect% doesn't seem to screw up \r
+  \edef\reserved@c{#1-}%
+  \edef\reserved@c{\def\noexpand\reserved@c{\expandafter\@@magyar@the\reserved@c\@empty}}% `\expandafter' is here so `the' and `number' take place
   %
+  \def\@@magyar@toldas##1{.##1.}% emit the number
   \let\romannumeral\number
+  \def\refstruc##1{0}%
   \let\ref\@@magyar@zeroref \let\pageref\@@magyar@zeropageref \let\cite\@@magyar@zerocite
   \let\aref\ref \let\apageref\pageref \let\acite\cite% !! \Aref* \Aref( etc.
   \let\Aref\ref \let\Apageref\pageref \let\Acite\cite
@@ -2307,7 +2342,9 @@
   \edef\reserved@a{\noexpand\reserved@c\def\noexpand\reserved@a{\reserved@a}}%
   %
   \expandafter\expandafter\expandafter\endgroup\reserved@a% keep \reserved@a and \reserved@c
-  %
+  %%\show\reserved@a \show\reserved@c \show\@@magyar@toldas
+  % vvv Dat: shows friendly LaTeX error: \told{\refstruc{refstruc=}}+ban
+  \def\refstruc{\@@magyar@error{Cannot use \string\refstruc\space inside \string\told}\@@magyar@refstruc}%
   \edef\reserved@a{\expandafter\@@magyar@classify@none\expandafter N\reserved@a\vfuzz}%
   %%\show\reserved@a
   \expandafter\@@magyar@ccheck\reserved@a..\vfuzz\reserved@c%
@@ -2407,8 +2444,15 @@
   \else\if\noexpand#1xi%
   \else\if\noexpand#1vi%
   \else\if\noexpand#1ii%
+  \else\if\noexpand#1MI%
+  \else\if\noexpand#1DI%
+  \else\if\noexpand#1CI%
+  \else\if\noexpand#1LI%
+  \else\if\noexpand#1XI%
+  \else\if\noexpand#1VI%
+  \else\if\noexpand#1II%
   \else\noexpand#1\@@magyar@nonumbers@skipa
-  \fi\fi\fi\fi\fi\fi\fi \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi \fi
+  \fi\fi\fi\fi\fi\fi\fi \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi \fi\fi\fi\fi\fi\fi\fi \fi
   \@@magyar@nonumbers@s
 }
 \def\@@magyar@nonumbers@s#1{%
@@ -2430,20 +2474,29 @@
   \else\if\noexpand#1x%
   \else\if\noexpand#1v%
   \else\if\noexpand#1i%
+  \else\if\noexpand#1M%
+  \else\if\noexpand#1D%
+  \else\if\noexpand#1C%
+  \else\if\noexpand#1L%
+  \else\if\noexpand#1X%
+  \else\if\noexpand#1V%
+  \else\if\noexpand#1I%
   \else\noexpand#1\@@magyar@nonumbers@skipa
-  \fi\fi\fi\fi\fi\fi\fi \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi \fi
+  \fi\fi\fi\fi\fi\fi\fi \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi \fi\fi\fi\fi\fi\fi\fi \fi
   \@@magyar@nonumbers@s
 }
 
-\def\@@magyar@strucname@part{r\'esz}%
-\def\@@magyar@strucname@chapter{fejezet}%
-\def\@@magyar@strucname@section{szakasz}%
-\def\@@magyar@strucname@subsection{alszakasz}%
-\def\@@magyar@strucname@subsubsection{alalszakasz}%
-\def\@@magyar@strucname@subsubsubsection{alalalszakasz}%
-\def\@@magyar@strucname@paragraph{bekezd\'es}%
-\def\@@magyar@strucname@subparagraph{albekezd\'es}%
-\def\@@magyar@strucname@subsubparagraph{alalbekezd\'es}%
+\let\@@magyar@toldas\@gobble
+\def\@@magyar@strucname@part{r\'esz\@@magyar@toldas{4}}%
+\def\@@magyar@strucname@chapter{fejezet\@@magyar@toldas{9}}%
+\def\@@magyar@strucname@section{szakasz\@@magyar@toldas{20}}%
+\def\@@magyar@strucname@subsection{alszakasz\@@magyar@toldas{20}}%
+\def\@@magyar@strucname@subsubsection{alalszakasz\@@magyar@toldas{20}}%
+\def\@@magyar@strucname@subsubsubsection{alalalszakasz\@@magyar@toldas{20}}%
+\def\@@magyar@strucname@paragraph{bekezd\'es\@@magyar@toldas{4}}%
+\def\@@magyar@strucname@subparagraph{albekezd\'es\@@magyar@toldas{4}}%
+\def\@@magyar@strucname@subsubparagraph{alalbekezd\'es\@@magyar@toldas{4}}%
+%** Must be expandable.
 %** @param #1 `section' etc.
 %** @expands to its name in English
 \def\@@magyar@strucname#1{#1}
@@ -2451,6 +2504,7 @@
 %** @expands to its name in Hungarian
 \def\@@magyar@strucname@hu#1{\csname @@magyar@strucname@#1\endcsname}
 
+%** Keeps only structure number, discards page number etc.
 \def\@@magyar@refstruc@parse#1#2\vfuzz{%
   \ifx\relax#1\let\reserved@a\relax
   \else\def\reserved@a{#1}\fi
@@ -2461,46 +2515,86 @@
   \else\csname#1\endcsname\fi
 }%
 
-%** @param #1 \ref id
-\def\@@magyar@refstruc@name#1{%
+\def\@@magyar@refstruc@split#1+#2\vfuzz#3{%
+  \if\noexpand#30\else\ref{#1}.~\fi
+  \ifx\vfuzz#2%
+    \textbf{??}%
+    \G@refundefinedtrue
+  \else
+    \expandafter\ifx\csname r@#1\endcsname\relax
+      \textbf{??+#2}%
+      \G@refundefinedtrue
+    \else
+      \expandafter\expandafter\expandafter
+      \@@magyar@refstruc@parse\csname r@#1\endcsname..\vfuzz%
+      \@@magyar@refstruc@work
+      \let\@@magyar@toldas\relax
+      \edef\reserved@c{\expandafter\@@magyar@strucname\expandafter{\reserved@c}}%
+      \let\@@magyar@suffix@at\@@magyar@suffix@st% fix the -t suffix
+      \ifx\reserved@b\@empty
+        \reserved@c
+      \else
+        \@@magyar@refstruc@splitb#2\vfuzz% strip `+' from the end of #2
+      \fi
+    \fi
+  \fi
+}
+\def\@@magyar@refstruc@splitb#1+\vfuzz{%
+  \expandafter\@@magyar@told\reserved@c+#1{}% fejezet -> fejezetben
+}
+
+%** The +val suffix does not produce the desired result.
+%** @param #1 \ref id or with \told
+%** @param #2 1 to prefix with 1\ref{...}.~' in Hungarian order
+%** @example \refstruc{sec:foo}
+%** @example \refstruc{sec:foo+as+an} 
+\def\@@magyar@refstruc@name#1#2{%
   \begingroup
   \expandafter\expandafter\expandafter
   \@@magyar@refstruc@parse\csname r@#1\endcsname..\vfuzz%
   %%\show\reserved@a% first arg of ref, i.e section number, eg. `1.2.3' -- or \relax
   \ifx\reserved@a\relax
-    \textbf{??}%
-    \G@refundefinedtrue
+    \@@magyar@refstruc@split#1+\vfuzz#2%
   \else
-    \edef\reserved@a{\expandafter\@@magyar@nonumbers@a\reserved@a\hfuzz}%
-    \expandafter\lowercase\expandafter{\expandafter\def\expandafter\reserved@a\expandafter{\reserved@a}}%
-    \@@magyar@refstruc@setcnt{c@part}1
-    \@@magyar@refstruc@setcnt{c@chapter}1
-    \@@magyar@refstruc@setcnt{c@section}1
-    \@@magyar@refstruc@setcnt{c@subsection}1
-    \@@magyar@refstruc@setcnt{c@subsubsection}1
-    \@@magyar@refstruc@setcnt{c@subsubsubsection}1
-    \@@magyar@refstruc@setcnt{c@paragraph}1
-    \@@magyar@refstruc@setcnt{c@subparagraph}1
-    \@@magyar@refstruc@setcnt{c@subsubparagraph}1
-    \def\reserved@c{subsubparagraph}\edef \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
-    \def\reserved@c{subparagraph}\edef    \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
-    \def\reserved@c{paragraph}\edef       \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
-    \def\reserved@c{subsubsubsection}\edef\reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
-    \def\reserved@c{subsubsection}\edef   \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
-    \def\reserved@c{subsection}\edef      \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
-    \def\reserved@c{section}\edef         \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
-    \def\reserved@c{chapter}\edef         \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
-    \def\reserved@c{part}\edef            \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
-    \@latex@error{Unknown structure level for ref \string`\reserved@a'}\@ehc%
-    \def\reserved@c{\textbf{??}}%
-    \fi\fi\fi\fi\fi\fi\fi\fi\fi
+    \if\noexpand#20\else\ref{#1}.~\fi
+    \@@magyar@refstruc@work
     \expandafter\@@magyar@strucname\expandafter{\reserved@c}%
   \fi
   \endgroup
-}%
+}
 
-\def\@@magyar@refstruc@hu#1{\ref{#1}.~\@@magyar@refstruc@name{#1}}%
-\def\@@magyar@refstruc#1{\@@magyar@refstruc@name{#1}~\ref{#1}}%
+%** Input is \reserved@a, output is \reserved@c
+\def\@@magyar@refstruc@work{%
+  \edef\reserved@a{\expandafter\@@magyar@nonumbers@a\reserved@a\hfuzz}%
+  %\expandafter\lowercase\expandafter{\expandafter\def\expandafter\reserved@a\expandafter{\reserved@a}}%
+  % ^^^ Dat: don't do lowercasing, deliberately.
+  \@@magyar@refstruc@setcnt{c@part}1
+  \@@magyar@refstruc@setcnt{c@chapter}1
+  \@@magyar@refstruc@setcnt{c@section}1
+  \@@magyar@refstruc@setcnt{c@subsection}1
+  \@@magyar@refstruc@setcnt{c@subsubsection}1
+  \@@magyar@refstruc@setcnt{c@subsubsubsection}1
+  \@@magyar@refstruc@setcnt{c@paragraph}1
+  \@@magyar@refstruc@setcnt{c@subparagraph}1
+  \@@magyar@refstruc@setcnt{c@subsubparagraph}1
+  \def\reserved@c{subsubparagraph}\edef \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{subparagraph}\edef    \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{paragraph}\edef       \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{subsubsubsection}\edef\reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{subsubsection}\edef   \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{subsection}\edef      \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{section}\edef         \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{chapter}\edef         \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \def\reserved@c{part}\edef            \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
+  \@latex@error{Unknown structure level for ref \string`\reserved@a';
+  \reserved@b}\@ehc%
+  \def\reserved@c{??}% Dat: must be expandable
+  \let\reserved@b\@empty
+  \fi\fi\fi\fi\fi\fi\fi\fi\fi
+}
+
+\def\@@magyar@refstruc@hu#1{\@@magyar@refstruc@name{#1}1}%
+\def\@@magyar@refstruc#1{\@@magyar@refstruc@name{#1}0~\ref{#1}}%
 
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   \babel@save\@@magyar@refstruc
@@ -3043,6 +3137,7 @@
 
 \ldf@finish\CurrentOption% \input \CurrentOption.cfg
 
+% !! letter.cls
 % !! make others conditional
 % !! \refn{foo}: 5.2.~alszakasz
 % !! \begin{description}
