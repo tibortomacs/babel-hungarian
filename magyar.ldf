@@ -6,20 +6,20 @@
 %% The original source files were:
 %%
 %% magyar.dtx  (with options: `code')
-%% Copyright 1998-2001 Johannes L. Braams and any individual authors
+%%
+%% This is a generated file.
+%%
+%% Copyright 1989-2001 Johannes L. Braams and any individual authors
 %% listed elsewhere in this file.  All rights reserved.
 %%
-%% For further copyright information see any other copyright notices in
-%% this file.
-%%
-%% This file is part of the Babel system release 3.6.
+%% This file is part of the Babel system release 3.7.
 %% --------------------------------------------------
 %%
 %% It may be distributed under the terms of the LaTeX Project Public
 %% License, as described in lppl.txt in the base LaTeX distribution.
-%% Either version 1.0 or, at your option, any later version.
-\ProvidesFile{magyar.ldf}
-        [2001/01/25 v1.3hj Magyar support from the babel system]
+%% Either version 1.2 or, at your option, any later version.
+\ProvidesLanguage{magyar}
+        [2001/03/05 v1.4cj Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2001
@@ -30,7 +30,7 @@
 %%              \'Arp\'ad B\'IR\'O  --1996/12/13
 %%              J\'ozsef B\'ERCES 1997-06-06  (exact date unknown, after 1996-12-13, before 2000-03-15)
 %%              P\'eter SZAB\'O 2000-03-15--2001-01-25
-%%
+%% This version is a direct port of 2001/01/25 v1.3hj to Babel 3.7, without changes or bugfixes.
 %
 % Alap használat:
 %
@@ -45,17 +45,20 @@
 %	\usepackage{usebabel}			% usebabel.sty kell neki
 %	\usebabel{[activegrave,magyar]}		% magyar.ldf kell neki
 %
-% pts (P\'eter SZAB\'O) ezeket változtatta a v1.3hi-hez képest:
+% pts (P\'eter SZAB\'O) ezeket változtatta a v1.4ci-hez képest:
 %
 % -- plusz dokumentáció az alábbi kommentekben
-% -- az új Babel v3.6x-szel, és az annál régebbi Babellel is mûködik
 % -- `` és ,, egyaránt a magyar nyitó idézõjelet (alsó 99) adja
+%    (ez a Babel 3.7-beli 2001/03/05 v1.4c-ben is benne van)
 % -- tipográfiai (sorigazítás) a \@makecaption-ben
 % -- tipográfiai javítás (elválasztó szóköz) a \@seccntformat-ban
 % -- tipografiai javítás (\slshape helyett \itshape) a \\@begintheorem-ben
+%    (ez a Babel 3.7-beli 2001/03/05 v1.4c-ben is benne van)
 % -- fordítási javítás (Szójegyzék hozzáadása) a \glossaryname-hez
+%    (ez a Babel 3.7-beli 2001/03/05 v1.4c-ben hibás, mert angol: Glossary)
 % -- kompatibilitási javítás: az .aux fájl elején a ` \catcode-ja other (12)
 %    legyen; enélkül bizonyos .tex dokumentumok nem fordulnak másodjára
+%    (ez a Babel 3.7-beli 2001/03/05 v1.4c-ben is benne van)
 %
 % Nézzük, milyen idézõjelek vannak:
 %
