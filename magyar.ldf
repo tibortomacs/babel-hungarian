@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/04/13 v1.5b Magyar support from the babel system]
+%%        [2004/04/17 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/04/13 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/04/17 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -841,22 +841,30 @@
 \if0\magyar@opt@@theoremtitle \@@magyar@skiplong\fi
 % for theorem.sty and ntheorem.sty
 % Define your \newtheorem commands in the preamble, before \theoremstyle
-\expandafter\ifx\csname theorem@headerfont\endcsname\relax\else
-  \def\magyar@th@magyar{%
-    \def\@begintheorem##1##2{%
-      \item[\hskip \labelsep{\theorem@headerfont ##2.\ ##1.}]}%
-    \babel@save\@opargbegintheorem
-    \def\@opargbegintheorem##1##2##3{%
-      \item[\hskip \labelsep{\theorem@headerfont ##2.\ ##1\ (##3).}]}%
-  }
-  \expandafter\let\csname th@\CurrentOption-plain\endcsname\magyar@th@magyar
-  \def\theorem@headerfont{\bf}%
-  \edef\reserved@a{\the\theorem@style}%
-  \def\reserved@b{plain}%
-  \ifx\reserved@a\reserved@b
-    \expandafter\theorem@style\expandafter{\CurrentOption-plain}%
+\def\magyar@th@magyar{%
+  \def\@begintheorem##1##2{%
+    \item[\hskip \labelsep{\theorem@headerfont ##2.\ ##1.}]}%
+  \def\@opargbegintheorem##1##2##3{%
+    \item[\hskip \labelsep{\theorem@headerfont ##2.\ ##1\ (##3).}]}%
+}
+%** @param #1 magyar
+\def\@@magyar@setup@theoremstyle#1{%
+  \expandafter\ifx\csname theorem@headerfont\endcsname\relax
+    \let\magyar@th@magyar\@undefined
+  \else
+    \expandafter\let\csname th@#1-plain\endcsname\magyar@th@magyar
+    \def\theorem@headerfont{\bf}%
+    \edef\reserved@a{\the\theorem@style}%
+    \def\reserved@b{plain}%
+    \ifx\reserved@a\reserved@b
+      \expandafter\theorem@style\expandafter{#1-plain}%
+    \fi
   \fi
-\fi
+}
+
+% Do this quite late in case theorem.sty or ntheorem.sty is loaded late.
+\expandafter\AtBeginDocument\expandafter{\expandafter
+  \@@magyar@setup@theoremstyle\expandafter{\CurrentOption}}
 
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   %%\show\theorem@headerfont
@@ -2748,13 +2756,24 @@
 
 \def\@@magyar@firsthfuzz#1#2\hfuzz{#1}
 \def\@@magyar@secondhfuzz#1#2#3\hfuzz{#2}
-%** @param #1 a single citation reference (no commas)
-\def\@@magyar@zerocite#1{\@@magyar@zerocite@low#1,\hbox$}% keep only first cited material
-\def\@@magyar@zerocite@low#1,#2\hbox${%
-  \expandafter\ifx\csname b@#1\endcsname\relax0\else
-    \csname b@#1\endcsname
-  \fi
-}%
+%** See docs in magyar.dtx
+\def\@@magyar@zerocite#1{%
+  \ifx[#1\expandafter\@secondoftwo\fi\@thirdofthree\@firstoftwo
+  {\@@magyar@zerocite@lowa[, }% had `['
+  {\@@magyar@zerocite@lowa[]{#1}}%
+}
+\def\@@magyar@zerocite@lowa[#1]#2{[\@@magyar@zerocite@lowb#2,\hbox,${#1}}
+\def\@@magyar@swapvfuzz#1#2\vfuzz{#2#1}
+\def\@@magyar@zerocite@lowb#1#2,{%
+  \ifx\hfuzz#1\hfuzz
+  \else\ifx\hbox#1\@@magyar@swapvfuzz\@@magyar@zerocite@lowc
+  \else\ifx,#1\@@magyar@swapvfuzz\@@magyar@zerocite@lowb{#2,}%
+  \else\expandafter\ifx\csname b@#1#2\endcsname\relax
+    0, \@@magyar@swapvfuzz\@@magyar@zerocite@lowb
+  \else\csname b@#1#2\endcsname, \@@magyar@swapvfuzz\@@magyar@zerocite@lowb
+  \fi\fi\fi\fi\vfuzz}
+\def\@@magyar@zerocite@lowc$#1{]#1}
+
 \def\@@magyar@zeroref#1{%
   \expandafter\ifx\csname r@#1\endcsname\relax0\else
     \expandafter\expandafter\expandafter\@@magyar@firsthfuzz\csname r@#1\endcsname00\hfuzz
@@ -2804,9 +2823,10 @@
 %** @example \told{300}+szor
 %** @example -i and -ig don't change have alternate forms
 %** @param #1 something that expands to an integer, or `\count...' or `\toks...'
-\def\@@magyar@told#1+{\@@magyar@told@low{#1}0}%
-\def\@@magyar@atold#1+{\@@magyar@told@low{#1}a}%
-\def\@@magyar@Atold#1+{\@@magyar@told@low{#1}A}%
+\DeclareRobustCommand \@@magyar@told{\@@magyar@xtold 0}
+\DeclareRobustCommand\@@magyar@atold{\@@magyar@xtold a}
+\DeclareRobustCommand\@@magyar@Atold{\@@magyar@xtold A}
+\def\@@magyar@xtold#1#2+{\@@magyar@told@low{#2}#1}
 %** @param #1 something that expands to an integer, or `\count...' or `\toks...'
 %** @param #2 add \az? (0: no, a: lowercase A: uppercase)
 \def\@@magyar@told@low#1#2{%
@@ -2830,6 +2850,7 @@
   \def\@@magyar@toldas##1{.##1.}% emit the number
   \let\romannumeral\number
   \def\refstruc##1{0}%
+  \let\@safe@activesfalse\@empty% \b@DuplanJauneau1986 ->\@safe@activesfalse 15
   \let\ref\@@magyar@zeroref \let\pageref\@@magyar@zeropageref \let\cite\@@magyar@zerocite
   \let\aref\ref \let\apageref\pageref \let\acite\cite% !! \Aref* \Aref(, only 1st arg of \acite etc.
   \let\Aref\ref \let\Apageref\pageref \let\Acite\cite
