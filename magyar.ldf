@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/05/26 v1.5b Magyar support from the babel system]
+%%        [2004/06/27 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/05/26 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/06/27 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -193,7 +193,8 @@
 %**     titles=\enskip,            % TeX code: =unchanged, =\quad or other
 %**     toclang=good,              % or =badfloat or =badall or =unchanged
 %**     told=weak,                 % or =no or =yes
-%**     varioref=hu,              % or =unchanged
+%**     varioref=hu,               % or =unchanged
+%**     fancyhdr=hu,               % or =unchanged
 %**   }\usepackage[magyar]{babel}
 \dMf magyar@opt@defaults@@over-1.4 {%
   \magyar@opt@accents@@defaulthigh
@@ -213,6 +214,7 @@
   \magyar@opt@emitdate{emitdate}{weak}%
   \magyar@opt@extras@@yes
   \magyar@opt@chapterhead@@yes
+  \magyar@opt@fancyhdr@@hu% !!! other places, too
   \magyar@opt@figurecaptions@@hu
   \magyar@opt@footnote@@yes
   \magyar@opt@frenchspacing@@unchanged
@@ -273,8 +275,9 @@
   \magyar@opt@dottedtocline@@unchanged% OK
   \magyar@opt@emitdate{emitdate}{no}% OK
   \magyar@opt@extras@@yes% OK
-  \magyar@opt@footnote@@unchanged% OK
+  \magyar@opt@fancyhdr@@hu
   \magyar@opt@figurecaptions@@hu% OK
+  \magyar@opt@footnote@@unchanged% OK
   \magyar@opt@frenchspacing@@unchanged% OK
   \magyar@opt@hang{hang}{no}% OK
   \magyar@opt@hunnewlabel@@yes% OK
@@ -329,6 +332,7 @@
   \magyar@opt@emitdate{emitdate}{no}%
   \magyar@opt@extras@@no
   \magyar@opt@chapterhead@@no
+  \magyar@opt@fancyhdr@@unchanged
   \magyar@opt@figurecaptions@@unchanged
   \magyar@opt@footnote@@unchanged
   \magyar@opt@frenchspacing@@unchanged
@@ -387,6 +391,7 @@
   \magyar@opt@emitdate{emitdate}{yes}%
   \magyar@opt@extras@@yes
   \magyar@opt@chapterhead@@yes
+  \magyar@opt@fancyhdr@@hu
   \magyar@opt@figurecaptions@@hu
   \magyar@opt@footnote@@yes
   \magyar@opt@frenchspacing@@yes
@@ -432,7 +437,7 @@
   \magyar@doopt activespace=safe,amstocnumskip=\enskip,frenchspacing=yes,
     captions=hu,classmod=yes,figurecaptions=hu,
     footnote=huplain,frenchspacing=yes,hyphenmins=22,
-    labelenums=hu-d,labelitems=hu,
+    labelenums=hu-d,labelitems=hu,fancyhdr=hu,
     longcaption=centered,mathbrk=fix,mathhucomma=fix,
     postpara=diamond,postsubpara=star,postdescription=dot,
     sectiondot=safe,tablecaptions=hu,theoremtitle=hu,
@@ -523,6 +528,9 @@
 \def\magyar@opt@varioref@@unchanged{\def\magyar@opt@@varioref{0}}
 \def\magyar@opt@varioref@@hu{\def\magyar@opt@@varioref{1}}
 \let\magyar@opt@varioref\magyar@enumarg
+\def\magyar@opt@fancyhdr@@unchanged{\def\magyar@opt@@fancyhdr{0}}
+\def\magyar@opt@fancyhdr@@hu{\def\magyar@opt@@fancyhdr{1}}
+\let\magyar@opt@fancyhdr\magyar@enumarg
 \def\magyar@opt@figurecaptions@@unchanged{\def\magyar@opt@@figurecaptions{0}}
 \def\magyar@opt@figurecaptions@@hu{\def\magyar@opt@@figurecaptions{1}}
 \def\magyar@opt@figurecaptions@@us{\def\magyar@opt@@figurecaptions{2}}
@@ -746,6 +754,7 @@
 
 
 \magyar@opt@defaults{defaults}{over-1.4}
+\def\magyar@opt@@hdrtitleskip{\enskip}% !!! option for that
 \magyar@dooptions% in \magyarOptions
 \ifnum\magyar@opt@@openqq=3 % =maybedown
   \ifnum\magyar@opt@@active=0
@@ -2023,6 +2032,13 @@
       please move it before \string\usepackage[#1]{babel}}%
     \fi
   }%
+  \def\@@magyar@@ps@fancy{\relax}%\@fancyplainfalse\ps@@fancy}%
+  \def\magyar@sugg@fh#1{%
+    \ifx\ps@fancy\@@magyar@@ps@fancy
+      \PackageWarningNoLine{#1.ldf}{No effect on fancyhdr.sty,\MessageBreak
+      please load it before \string\usepackage[#1]{babel}}%
+    \fi
+  }%
   \def\magyar@sugg@ap#1{%
     \expandafter\ifx\csname opt@#1.ldf.sty\endcsname\relax\else
       \PackageWarningNoLine{#1.ldf}{No effect of \@backslashchar PassOptionsToPackage{?}{#1.ldf}\MessageBreak
@@ -2036,6 +2052,7 @@
     \noexpand\magyar@sugg@to{\CurrentOption}%
     \noexpand\magyar@sugg@ie{\CurrentOption}%
     \noexpand\magyar@sugg@vr{\CurrentOption}%
+    \noexpand\magyar@sugg@fh{\CurrentOption}%
   }}\reserved@a
   \@gobble
 {^}%
@@ -4045,14 +4062,14 @@
 	  \ifnum \c@secnumdepth >\m@ne
 	    \if@mainmatter
 	      \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else. \fi
-	      \@chapapp. \ %
+	      \@chapapp.\magyar@opt@@hdrtitleskip% \ %
 	    \fi
 	  \fi
 	  ##1}}{}}%
       \def\sectionmark##1{%
 	\markright {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\z@
-	    \thesection. \ %
+	    \thesection.\magyar@opt@@hdrtitleskip% \ %
 	  \fi
 	  ##1}}}%
     \else
@@ -4064,7 +4081,7 @@
 	  \ifnum \c@secnumdepth >\m@ne
 	    \if@mainmatter
 	      \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else. \fi
-	      \@chapapp. \ %
+	      \@chapapp.\magyar@opt@@hdrtitleskip% \ %
 	    \fi
 	  \fi
 	  ##1}}}%
@@ -4167,13 +4184,14 @@
       \def\chaptermark##1{%
 	\markboth {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
-	      \thechapter. \@chapapp. \ %
+	    \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else. \fi
+	    \@chapapp.\magyar@opt@@hdrtitleskip% \ %
 	  \fi
 	  ##1}}{}}%
       \def\sectionmark##1{%
 	\markright {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\z@
-	    \thesection. \ %
+	    \thesection.\magyar@opt@@hdrtitleskip% \ %
 	  \fi
 	  ##1}}}%
     \else
@@ -4183,7 +4201,8 @@
       \def\chaptermark##1{%
 	\markright {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
-	      \thechapter. \@chapapp. \ %
+	    \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else. \fi
+	    \@chapapp.\magyar@opt@@hdrtitleskip% \ %
 	  \fi
 	  ##1}}}%
     \fi
@@ -4249,13 +4268,13 @@
         \def\sectionmark##1{%
           \markboth {\MakeUppercase{%
             \ifnum \c@secnumdepth >\z@
-              \thesection.\magyar@opt@@titleskip
+              \thesection.\magyar@opt@@hdrtitleskip
             \fi
             ##1}}{}}%
         \def\subsectionmark##1{%
           \markright {%
             \ifnum \c@secnumdepth >\@ne
-              \thesubsection.\magyar@opt@@titleskip
+              \thesubsection.\magyar@opt@@hdrtitleskip
             \fi
             ##1}}}%
     \else
@@ -4266,7 +4285,7 @@
         \def\sectionmark##1{%
           \markright {\MakeUppercase{%
             \ifnum \c@secnumdepth >\m@ne
-              \thesection.\magyar@opt@@titleskip
+              \thesection.\magyar@opt@@hdrtitleskip
             \fi
             ##1}}}}%
     \fi}%
@@ -4366,6 +4385,38 @@
 }
 \@gobble
 {^}%
+
+% vvv fancyhdr=
+%
+% Dat: magyar.ldf has to be loaded first, otherwise it cannot fix
+%      `\usepackage{fancyhdr} \pagestyle{fancy}'
+
+\if0\magyar@opt@@fancyhdr \@@magyar@skiplong\fi
+\expandafter\ifx\csname ps@fancy\endcsname\relax
+  % Emit a warning if \pagestyle{fancy} is used after this.
+  \def\@@magyar@@ps@fancy{\@fancyplainfalse\ps@@fancy}%
+\else
+  \addto\ps@fancy{% works for article.cls, report.cls and book.cls
+    \@ifundefined{chapter}{%
+      \def\sectionmark#1{\markboth{\MakeUppercase{\ifnum \c@secnumdepth>\z@
+        \thesection.\magyar@opt@@hdrtitleskip \fi #1}}{}}%
+      % vvv Imp: do we need \if@twoside to set \subsectionmark here?
+      \def\subsectionmark#1{\markright {\ifnum \c@secnumdepth >\@ne
+        \thesubsection.\magyar@opt@@hdrtitleskip \fi #1}}%
+    }{\def\chaptermark#1{\markboth{\MakeUppercase{\ifnum \c@secnumdepth>\m@ne
+        \csname if@mainmatter\endcsname% report.cls doesn't have it
+        \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else. \fi
+        \@chapapp.\magyar@opt@@hdrtitleskip
+        \expandafter\ifx\csname if@mainmatter\endcsname\relax
+          \csname iftrue\endcsname\fi
+        \csname fi\endcsname\fi#1}}{}}%
+      \def\sectionmark#1{\markright{\MakeUppercase{\ifnum \c@secnumdepth>\z@
+        \thesection.\magyar@opt@@hdrtitleskip \fi#1}}}}}%
+  \def\@@magyar@@ps@fancy{\relax}% must be done after suggestions=
+\fi
+\@gobble
+{^}%
+
 
 % vvv extras=, must be last
 
