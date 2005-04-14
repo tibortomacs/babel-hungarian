@@ -1001,14 +1001,14 @@
 \makeatletter
 
 %** modified by pts at Fri Oct  3 22:19:13 CEST 2003
-\def\@@magyar@az@vfuzzdef#1#2#3{{%
-  \relax\relax\relax\relax
-%  \aaaaaaaaaaaa
-%  \@safe@activestrue% allow active `:' inside labels
+%** @param #1 tokens, will be \edef\vfuzz'ed
+\def\@@magyar@az@vfuzzedef#1{%
+  \begingroup
+  \@safe@activestrue% allow active `:' inside labels; 
+  \def\hyper@@link[##1]##2##3##4{##4}% Dat: \def\b@abook{\hyper@@link [cite]{}{cite.sokt}{2}}% with hyperref.sty
   \let\romannumeral\number% by pts@fazekas.hu at Mon Oct 27 23:44:06 CET 2003
-  % Dat: deliberately no \autoref for hyperref.sty !!
+  % Dat: deliberately no \autoref for hyperref.sty !! (why??)
   \let\ref\@@magyar@zeroref \let\pageref\@@magyar@zeropageref
-%  \bbbbbbbbbbbb
   \let\cite\@@magyar@zerocite \let\eqref\@@magyar@zeroeqref
   % ^^^ fix so \az{\ref{...}} works
   \let\refstruc\@@magyar@zerorefplus
@@ -1023,16 +1023,10 @@
   \def\d{}\def\b{}\def\c{}\def\t{}% Dat: no need to redefine \H and \.
   % Dat: no need to remove \textsf or \mdseries, because they are
   % handled properly by \protect == \string here.
-  \let\@safe@activestrue\@empty% babel puts these inside \b@...
+  \let\@safe@activestrue\@empty% babel puts these inside \b@...: % Dat: \def\b@abook{\@safe@activesfalse 2}% (what is \@safe@actives??)
   \let\@safe@activesfalse\@empty
-  %\tracingmacros1
-  \edef\vfuzz{\def\noexpand\vfuzz{%
-    \expandafter\ifx\csname #1\endcsname\relax
-      \expandafter\ifx\csname #2\endcsname\relax#3%
-      \else\csname#2\endcsname\fi
-    \else\csname#1\endcsname\fi
-  }}%
-  \expandafter}\vfuzz
+  \edef\vfuzz{\noexpand\def\noexpand\vfuzz{#1}}%
+  \expandafter\endgroup\vfuzz
 }
 
 %** Makes \az etc. not emit the definite article.
@@ -1060,24 +1054,41 @@
   \begingroup
   %\def\protect{\noexpand\protect\noexpand}%
   \set@display@protect% screws up \r
-  \@@magyar@az@vfuzzdef{relax}{relax}{#1}%
+  \@@magyar@az@vfuzzedef{#1}%
   %%\show\vfuzz
   \expandafter\endgroup\expandafter
-  \set@display@protect\expandafter% fixes \r; why??
-  \@@magyar@az@set\vfuzz\hbox$% \vfuzz is already expanded
+    \set@display@protect\expandafter% fixes \r; why??
+    \@@magyar@az@set\expandafter{\vfuzz}\hbox$%
 }}
+
+\def\@@magyar@firstarg#1#2\hbox${#1}%
 
 %** \Aref({e:foo}) -> `az~(5)'; \aref*{e:foo}: `az'
 \def\@@magyar@az@lowa{\@ifnextchar({\@@magyar@az@lowb}{\@@magyar@az@lowb\@empty}}
 \def\@@magyar@az@lowb#1#2{\@@magyar@az@ref\@firstoftwo{#2}~#1\ref{#2}}
-%** @param #1 \@firstoftwo (for \ref) or \@secodoftwo (for \pageref)
+%** @param #1 \@firstoftwo (for \ref) or \@secondoftwo (for \pageref)
+%**           everything which is not \@secondoftwo is treated is \@firstoftwo
+%** @param #2 for \csname r@#2\endcsname
 \def\@@magyar@az@ref#1#2{%
-  \begingroup
-    \@@magyar@az@vfuzzdef{@@magyar@r@#2}{r@#2}{}%
-    \ifx\vfuzz\@empty\else% a speed boost
-      \edef\vfuzz{\noexpand\@@magyar@az@set\expandafter#1\vfuzz\hbox$}%
+  % Dat: this works when turning on hyperref.sty for the 1st time (1st .aux file) -- but the original \ref doesn't work (\@fifthoffive)
+  \@ifundefined{@@magyar@r@#2}{%
+    \@ifundefined{r@#2}{\let\reserved@a\@empty}{\expandafter\let\expandafter\reserved@a\csname r@#2\endcsname}%
+  }{\expandafter\let\expandafter\reserved@a\csname @@magyar@r@#2\endcsname}%
+  \ifx\reserved@a\@empty\endgroup\else% a speed boost
+    \ifx#1\@secondoftwo\relax % Dat: remove the 1st {...} arg inside \reserved@a
+      \expandafter\expandafter\expandafter\def\expandafter\expandafter
+        \expandafter\reserved@a\expandafter\expandafter\expandafter{%
+        \expandafter\expandafter\expandafter\@gobble\reserved@a{}}%
     \fi
-  \expandafter\endgroup\vfuzz
+    % vvv keep only the 1st arg (w/o braces) of \vbox, without expansion.
+    %     This is to have hyperref.sty with `\newlabel{tab}{{1}{2}{\texorpdfstring {\textit {bg}}{asd}\relax }{section.1}{}}'
+    %     right, and \texorpdfstring not expanded in the \edef below.
+    \expandafter\expandafter\expandafter\def\expandafter\expandafter
+      \expandafter\reserved@a\expandafter\expandafter\expandafter{%
+      \expandafter\expandafter\expandafter\@@magyar@firstarg\reserved@a{}\hbox$}%
+    \expandafter\@@magyar@az@vfuzzedef\expandafter{\reserved@a}%
+    \expandafter\endgroup\expandafter\@@magyar@az@set\expandafter{\vfuzz}\hbox$%
+  \fi
 }
 
 \def\@@magyar@az@lowd#1{\@@magyar@az@ref\@secondoftwo{#1}~\pageref{#1}}
@@ -1090,9 +1101,12 @@
 \def\@@magyar@acite@lowd#1{\@@magyar@acite@lowc#1,\hbox$}
 \def\@@magyar@acite@lowc#1,#2\hbox#3${%
   \begingroup
-  \@@magyar@az@vfuzzdef{@@magyar@b@#1}{b@#1}{}% Dat: @@magyar@b@... is never used
+  \@ifundefined{@@magyar@b@#1}{%
+    \@ifundefined{b@#1}{\def\vfuzz{}}{%
+      \@@magyar@az@vfuzzedef{\csname b@#1\endcsname}}%
+  }  {\@@magyar@az@vfuzzedef{\csname @@magyar@b@#1\endcsname}}%
   \expandafter\endgroup\expandafter
-  \@@magyar@az@set\vfuzz\hbox$% \vfuzz is already expanded
+    \@@magyar@az@set\expandafter{\vfuzz}\hbox$%
 }
 
 % The original version of the \@az macros below were written by
@@ -1187,9 +1201,9 @@
 
 %** Typesets `z' or nothing (last char of definite article). Is _not_
 %** expandable.
-%** @param #1 may contain space(_10) tokens, but mustn't contain expanadable
+%** @param #1 may contain space(_10) tokens, but mustn't contain expandable
 %**   tokens.
-\def\@@magyar@az@set#1\hbox#2${% by pts
+\def\@@magyar@az@set#1#2\hbox${% by pts
   % ^^^ Dat: we have `$' instead of `!' because of catcode changes (shouldn't affect)
   \edef\reserved@a{\@@magyar@azrb#1\hfuzz}%
   \expandafter\@@magyar@aznospace\reserved@a[b][][] \hbox$%
@@ -2961,7 +2975,8 @@
   \if0#2\else
     #2% a or A
     % vvv Dat: we do \az with \romannumeral changed to \number
-    \expandafter\@@magyar@az@set\expandafter{\reserved@a}\hbox$\nobreakspace% Dat: `~' is wrong here, it has been redefined !!!
+    \expandafter\@@magyar@az@set\expandafter{\reserved@a}\hbox$% Dat: \reserved@a is already expanded, as required by \@@magyar@az@set
+    \nobreakspace% Dat: `~' is wrong here, it has been redefined !!
   \fi
   \edef\reserved@a{\noexpand\reserved@c\def\noexpand\reserved@a{\reserved@a}}%
   %
@@ -4640,20 +4655,12 @@
 % !! french.ldf \LasyGuillemets
 % !! huplain.bst   editor = "Wizar{\BN dj} V. Oz and Mihalis Yannakakis",
 % !! huplain.bst w/o magyar.ldf
-% !! bugfix:
-%    \documentclass{article}
-%    %\usepackage{t1enc}
-%    \usepackage[magyar]{babel}
-%    \usepackage[latin2]{inputenc}
-%    \usepackage{hyperref}
-%    \begin{document}
-%    \section{\texorpdfstring{\textit{bg}}{asd}}
-%    % \section{\texorpdfstring{{\itshape bg}}{asd}} % ez megjavitja!
-%    Ld. \aref{tab}. táblázatot.
-%    \begin{table}
-%    \label{tab}
-%    \end{table}
-%    \end{document}
+% !! hyperref.sty bugfix when turning hyperref.sty on, \ref is spoiled:
+%    w/ or w/o magyar.ldf
+%    ! Argument of \@fifthoffive has an extra }.
+%    <inserted text> 
+%                    \par 
+%    l.48 Ld. \ref{tab}
 %
 % Dat: \mathcode`\,="013B     % és így a tizedes törtekben matematikai módban sem lesz köz
 % Dat:  \mathchardef\comma="613B  % a veszõ (,) ami matematikai módban elválasztó karakterként használható
