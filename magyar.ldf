@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2004/11/10 v1.5b Magyar support from the babel system]
+%%        [2005/04/14 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2004/11/10 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2005/04/14 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -998,12 +998,17 @@
 
 \if0\magyar@opt@@az \@@magyar@skiplong\fi
 
+\makeatletter
+
 %** modified by pts at Fri Oct  3 22:19:13 CEST 2003
 \def\@@magyar@az@vfuzzdef#1#2#3{{%
-  \@safe@activestrue% allow active `:' inside labels
+  \relax\relax\relax\relax
+%  \aaaaaaaaaaaa
+%  \@safe@activestrue% allow active `:' inside labels
   \let\romannumeral\number% by pts@fazekas.hu at Mon Oct 27 23:44:06 CET 2003
   % Dat: deliberately no \autoref for hyperref.sty !!
   \let\ref\@@magyar@zeroref \let\pageref\@@magyar@zeropageref
+%  \bbbbbbbbbbbb
   \let\cite\@@magyar@zerocite \let\eqref\@@magyar@zeroeqref
   % ^^^ fix so \az{\ref{...}} works
   \let\refstruc\@@magyar@zerorefplus
@@ -4635,6 +4640,20 @@
 % !! french.ldf \LasyGuillemets
 % !! huplain.bst   editor = "Wizar{\BN dj} V. Oz and Mihalis Yannakakis",
 % !! huplain.bst w/o magyar.ldf
+% !! bugfix:
+%    \documentclass{article}
+%    %\usepackage{t1enc}
+%    \usepackage[magyar]{babel}
+%    \usepackage[latin2]{inputenc}
+%    \usepackage{hyperref}
+%    \begin{document}
+%    \section{\texorpdfstring{\textit{bg}}{asd}}
+%    % \section{\texorpdfstring{{\itshape bg}}{asd}} % ez megjavitja!
+%    Ld. \aref{tab}. táblázatot.
+%    \begin{table}
+%    \label{tab}
+%    \end{table}
+%    \end{document}
 %
 % Dat: \mathcode`\,="013B     % és így a tizedes törtekben matematikai módban sem lesz köz
 % Dat:  \mathchardef\comma="613B  % a veszõ (,) ami matematikai módban elválasztó karakterként használható
