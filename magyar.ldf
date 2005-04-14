@@ -1070,6 +1070,7 @@
 %**           everything which is not \@secondoftwo is treated is \@firstoftwo
 %** @param #2 for \csname r@#2\endcsname
 \def\@@magyar@az@ref#1#2{%
+  \begingroup
   % Dat: this works when turning on hyperref.sty for the 1st time (1st .aux file) -- but the original \ref doesn't work (\@fifthoffive)
   \@ifundefined{@@magyar@r@#2}{%
     \@ifundefined{r@#2}{\let\reserved@a\@empty}{\expandafter\let\expandafter\reserved@a\csname r@#2\endcsname}%
