@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2005/04/14 v1.5b Magyar support from the babel system]
+%%        [2005/04/19 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2005/04/14 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2005/04/19 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -139,7 +139,7 @@
 %** are the ovarall defaults of magyar.ldf v1.5, in case of
 %** \def\magyarOptions{} (or if is missing).
 %**
-%** These are the defaults:
+%** These are the defaults: (over-1.4)
 %**   \def\magyarOptions{
 %**     accents=defaulthigh,       % or =high or =low
 %**     active=safe,               % or =problematic or =none or =onlycs
@@ -154,11 +154,13 @@
 %**     az=weak,                   % or =yes or =no
 %**     captions=hu,               % or =unchanged
 %**     chapternumber=unchanged,   % see partnumber=
+%**     cjhebrewfix=yes,           % or =unchanged
 %**     classmod=yes,              % or =unchanged(=no) or TeX class name
 %**     %defaults=over-1.4,        % or =compat-1.4 or =safest or =prettiest
 %**     dottedtocline=fix,         % or =unchanged
 %**     emitdate=weak,             % or =no or =yes
 %**     extras=yes,                % or =no
+%**     fancyhdr=hu,               % or =unchanged
 %**     figurecaptions=hu,         % or =us or =unchanged
 %**     frenchspacing=unchanged,   % or =no or =yes
 %**     hang=weak,                 % or =no or =yes
@@ -195,7 +197,6 @@
 %**     toclang=good,              % or =badfloat or =badall or =unchanged
 %**     told=weak,                 % or =no or =yes
 %**     varioref=hu,               % or =unchanged
-%**     fancyhdr=hu,               % or =unchanged
 %**   }\usepackage[magyar]{babel}
 \dMf magyar@opt@defaults@@over-1.4 {%
   \magyar@opt@accents@@defaulthigh
@@ -251,6 +252,7 @@
   \magyar@opt@toclang@@good
   \magyar@opt@told{told}{weak}%
   \magyar@opt@varioref@@hu
+  \magyar@opt@cjhebrewfix@@yes
 }
 
 %** These defaults try to be compatible with magyar.ldf v1.4 as much as
@@ -313,6 +315,7 @@
   \magyar@opt@toclang@@good% we don't want weird errors and mischosen languages (would be =badall)
   \magyar@opt@told{told}{no}% OK
   \magyar@opt@varioref@@hu% was =unchanged, but varioref.sty (2000) is buggy
+  \magyar@opt@cjhebrewfix@@yes
 }
 
 %** These defaults turn of most features -- the effect is similar to as if
@@ -371,6 +374,7 @@
   \magyar@opt@toclang@@unchanged
   \magyar@opt@told{told}{no}%
   \magyar@opt@varioref@@unchanged
+  \magyar@opt@cjhebrewfix@@unchanged
 }
 
 %** These defaults load almost all features, and try to do their best to make
@@ -432,6 +436,7 @@
   \magyar@opt@toclang@@good
   \magyar@opt@told{told}{yes}%
   \magyar@opt@varioref@@hu
+  \magyar@opt@cjhebrewfix@@yes
 }
 
 %** Matches Hungarian typographic orders most closely -- and most
@@ -534,6 +539,9 @@
 \def\magyar@opt@varioref@@unchanged{\def\magyar@opt@@varioref{0}}
 \def\magyar@opt@varioref@@hu{\def\magyar@opt@@varioref{1}}
 \let\magyar@opt@varioref\magyar@enumarg
+\def\magyar@opt@cjhebrewfix@@unchanged{\def\magyar@opt@@cjhebrewfix{0}}
+\def\magyar@opt@cjhebrewfix@@yes{\def\magyar@opt@@cjhebrewfix{1}}
+\let\magyar@opt@cjhebrewfix\magyar@enumarg
 \def\magyar@opt@fancyhdr@@unchanged{\def\magyar@opt@@fancyhdr{0}}
 \def\magyar@opt@fancyhdr@@hu{\def\magyar@opt@@fancyhdr{1}}
 \let\magyar@opt@fancyhdr\magyar@enumarg
@@ -594,6 +602,7 @@
 \def\magyar@opt@appendixdot@@no {\def\@@magyar@appendixname{\appendixname}}
 \def\magyar@opt@appendixdot@@yes{\def\@@magyar@appendixname{}}
 \let\magyar@opt@appendixdot\magyar@enumarg
+\def\magyar@opt@extras@@no {\def\magyar@opt@@extras{0}}
 \def\magyar@opt@extras@@yes{\def\magyar@opt@@extras{1}}
 \let\magyar@opt@extras\magyar@enumarg
 \def\magyar@opt@chapterhead@@no{\def\magyar@opt@@chapterhead{0}}
@@ -4501,6 +4510,21 @@
   \edef\reserved@a{\noexpand\@namedef{\CurrentOption hyphenmins}{\magyar@opt@@hyphenmins}}
   \reserved@a
 \fi
+
+% vvv cjhebrewfix= % by pts@fazekas.hu at Tue Apr 19 18:26:54 CEST 2005
+
+\if0\magyar@opt@@varioref \@@magyar@skiplong\fi
+% Dat: \cjRL{`l} in cjhebrew.sty should typeset two letters, but typesets
+%      only one if ` is \active. Use this code to fix it.
+% Imp: also fix in command arguments etc. Change catcode later.
+\def\@@magyar@cjhebrewfix{%
+  \let\@@magyar@orig@cjRL\cjRL
+  \def\cjRL{\begingroup\catcode\string``=12 \@@magyar@cjRL@low}%
+  \def\@@magyar@cjRL@low##1{\@@magyar@orig@cjRL{##1}\endgroup}%
+}
+\AtBeginDocument{\ifx\cjRL\@undefined\else\@@magyar@cjhebrewfix\fi}
+\@gobble
+{^}%
 
 % vvv varioref=
 
