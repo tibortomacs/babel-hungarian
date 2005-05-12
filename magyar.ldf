@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2005/04/28 v1.5b Magyar support from the babel system]
+%%        [2005/05/12 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -73,7 +73,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2005/04/28 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2005/05/12 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -154,7 +154,7 @@
 %**     az=weak,                   % or =yes or =no
 %**     captions=hu,               % or =unchanged
 %**     chapternumber=unchanged,   % see partnumber=
-%**     cjhebrewfix=yes,           % or =unchanged
+%**     cjhebrewfix=yes,           % or =unchanged or =onlyouter
 %**     classmod=yes,              % or =unchanged(=no) or TeX class name
 %**     %defaults=over-1.4,        % or =compat-1.4 or =safest or =prettiest
 %**     dottedtocline=fix,         % or =unchanged
@@ -540,7 +540,8 @@
 \def\magyar@opt@varioref@@hu{\def\magyar@opt@@varioref{1}}
 \let\magyar@opt@varioref\magyar@enumarg
 \def\magyar@opt@cjhebrewfix@@unchanged{\def\magyar@opt@@cjhebrewfix{0}}
-\def\magyar@opt@cjhebrewfix@@yes{\def\magyar@opt@@cjhebrewfix{1}}
+\def\magyar@opt@cjhebrewfix@@onlyouter{\def\magyar@opt@@cjhebrewfix{1}}
+\def\magyar@opt@cjhebrewfix@@yes{\def\magyar@opt@@cjhebrewfix{2}}
 \let\magyar@opt@cjhebrewfix\magyar@enumarg
 \def\magyar@opt@fancyhdr@@unchanged{\def\magyar@opt@@fancyhdr{0}}
 \def\magyar@opt@fancyhdr@@hu{\def\magyar@opt@@fancyhdr{1}}
@@ -4523,16 +4524,34 @@
 \fi
 
 % vvv cjhebrewfix= % by pts@fazekas.hu at Tue Apr 19 18:26:54 CEST 2005
-
-\if0\magyar@opt@@varioref \@@magyar@skiplong\fi
+%     thanks to Zoltán Hamar for reporting the problem
+% Dat: the ultimate solution is active=onlycs, but it limits other
+%      functionality
+% Dat: use \def\h{\cjRL} in the preamble to abbreviate \cjRL
+%      wrong: \let\h\cjRL
+%      wrong: \newcommand{\h}[1]{\cjRL{#1}}
+\if0\magyar@opt@@cjhebrewfix \@@magyar@skiplong\fi
 % Dat: \cjRL{`l} in cjhebrew.sty should typeset two letters, but typesets
 %      only one if ` is \active. Use this code to fix it.
 % Imp: also fix in command arguments etc. Change catcode later.
+\if1\magyar@opt@@cjhebrewfix % =onlyouter
+% Dat: this doesn't work in the argument of \section etc., but it allows
+%      LaTeX commands (\) in the arg of \cjRL
 \def\@@magyar@cjhebrewfix{%
   \let\@@magyar@orig@cjRL\cjRL
   \def\cjRL{\begingroup\catcode\string``=12 \@@magyar@cjRL@low}%
-  \def\@@magyar@cjRL@low##1{\@@magyar@orig@cjRL{##1}\endgroup}%
-}
+  \def\@@magyar@cjRL@low##1{\@@magyar@orig@cjRL{##1}\endgroup}}
+\else % =yes
+% Dat: this works in the argument of \section etc., but it doesn't allow
+%      LaTeX commands (\) in the arg of \cjRL
+\def\@@magyar@cjhebrewfix{%
+  \let\@@magyar@orig@cjRL\cjRL
+  \DeclareRobustCommand\cjRL[1]{\begingroup
+    \toks@{##1}%
+    \edef\reserved@a{\the\toks@}%
+    \edef\reserved@a{\noexpand\@@magyar@orig@cjRL{\expandafter\strip@prefix\meaning\reserved@a}}%
+    \reserved@a\endgroup}}
+\fi
 \AtBeginDocument{\ifx\cjRL\@undefined\else\@@magyar@cjhebrewfix\fi}
 \@gobble
 {^}%
