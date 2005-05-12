@@ -4532,21 +4532,6 @@
 %  \fi
 %}
 
-% !!
-\def\reserved@b{\protect}
-\edef\reserved@b{\expandafter\strip@prefix\meaning\reserved@b}
-%\show\reserved@b
-\edef\reserved@a{%
-  \noexpand\def\noexpand\skipfoo##1\reserved@b{%
-  \noexpand\ifx##1\noexpand\hfuzz\noexpand\@empty\noexpand\else
-    ##1%(##1)%
-    \noexpand\expandafter\noexpand\skipfoo
-  \noexpand\fi}%
-  \noexpand\def\noexpand\delfoo##1\noexpand\hfuzz{%
-    \noexpand\skipfoo##1\reserved@b\noexpand\hfuzz\reserved@b}%
-}
-%\show\reserved@a
-\reserved@a
 
 % vvv cjhebrewfix= % by pts@fazekas.hu at Tue Apr 19 18:26:54 CEST 2005
 %     thanks to Zoltán Hamar for reporting the problem
@@ -4584,6 +4569,18 @@
 \else % =yes
 % Dat: this works in the argument of \section etc., but it doesn't allow
 %      LaTeX commands (\) in the arg of \cjRL
+\def\reserved@b{\protect}
+\edef\reserved@b{\expandafter\strip@prefix\meaning\reserved@b}
+%\show\reserved@b
+\edef\reserved@a{%
+  \noexpand\def\noexpand\@@magyar@cjhebrew@skipa##1\reserved@b{%
+  \noexpand\ifx##1\noexpand\hfuzz\noexpand\@empty\noexpand\else
+    ##1%(##1)%
+    \noexpand\expandafter\noexpand\@@magyar@cjhebrew@skipa
+  \noexpand\fi}%
+  \noexpand\def\noexpand\@@magyar@cjhebrew@skipb##1\noexpand\hfuzz{% Dat: this removes all `\protect '
+    \noexpand\@@magyar@cjhebrew@skipa##1\reserved@b\noexpand\hfuzz\reserved@b}}
+\reserved@a
 \def\@@magyar@cjhebrewfix{%
   \let\@@magyar@orig@cjRL\cjRL
   %\let\@@magyar@orig@cjRL\bf
@@ -4596,9 +4593,7 @@
     %      instances of `\protect ' (catcodes 12 and 10), which were inserted
     %      into \firstmark, i.e. with \section{A\cjRL{`l}B}, \firstmark
     %      becomes: `{}{\protect \csname foreignlanguage \endcsname {magyar}{\protect \MakeUppercase {1\hskip 1em\relax A\protect \cjRL  {\protect `l}B}}}'
-    %\edef\reserved@a{\expandafter\skipfoo\reserved@a foo \hfuzz foo }%
-    %\show\reserved@a
-    \edef\reserved@a{\expandafter\delfoo\reserved@a\hfuzz}%
+    \edef\reserved@a{\expandafter\@@magyar@cjhebrew@skipb\reserved@a\hfuzz}%
     %\show\reserved@a
     \expandafter\@@magyar@orig@cjRL\expandafter{\reserved@a}\endgroup}}
 \fi
