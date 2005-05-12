@@ -4523,6 +4523,31 @@
   \reserved@a
 \fi
 
+% !!
+
+%\def\skipfoo #1foo {%
+%  \ifx#1\hfuzz\else
+%    (#1)%
+%    \expandafter\skipfoo
+%  \fi
+%}
+
+% !!
+\def\reserved@b{\protect}
+\edef\reserved@b{\expandafter\strip@prefix\meaning\reserved@b}
+%\show\reserved@b
+\edef\reserved@a{%
+  \noexpand\def\noexpand\skipfoo##1\reserved@b{%
+  \noexpand\ifx##1\noexpand\hfuzz\noexpand\@empty\noexpand\else
+    ##1%(##1)%
+    \noexpand\expandafter\noexpand\skipfoo
+  \noexpand\fi}%
+  \noexpand\def\noexpand\delfoo##1\noexpand\hfuzz{%
+    \noexpand\skipfoo##1\reserved@b\noexpand\hfuzz\reserved@b}%
+}
+%\show\reserved@a
+\reserved@a
+
 % vvv cjhebrewfix= % by pts@fazekas.hu at Tue Apr 19 18:26:54 CEST 2005
 %     thanks to Zoltán Hamar for reporting the problem
 % Dat: the ultimate solution is active=onlycs, but it limits other
@@ -4530,6 +4555,21 @@
 % Dat: use \def\h{\cjRL} in the preamble to abbreviate \cjRL
 %      wrong: \let\h\cjRL
 %      wrong: \newcommand{\h}[1]{\cjRL{#1}}
+% Dat: cjhebrew uses the following strings for typesetting Hebrew letters:
+%      ' b g d h w z .h .t y k K l m M n N s ` p P .s .S q r ,s +s t * a a:
+%      /a e i o O u U E E: A A: | * : ; --
+% Dat: headings in `\pagestyle{headings} \section{(\cjRL{`l})}' doesn't work
+%      as expected, because \MakeUppercase capitalizes the L, too.
+%      Solution #1:
+%        \DeclareRobustCommand\mycjcommand{\cjRL{`l}}
+%        \section{(\mycjcommand)}
+%      Solution #2: (won't convert any heading to uppercase)
+%        % change the definition of \ps@headings, remove \MakeUppercase
+%        \makeatletter \def\ps@headings{%
+%          \let\@oddfoot\@empty \let\@mkboth\markboth  
+%          \def\@oddhead{{\slshape\rightmark}\hfil\thepage}%  
+%          \def\sectionmark##1{\markright {\iffalse\MakeUppercase\fi{%
+%            \ifnum \c@secnumdepth >\m@ne \thesection\quad \fi##1}}}}
 \if0\magyar@opt@@cjhebrewfix \@@magyar@skiplong\fi
 % Dat: \cjRL{`l} in cjhebrew.sty should typeset two letters, but typesets
 %      only one if ` is \active. Use this code to fix it.
@@ -4546,11 +4586,21 @@
 %      LaTeX commands (\) in the arg of \cjRL
 \def\@@magyar@cjhebrewfix{%
   \let\@@magyar@orig@cjRL\cjRL
+  %\let\@@magyar@orig@cjRL\bf
   \DeclareRobustCommand\cjRL[1]{\begingroup
     \toks@{##1}%
+    %\showthe\toks@
     \edef\reserved@a{\the\toks@}%
-    \edef\reserved@a{\noexpand\@@magyar@orig@cjRL{\expandafter\strip@prefix\meaning\reserved@a}}%
-    \reserved@a\endgroup}}
+    \edef\reserved@a{\expandafter\strip@prefix\meaning\reserved@a}%
+    % Dat: we're almost complete here, but 1st we want to remove all
+    %      instances of `\protect ' (catcodes 12 and 10), which were inserted
+    %      into \firstmark, i.e. with \section{A\cjRL{`l}B}, \firstmark
+    %      becomes: `{}{\protect \csname foreignlanguage \endcsname {magyar}{\protect \MakeUppercase {1\hskip 1em\relax A\protect \cjRL  {\protect `l}B}}}'
+    %\edef\reserved@a{\expandafter\skipfoo\reserved@a foo \hfuzz foo }%
+    %\show\reserved@a
+    \edef\reserved@a{\expandafter\delfoo\reserved@a\hfuzz}%
+    %\show\reserved@a
+    \expandafter\@@magyar@orig@cjRL\expandafter{\reserved@a}\endgroup}}
 \fi
 \AtBeginDocument{\ifx\cjRL\@undefined\else\@@magyar@cjhebrewfix\fi}
 \@gobble
