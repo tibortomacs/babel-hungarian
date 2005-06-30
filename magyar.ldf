@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2005/06/01 v1.5b Magyar support from the babel system]
+%%        [2005/06/30 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -34,6 +34,37 @@
 %
 % magyar.ldf -- LaTeX Language Definition for `magyar' (Hungarian), v1.5b
 %
+% The newest version of this magyar.ldf is part of MagyarLaTeX, available from
+% http://www.math.bme.hu/latex/ . The web page is in Hungarian language, but
+% it is easy to figure out how to download the newest magyar.ldf. Please
+% bookmark this link as the definitive source of the newest version.
+%
+% This program is free software. There is NO WARRANTY. Use at your own risk!
+% You can choose any of these licenses: GNU GPL, LaTeX's license,
+% Babel's license.
+%
+% When will magyar.ldf 1.5 be part of mainstream LaTeX / Babel? I have no
+% idea, ask the maintainer of Babel. magyar.ldf 1.5 has been converted to
+% magyar.dtx on June 27, 2004. That version has been submitted to the
+% maintainer of the Babel package. No reply from him since then.
+%
+% Should magyar.ldf 1.5 be part of tetex, or should it be available as a
+% supplementary package in TeX distributions? Yes, but this is the task of the
+% creators of those distributions. The Debian package ``magyarlatex'',
+% which supplements the teTeX shipped with Debian Woody, Sarge and Sid,
+% is available from http://www.math.bme.hu/latex/dl
+% (file magyarlatex-latest.deb).
+%
+% The author of magyar.ldf 1.5 hasn't uploaded it to CTAN
+% (http://www.ctan.org), because he doesn't have time to maintain it and
+% re-upload it after each bugfix. If you think that magyar.ldf 1.5 should be
+% on CTAN, feel free to upload a snapshot, since it is free software.
+%
+% magyar.ldf 1.5 is based on magyar.ldf 1.4. However, it has been totally
+% rewritten and extended (just compare the file sizes), and it doesn't share
+% code from the earlier versions anymore. However, its default configuration
+% tries to be compatible with older versions.
+%
 % To typeset text in Hungarian, please
 %
 % 1. Include `magyar huhyph.tex' in language.dat, re-run initex(1) (initex
@@ -43,6 +74,7 @@
 %
 % 2. In the document preamble, use
 %
+%      \def\magyarOptions{defaults=hu-min}
 %      \usepackage[magyar]{babel}
 %      \usepackage{t1enc}% for automatic hyphenation of accented chars
 %      \usepackage[latin2]{inputenc}% for typing chars
@@ -73,7 +105,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2005/06/01 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2005/06/30 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -4764,6 +4796,16 @@
 % !! >    Kipróbáltam, s tényleg pontosan ugyanaz a fájl magyar.ldf (texmf fában) és
 %    > magyar-0510.ldf (aktuális könyvtárban) néven más eredményt ad.
 %    (cjhebrew)
+% !! a4wide.sty doesn't compile
+%    \documentclass[12pt,a4paper]{article}
+%    \usepackage{t1enc}                   
+%    \usepackage{times}% Imp: math mode
+%    \usepackage[magyar]{babel}
+%    \usepackage{graphicx}
+%    \usepackage[latin2]{inputenc}
+%    %\usepackage{a4wide}% SUXX: doesn't work with magyar.ldf
+%    \pagestyle{empty}
+%    \begin{document}
 %
 % Dat: \mathcode`\,="013B     % és így a tizedes törtekben matematikai módban sem lesz köz
 % Dat:  \mathchardef\comma="613B  % a veszõ (,) ami matematikai módban elválasztó karakterként használható
