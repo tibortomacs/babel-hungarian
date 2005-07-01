@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2005/06/30 v1.5b Magyar support from the babel system]
+%%        [2005/07/01 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -105,7 +105,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2005/06/30 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2005/07/01 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -1125,6 +1125,12 @@
 \def\@@magyar@az@ref#1#2{%
   \begingroup
   % Dat: this works when turning on hyperref.sty for the 1st time (1st .aux file) -- but the original \ref doesn't work (\@fifthoffive)
+  % Dat: #2 might contain an active : ; ! ? in case
+  %      \def\magyarOptions{activespace=safe}
+  \begingroup\lccode`~`: \lowercase{\endgroup\edef~{\string~}}%
+  \begingroup\lccode`~`; \lowercase{\endgroup\edef~{\string~}}%
+  \begingroup\lccode`~`! \lowercase{\endgroup\edef~{\string~}}%
+  \begingroup\lccode`~`? \lowercase{\endgroup\edef~{\string~}}%
   \@ifundefined{@@magyar@r@#2}{%
     \@ifundefined{r@#2}{\let\reserved@a\@empty}{\expandafter\let\expandafter\reserved@a\csname r@#2\endcsname}%
   }{\expandafter\let\expandafter\reserved@a\csname @@magyar@r@#2\endcsname}%
