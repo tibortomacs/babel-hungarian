@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2005/07/13 v1.5b Magyar support from the babel system]
+%%        [2005/08/18 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -105,7 +105,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2005/07/13 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2005/08/18 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -185,6 +185,7 @@
 %**     appendixdot=yes,           % or =no % !! dokumentálni
 %**     az=weak,                   % or =yes or =no
 %**     captions=hu,               % or =unchanged
+%**     chapterhead=yes,           % or =unchanged(=no)
 %**     chapternumber=unchanged,   % see partnumber=
 %**     cjhebrewfix=yes,           % or =unchanged or =onlyouter
 %**     classmod=yes,              % or =unchanged(=no) or TeX class name
@@ -638,6 +639,7 @@
 \def\magyar@opt@extras@@no {\def\magyar@opt@@extras{0}}
 \def\magyar@opt@extras@@yes{\def\magyar@opt@@extras{1}}
 \let\magyar@opt@extras\magyar@enumarg
+\def\magyar@opt@chapterhead@@unchanged{\def\magyar@opt@@chapterhead{0}}
 \def\magyar@opt@chapterhead@@no{\def\magyar@opt@@chapterhead{0}}
 \def\magyar@opt@chapterhead@@yes{\def\magyar@opt@@chapterhead{1}}
 \let\magyar@opt@chapterhead\magyar@enumarg
@@ -4260,7 +4262,7 @@
   % Chapter: dot, changing typeout, toc
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@chapter
-    \def\@chapter[#1]#2{%
+    \def\@chapter[#1]#2{% !! don't \def, but \let, other places, too
       \ifnum \c@secnumdepth >\m@ne
          \if@mainmatter
            \refstepcounter{chapter}%
