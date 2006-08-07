@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2005/12/03 v1.5b Magyar support from the babel system]
+%%        [2006/08/07 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -105,7 +105,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2005/12/03 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2006/08/07 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -1571,9 +1571,9 @@
     \expandafter\ifx\csname captionlabeldelim\endcsname\relax
       \let\@@magyar@do@makecaption\@@magyar@do@makecaption@captiontwo@no
     \else
-      % Dat: caption2.sty is loaded (and has \def\captionlabeldelim{.})
-      % Dat: we now redefine {.} to {:}
-      % Dat: the user can force {.} by \def\captionlabeldelim{.\empty}
+      % Dat: caption2.sty is loaded (and has \def\captionlabeldelim{.} -- but it might have {:})
+      % Dat: we now redefine {:} to {.}
+      % Dat: the user can force {:} by \def\captionlabeldelim{:\empty}
       % Dat: this works now: \usepackage[german,french,magyar]{babel} \usepackage{caption2} \begin{document} \renewcommand*\captionfont{\itshape} \renewcommand*\captionlabelfont{\scshape}
       \def\reserved@a{:}%
       \ifx\reserved@a\captionlabeldelim \def\captionlabeldelim{.}\fi
