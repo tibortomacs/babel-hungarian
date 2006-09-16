@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2006/09/13 v1.5b Magyar support from the babel system]
+%%        [2006/09/16 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -105,7 +105,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2006/09/13 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2006/09/16 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -186,6 +186,7 @@
 %**     appendixdot=yes,           % or =no % !! dokumentálni
 %**     az=weak,                   % or =yes or =no
 %**     babelmarkfix=yes,          % or =unchanged
+%**     captionfix=yes,            % or =unchanged
 %**     captions=hu,               % or =unchanged
 %**     chapterhead=yes,           % or =unchanged(=no)
 %**     chapternumber=unchanged,   % see partnumber=
@@ -247,6 +248,7 @@
   \magyar@opt@appendixdot@@yes
   \magyar@opt@babelmarkfix@@yes
   \magyar@opt@az{az}{weak}%
+  \magyar@opt@captionfix@@yes
   \magyar@opt@captions@@hu
   \magyar@opt@chapternumber@@unchanged
   \magyar@opt@classmod@@yes
@@ -315,6 +317,7 @@
   \magyar@opt@appendixdot@@yes
   \magyar@opt@babelmarkfix@@unchanged
   \magyar@opt@az{az}{yes}% OK
+  \magyar@opt@captionfix@@unchanged
   \magyar@opt@captions@@hu% OK
   \magyar@opt@chapterhead@@yes% OK
   \magyar@opt@chapternumber@@unchanged% OK
@@ -376,6 +379,7 @@
   \magyar@opt@appendixdot@@yes
   \magyar@opt@az{az}{no}%
   \magyar@opt@babelmarkfix@@yes
+  \magyar@opt@captionfix@@yes
   \magyar@opt@captions@@unchanged
   \magyar@opt@chapternumber@@unchanged
   \magyar@opt@classmod@@unchanged
@@ -439,6 +443,7 @@
   \magyar@opt@appendixdot@@no
   \magyar@opt@az{az}{yes}%
   \magyar@opt@babelmarkfix@@yes
+  \magyar@opt@captionfix@@yes
   \magyar@opt@captions@@hu
   \magyar@opt@chapternumber@@unchanged
   \magyar@opt@classmod@@yes
@@ -716,6 +721,9 @@
 \def\magyar@opt@amsuppercasefix@@unchanged{\def\magyar@opt@@amsuppercasefix{0}}
 \dMf magyar@opt@amsuppercasefix@@fix-ams  {\def\magyar@opt@@amsuppercasefix{1}}
 \dMf magyar@opt@amsuppercasefix@@fix-all  {\def\magyar@opt@@amsuppercasefix{2}}
+\let\magyar@opt@captionfix\magyar@enumarg
+\def\magyar@opt@captionfix@@unchanged{\def\magyar@opt@@captionfix{0}}
+\def\magyar@opt@captionfix@@yes      {\def\magyar@opt@@captionfix{1}}
 \let\magyar@opt@babelmarkfix\magyar@enumarg
 \def\magyar@opt@babelmarkfix@@unchanged{\def\magyar@opt@@babelmarkfix{0}}
 \def\magyar@opt@babelmarkfix@@yes      {\def\magyar@opt@@babelmarkfix{1}}
@@ -1637,6 +1645,33 @@
   \expandafter\endgroup\reserved@a
   \@gobble
 {^}%
+
+% --- captionfix=
+%
+% Fix ``1. ábra'' order in \caption defined by caption.sty 2004/07/16 v3.0c.
+%
+% The manual fix would be:
+%
+%  \DeclareCaptionLabelFormat{simpleMagyar}{#2.\bothIfSecond{\nobreakspace}{#1}}
+%  \let\caption@lfmt\caption@lfmt@simpleMagyar
+%
+
+\if0\magyar@opt@@captionfix\@@magyar@skiplong\fi
+  \def\@@magyar@captionfix{\@ifundefined{caption@lfmt}{}{%
+    % Dat: only in preamble:  \DeclareCaptionLabelFormat{simpleMagyar}{#2.\bothIfSecond{\nobreakspace}{#1}}
+    \def\caption@lfmt@simpleMagyar##1##2{##2.\bothIfSecond{\nobreakspace}{##1}}%
+  }}
+  \AtBeginDocument{\@@magyar@captionfix}
+  \expandafter\addto\csname extras\CurrentOption\endcsname{%
+    \ifx\caption@lfmt\caption@lfmt@default % Imp: not if both undefined
+      \ifx\caption@lfmt@simpleMagyar\@undefined\else
+	\babel@save\caption@lfmt
+	\let\caption@lfmt\caption@lfmt@simpleMagyar
+      \fi
+    \fi}
+  \@gobble
+{^}%
+
 
 % --- shortrefcmds=
 
