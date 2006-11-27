@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2006/09/16 v1.5b Magyar support from the babel system]
+%%        [2006/11/27 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -105,7 +105,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2006/09/16 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2006/11/27 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -205,6 +205,7 @@
 %**     hutoday=yes,               % or =no
 %**     hyphenmins=22,             % or =unchanged or two chars: \lefthyphenmin\righthyphenmin
 %**     hyphenation=huhyph3,       % or =none or =composite or =phonetic or =huhyphn
+%**     hynumberline=unchanged,    % or =hu
 %**     labelenums=unchanged,      % or =hu-a or =hu-A or =hu-d
 %**     labelitems=unchanged,      % or =hu
 %**     longcaption=justified,     % or =centered or =centernewline or =none (=unchanged)
@@ -273,6 +274,7 @@
   \magyar@opt@mathfactorial@@define
   \magyar@opt@mathhucomma@@define
   \magyar@opt@mathmuskips@@unchanged
+  \magyar@opt@hynumberline@@unchanged
   \magyar@opt@mathreal{mathreal}{weak}%
   \magyar@opt@mond{mond}{weak}%
   \magyar@opt@openqq@@maybedown
@@ -342,6 +344,7 @@
   \magyar@opt@mathhucomma@@unchanged% OK
   \magyar@opt@mathfactorial@@unchanged% OK
   \magyar@opt@mathmuskips@@unchanged% OK
+  \magyar@opt@hynumberline@@unchanged% OK
   \magyar@opt@mathreal{mathreal}{no}%
   \magyar@opt@mond{mond}{no}% OK
   \magyar@opt@openqq@@maybedown% OK
@@ -404,6 +407,7 @@
   \magyar@opt@mathhucomma@@unchanged
   \magyar@opt@mathfactorial@@unchanged
   \magyar@opt@mathmuskips@@unchanged
+  \magyar@opt@hynumberline@@unchanged
   \magyar@opt@mathreal{mathreal}{no}%
   \magyar@opt@mond{mond}{no}%
   \magyar@opt@openqq@@unchanged
@@ -468,6 +472,7 @@
   \magyar@opt@mathhucomma@@fix
   \magyar@opt@mathfactorial@@fix
   \magyar@opt@mathmuskips@@hu
+  \magyar@opt@hynumberline@@hu
   \magyar@opt@mathreal{mathreal}{yes}%
   \magyar@opt@mond{mond}{yes}%
   \magyar@opt@openqq@@maybedown
@@ -502,7 +507,7 @@
     longcaption=centered,mathbrk=fix,mathhucomma=fix,
     postpara=diamond,postsubpara=star,postdescription=dot,
     sectiondot=safe,tablecaptions=hu,theoremtitle=hu,
-    appendixdot=no,
+    appendixdot=no,hynumberline=hu,
     titles=\enskip,\hfuzz,%
 }
 
@@ -626,6 +631,10 @@
 \def\magyar@opt@mathmuskips@@latex{\def\magyar@opt@@mathmuskips{1}}
 \def\magyar@opt@mathmuskips@@hu{\def\magyar@opt@@mathmuskips{2}}
 \let\magyar@opt@mathmuskips\magyar@enumarg
+\def\magyar@opt@hynumberline@@unchanged{\def\magyar@opt@@hynumberline{0}}
+\def\magyar@opt@hynumberline@@latex{\def\magyar@opt@@hynumberline{1}}
+\def\magyar@opt@hynumberline@@hu{\def\magyar@opt@@hynumberline{2}}
+\let\magyar@opt@hynumberline\magyar@enumarg
 \def\magyar@opt@hunnewlabel@@no {\def\magyar@opt@@hunnewlabel{0}}
 \dMf magyar@opt@hunnewlabel@@only-hu {\def\magyar@opt@@hunnewlabel{1}}
 \def\magyar@opt@hunnewlabel@@yes{\def\magyar@opt@@hunnewlabel{2}}
@@ -1863,13 +1872,23 @@
     % ^^^ Dat: {#4\csname...} is needed so \magyar@post@dot makes a {\bf.}
     % Dat: \ignorespaces is superflous here, it also doesn't ignore \par
   }%
-  \def\magyar@paragraphfix#1#2#3#4#5#6#7#8#9\vfuzz{%
+  %** Fixes (redefines) the specified macro so postpara= and postsubpara=
+  %** takes effect. It is useful to call this after a `\renewcommand\paragraph'
+  %** in a package. Has no effect if the definition of #1 doesn't look like
+  %** the one in article.cls (i.e. \@startsection).
+  %** @param #1 \paragraph or \subparagraph
+  \def\magyar@paragraphfix#1{%
+    \expandafter\magyar@pf@lowd\expandafter#1#1\hfuzz........\vfuzz
+  }
+  \def\magyar@pf@lowd#1#2#3#4#5#6#7#8#9\vfuzz{%
     % Dat: \unskip doesn't work, have to change \hskip to -1sp: 1sp is the
     %      amount of horizontal space between the diamond and the paragraph text
     %      0sp would be bad, because it isn't negative (positive skips are
     %      interpreted as vertical).
-    \def\reserved@a{#9}%
-    \ifx\reserved@a\@empty\ifx#2\@startsection\if-\magyar@first#7\vfuzz
+    %%
+    \expandafter\def\expandafter\reserved@a\expandafter{\magyar@first#9\vfuzz}%
+    %\def\reserved@a{#9}\ifx\reserved@a\@empty
+    \if\reserved@a\hfuzz\ifx#2\@startsection\if-\magyar@first#7\vfuzz
       \def#1{\@ifstar
         {\magyar@pf@lowa *{#2{#3}{#4}{#5}{#6}{-1sp}{#8}}#1}%
         {\@ifnextchar[%]
@@ -1881,14 +1900,14 @@
   }
   % !! Imp: change Hungarian \paragraphs only, with dual load
   \expandafter\ifx\csname magyar@opt@@postpara\endcsname\relax\else
-    \expandafter\magyar@paragraphfix\expandafter\paragraph\paragraph\vfuzz
+    \magyar@paragraphfix\paragraph
     \expandafter\let\expandafter\magyar@post@paragraph\csname magyar@post@\magyar@opt@@postpara\endcsname
     \ifx\magyar@post@paragraph\relax
       \@@magyar@error{Invalid arg for option: postpara = \magyar@opt@@postpara}%
     \fi
   \fi
   \expandafter\ifx\csname magyar@opt@@postsubpara\endcsname\relax\else
-    \expandafter\magyar@paragraphfix\expandafter\subparagraph\subparagraph\vfuzz
+    \magyar@paragraphfix\subparagraph
     \expandafter\let\expandafter\magyar@post@subparagraph\csname magyar@post@\magyar@opt@@postsubpara\endcsname
     \ifx\magyar@post@subparagraph\relax
       \@@magyar@error{Invalid arg for option: postsubpara = \magyar@opt@@postsubpara}%
@@ -3170,7 +3189,9 @@
   \def\@@magyar@toldas##1{.##1.}% emit the number
   \let\romannumeral\number
   \def\refstruc##1{0}%
+  \let\@safe@activestrue\@empty% babel puts these inside \b@...: % Dat: \def\b@abook{\@safe@activesfalse 2}% (what is \@safe@actives??)
   \let\@safe@activesfalse\@empty% \b@DuplanJauneau1986 ->\@safe@activesfalse 15
+  \def\hyper@@link[##1]##2##3##4{##4}% Dat: \def\b@abook{\hyper@@link [cite]{}{cite.sokt}{2}}% with hyperref.sty % BUGFIX at Tue Nov 21 03:15:32 CET 2006
   \let\ref\@@magyar@zeroref \let\pageref\@@magyar@zeropageref \let\cite\@@magyar@zerocite
   \let\aref\ref \let\apageref\pageref \let\acite\cite% !! \Aref* \Aref(, only 1st arg of \acite etc.
   \let\Aref\ref \let\Apageref\pageref \let\Acite\cite
@@ -3836,7 +3857,7 @@
 
   % !! indent=article must work within \maketitle for article.cls etc.
 
-  %** Copied from article.cls
+  %** Copied from article.cls, added \,.
   %** Has #1, but partially applied here
   \def\magyar@fo@indent@articlesp{%
     \parindent1em % SUXX: impossible to acquire default value
@@ -3852,7 +3873,7 @@
     %      only to the main text
     \noindent\hb@xt@1.8em{\hss\@textsuperscript{\normalfont\@thefnmark}}%
   }
-  \def\magyar@fo@indent@dimensetup{%
+  \def\magyar@@fo@indent@dimensetup{%
     \parindent1em % SUXX: impossible to acquire default value
     %\advance\leftskip1.8em % SUXX: impossible to acquire default value
     \leftskip\leftmargini % SUXX: impossible to acquire default value
@@ -3861,7 +3882,7 @@
   \def\magyar@fo@indent@hulist{%
     % Dat: superscript is emitted by \@makefnmark
     % Dat: \parindent doesn't apply for the 1st par of the footnote
-    \magyar@fo@indent@dimensetup
+    \magyar@@fo@indent@dimensetup
     \ifvmode\noindent\hb@xt@\z@\else\hbox\fi
     % ^^^ \usepackage[para]{footmisc} emits footnotes in horizontal mode
       {\hss\@textsuperscript{\normalfont\@thefnmark\,}}%
@@ -4286,6 +4307,21 @@
   \medmuskip   2mu plus 1.5mu minus 2mu % \medmuskip<\thinmuskip OK
   \thinmuskip  3mu
 \fi
+
+% --- hynumberline=
+% by pts@fazekas.hu at Tue Nov 21 00:34:37 CET 2006
+%
+% hynumberline=hu adds a dot after the section number with
+% \hypersetup{bookmarksnumbered=true} in hyperref.sty.
+
+\if0\magyar@opt@@hynumberline \@@magyar@skiplong\fi
+  \def\@@magyar@@hynumberline@old#1{#1 }% as defined in pdfmark.def
+  \def\@@magyar@@hynumberline@hu #1{#1. }%
+  \expandafter\addto\csname extras\CurrentOption\endcsname{%
+    \ifx  \Hy@numberline\@@magyar@@hynumberline@old
+      \let\Hy@numberline\@@magyar@@hynumberline@hu \fi}%
+\@gobble
+{^}%
 
 % --- mathreal=
 
@@ -4854,6 +4890,7 @@
 
 \ldf@finish\CurrentOption% \input \CurrentOption.cfg
 
+% !! doc: (\string!)
 % !! doc: \umlautlow is much more important in OT1 cmr fonts than in T1
 % !! %** @example értelmezés\/beállítás
 %    \def\per{/\penalty\exhyphenpenalty\hskip\z@skip}
@@ -4960,6 +4997,11 @@
 %    \pagestyle{empty}
 %    \begin{document}
 % !! % Imp: magyar.ldf: \textdt{tudja`=e}, \textdt{tudja`-e};
+% !! space in front of `;' is too large with \usepackage{times}
+%    \declare@shorthand{\CurrentOption}{;}{\magyar@thinspaced;}
+% !! doc: `- not suitable in .bib files etc.
+% !! \cite{foo,bar} -> `[2, 1]' increasing order preferred
+% Imp: indent using the maximum footnotemark *** count on the current page
 % Imp: generate ,,harmincháromból'' by \told{\@huordinal{33}}+bol etc.
 %
 % Dat: \mathcode`\,="013B     % és így a tizedes törtekben matematikai módban sem lesz köz
