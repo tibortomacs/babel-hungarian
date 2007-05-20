@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2006/11/27 v1.5b Magyar support from the babel system]
+%%        [2007/05/20 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -105,7 +105,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2006/11/27 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2007/05/20 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -1202,7 +1202,9 @@
   \begingroup
   \@ifundefined{@@magyar@b@#1}{%
     \@ifundefined{b@#1}{\def\vfuzz{}}{%
-      \@@magyar@az@vfuzzedef{\csname b@#1\endcsname}}%
+      \@@magyar@az@vfuzzedef{%
+        \expandafter\expandafter\expandafter\@@magyar@b@number
+        \expandafter\expandafter\expandafter{\csname b@#1\endcsname}}}%
   }  {\@@magyar@az@vfuzzedef{\csname @@magyar@b@#1\endcsname}}%
   \expandafter\endgroup\expandafter
     \@@magyar@az@set\expandafter{\vfuzz}\hbox$%
@@ -3105,9 +3107,40 @@
   \else\ifx,#1\@@magyar@swapvfuzz\@@magyar@zerocite@lowb{#2,}%
   \else\expandafter\ifx\csname b@#1#2\endcsname\relax
     0, \@@magyar@swapvfuzz\@@magyar@zerocite@lowb
-  \else\csname b@#1#2\endcsname, \@@magyar@swapvfuzz\@@magyar@zerocite@lowb
+  \else\expandafter\expandafter\expandafter\@@magyar@b@number
+    \expandafter\expandafter\expandafter{\csname b@#1#2\endcsname},
+    \@@magyar@swapvfuzz\@@magyar@zerocite@lowb
   \fi\fi\fi\fi\vfuzz}
 \def\@@magyar@zerocite@lowc$#1{]#1}
+
+%** Expands to the numeric value of a \b@foobar definition
+%** Dat: with natbib.sty, we get \def\b@foobar{{1}{...}...},
+%**      otherwise something like \def\b@foobar{\... 1}
+%** @param #1 value of a \b@foobar
+\def\@@magyar@b@number{%
+  \expandafter\ifx\csname ver@natbib.sty\endcsname\relax
+    \expandafter\@firstofone
+  \else \expandafter\@@magyar@b@number@natbibone \fi
+}
+\def\@@magyar@b@number@natbibone#1{\@@magyar@b@number@natbibtwo#1.\vfuzz}
+\def\@@magyar@b@number@natbibtwo#1#2\vfuzz{#1}%
+
+\def\@@magyar@zeroaref#1{%
+  % Dat: we cannot use \@ifnextchar here, because it is not expandable
+  \ifx(#1\expandafter\@secondoftwo\fi\@thirdofthree\@firstoftwo
+  {\@@magyar@zeroref}{% Dat: gobble the (
+    \ifx*#1\expandafter\@secondoftwo\fi\@thirdofthree\@firstoftwo
+    {\NotAllowedArefStar\@@magyar@zeropageref}% Dat: gobble the *
+    {\@@magyar@zeroref{#1}}%
+    {\@@magyar@zeroref{#1}}}%
+}
+
+\def\@@magyar@zeroapageref#1{%
+  % Dat: we cannot use \@ifnextchar here, because it is not expandable
+  \ifx*#1\expandafter\@secondoftwo\fi\@thirdofthree\@firstoftwo
+  {\NotAllowedApagerefStar\@@magyar@zeropageref}% Dat: gobble the *
+  {\@@magyar@zeropageref{#1}}%
+}
 
 \def\@@magyar@zeroref#1{%
   \expandafter\ifx\csname r@#1\endcsname\relax0\else
@@ -3192,10 +3225,17 @@
   \let\@safe@activestrue\@empty% babel puts these inside \b@...: % Dat: \def\b@abook{\@safe@activesfalse 2}% (what is \@safe@actives??)
   \let\@safe@activesfalse\@empty% \b@DuplanJauneau1986 ->\@safe@activesfalse 15
   \def\hyper@@link[##1]##2##3##4{##4}% Dat: \def\b@abook{\hyper@@link [cite]{}{cite.sokt}{2}}% with hyperref.sty % BUGFIX at Tue Nov 21 03:15:32 CET 2006
-  \let\ref\@@magyar@zeroref \let\pageref\@@magyar@zeropageref \let\cite\@@magyar@zerocite
-  \let\aref\ref \let\apageref\pageref \let\acite\cite% !! \Aref* \Aref(, only 1st arg of \acite etc.
-  \let\Aref\ref \let\Apageref\pageref \let\Acite\cite
-  \let\autoref\ref% Dat: SUXX: section 1-gyel
+  %
+  \let\ref\@@magyar@zeroref
+  \let\pageref\@@magyar@zeropageref
+  \let\cite\@@magyar@zerocite
+  \let\eqref\@@magyar@zeroeqref
+  %
+  \let\aref\@@magyar@zeroaref \let\Aref\aref % Dat: supports \aref* and \aref(
+  \let\apageref\@@magyar@zeroapageref \let\Apageref\apageref % Dat: supports \apageref* and \apageref(
+  \let\acite\cite \let\Acite\acite
+  %
+  \let\autoref\ref% Dat: SUXX: ``section 1-gyel''
   \edef\reserved@a{#1}%
   \edef\reserved@a{\expandafter\@@magyar@the\reserved@a\@empty}% `\expandafter' is here so `the' and `number' take place
   %\let~\@@magyar@save@tilde% vvv for ~ below etc.
