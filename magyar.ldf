@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2007/05/20 v1.5b Magyar support from the babel system]
+%%        [2007/08/01 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -105,7 +105,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2007/05/20 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2007/08/01 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -1724,7 +1724,15 @@
       \vskip\belowcaptionskip}}
   \AtBeginDocument{%
     \expandafter\ifx\csname captionlabeldelim\endcsname\relax
-      \let\@@magyar@do@makecaption\@@magyar@do@makecaption@captiontwo@no
+      \expandafter\ifx\csname caption@lsep@period\endcsname\relax
+        \let\@@magyar@do@makecaption\@@magyar@do@makecaption@captiontwo@no
+      \else
+        % Dat: caption3.sty is loaded, and it has caption@lsep defined
+        % Dat: \show\caption@lsep@colon  % \long\def\caption@lsep@colon{: }
+        % Dat: \show\caption@lsep %\def\caption@lsep{\caption@lsep@colon}
+        \def\caption@lsep{\caption@lsep@period}% Imp: ability to override
+        \let\@@magyar@do@makecaption\@@magyar@do@makecaption@captiontwo@yes
+      \fi
     \else
       % Dat: caption2.sty is loaded (and has \def\captionlabeldelim{.} -- but it might have {:})
       % Dat: we now redefine {:} to {.}
