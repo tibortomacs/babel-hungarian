@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2008/06/30 v1.5b Magyar support from the babel system]
+%%        [2008/07/15 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2008/06/30 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2008/07/15 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -1974,84 +1974,95 @@
 {^}
 
 
-% --- Putting dots after section number in \section; sectiondot=
+% --- Putting dots after section number in toc/lof/lot; sectiondot=
+%
+% This is to have a dot after figure/table numbers in lof/lot and
+% section numbers in toc.
+%
+% The option sectiondot= is ill-named, because it doesn't apply to what is
+% displayed in \section, but it applies to \tableofcontents, \listoftables
+% and \listoffigures.
 
 \if0\magyar@opt@@sectiondot \@@magyar@skiplong\fi
   \ifnum\magyar@opt@@sectiondot>1
-  % [pts] Old solution, redefining \@caption, doesn't work with nameref.sty
-  \expandafter\addto\csname extras\CurrentOption\endcsname{%
-    \babel@save\@caption
-    \long\def\@caption#1[#2]#3{%
-      \csname par\endcsname
-      \addcontentsline{\csname ext@#1\endcsname}{#1}%
-	{\protect\numberline{\csname the#1\endcsname.}{\ignorespaces #2}}%
-      \begingroup
-	\@parboxrestore
-	\if@minipage
-	  \@setminipage
-	\fi
-	\normalsize
-	\@makecaption{\csname fnum@#1\endcsname}%
-	    {\ignorespaces #3}\csname par\endcsname
-      \endgroup}}
-
-  % [pts] This is incompatible with some packages.
-  % Alas, \@sect must also be redefined to have that dot in toc too.
-  % On the other hand, we include a dot after a run-in head.
-  \expandafter\addto\csname extras\CurrentOption\endcsname{%
-    \babel@save\@sect
-    \def\@sect#1#2#3#4#5#6[#7]#8{%
-      \ifnum #2>\c@secnumdepth
-	\let\@svsec\@empty
-      \else
-	\refstepcounter{#1}%
-	\protected@edef\@svsec{\@seccntformat{#1}\relax}%
-      \fi
-      \@tempskipa #5\relax
-      \ifdim \@tempskipa>\z@
+    % This solution (for sectiondot=problematic) is what was provided by
+    % magyar.ldf v1.4. It is incomatible with lots of packages.
+    %
+    % [pts] This doesn't work with nameref.sty.
+    \expandafter\addto\csname extras\CurrentOption\endcsname{%
+      \babel@save\@caption
+      \long\def\@caption#1[#2]#3{%
+	\csname par\endcsname
+	\addcontentsline{\csname ext@#1\endcsname}{#1}%
+	  {\protect\numberline{\csname the#1\endcsname.}{\ignorespaces #2}}%
 	\begingroup
-	  #6{%
-	    \@hangfrom{\hskip #3\relax\@svsec}%
-	      \interlinepenalty \@M #8\@@par}%
-	\endgroup
-	\csname #1mark\endcsname{#7}%
-	\addcontentsline{toc}{#1}{%
-	  \ifnum #2>\c@secnumdepth \else
-	    \protect\numberline{\csname the#1\endcsname.}%
+	  \@parboxrestore
+	  \if@minipage
+	    \@setminipage
 	  \fi
-	  #7}%
-      \else
-	\def\@svsechd{%
-	  #6{\hskip #3\relax
-	  \@svsec #8.}%
+	  \normalsize
+	  \@makecaption{\csname fnum@#1\endcsname}%
+	      {\ignorespaces #3}\csname par\endcsname
+	\endgroup}}
+
+    % [pts] This is incompatible with some packages.
+    \expandafter\addto\csname extras\CurrentOption\endcsname{%
+      % Alas, \@sect must also be redefined to have that dot in toc too.
+      % On the other hand, we include a dot after a run-in head.
+      \babel@save\@sect
+      \def\@sect#1#2#3#4#5#6[#7]#8{%
+	\ifnum #2>\c@secnumdepth
+	  \let\@svsec\@empty
+	\else
+	  \refstepcounter{#1}%
+	  \protected@edef\@svsec{\@seccntformat{#1}\relax}%
+	\fi
+	\@tempskipa #5\relax
+	\ifdim \@tempskipa>\z@
+	  \begingroup
+	    #6{%
+	      \@hangfrom{\hskip #3\relax\@svsec}%
+		\interlinepenalty \@M #8\@@par}%
+	  \endgroup
 	  \csname #1mark\endcsname{#7}%
 	  \addcontentsline{toc}{#1}{%
 	    \ifnum #2>\c@secnumdepth \else
 	      \protect\numberline{\csname the#1\endcsname.}%
 	    \fi
-	    #7}}%
-      \fi
-      \@xsect{#5}}}
+	    #7}%
+	\else
+	  \def\@svsechd{%
+	    #6{\hskip #3\relax
+	    \@svsec #8.}%
+	    \csname #1mark\endcsname{#7}%
+	    \addcontentsline{toc}{#1}{%
+	      \ifnum #2>\c@secnumdepth \else
+		\protect\numberline{\csname the#1\endcsname.}%
+	      \fi
+	      #7}}%
+	\fi
+	\@xsect{#5}}}
 
-  % [pts] This is incompatible with some packages.
-  % In order to have that dot after a run-in head when the star form of the
-  % sectioning commands is used, we have to redefine \@ssect
-  \expandafter\addto\csname extras\CurrentOption\endcsname{%
-    \babel@save\@ssect
-    \def\@ssect#1#2#3#4#5{%
-      \@tempskipa #3\relax
-      \ifdim \@tempskipa>\z@
-	\begingroup
-	  #4{%
-	    \@hangfrom{\hskip #1}%
-	      \interlinepenalty \@M #5\@@par}%
-	\endgroup
-      \else
-	\def\@svsechd{#4{\hskip #1\relax #5.}}%
-      \fi
-      \@xsect{#3}}}
+    % [pts] This is incompatible with some packages.
+    \expandafter\addto\csname extras\CurrentOption\endcsname{%
+      % In order to have that dot after a run-in head when the star form of the
+      % sectioning commands is used, we have to redefine \@ssect
+      \babel@save\@ssect
+      \def\@ssect#1#2#3#4#5{%
+	\@tempskipa #3\relax
+	\ifdim \@tempskipa>\z@
+	  \begingroup
+	    #4{%
+	      \@hangfrom{\hskip #1}%
+		\interlinepenalty \@M #5\@@par}%
+	  \endgroup
+	\else
+	  \def\@svsechd{#4{\hskip #1\relax #5.}}%
+	\fi
+	\@xsect{#3}}}
   \else
-    % This is to have a dot after figure/table numbers in lof/lot.
+    % This implements option sectiondot=safe.
+    %
     % [pts] We definitely want \numberline to emit table number in \listoftables as
     % `5.6.' instead of the default `5.6', but we don't want to redefine \@caption,
     % because the # args \addcontentsline adds to \contentsline depends on whether
@@ -4360,10 +4371,12 @@
 % --- hynumberline=
 % by pts@fazekas.hu at Tue Nov 21 00:34:37 CET 2006
 %
-% hynumberline=hu adds a dot after the section number with
-% \hypersetup{bookmarksnumbered=true} in hyperref.sty.
+% hynumberline=hu adds a dot after the section number in the bookmarks/outline
+% with \hypersetup{bookmarksnumbered=true} in hyperref.sty.
 
 \if0\magyar@opt@@hynumberline \@@magyar@skiplong\fi
+  %** Overrides original definition (\def\Hy@numberline#1{#1 }) in
+  %** pdfmark.def.
   \def\@@magyar@@hynumberline@old#1{#1 }% as defined in pdfmark.def
   \def\@@magyar@@hynumberline@hu #1{#1. }%
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
