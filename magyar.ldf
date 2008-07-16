@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2008/07/15 v1.5b Magyar support from the babel system]
+%%        [2008/07/16 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2008/07/15 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2008/07/16 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -2122,28 +2122,48 @@
 {^}%
 
 % --- amstocnumskip=, amstocnumlang=
+%
+% Change \tocsection, \tocsubsection etc. in amsart.cls etc. These commands
+% have effect in \tableofcontents, e.g. in the .toc file:
+% `\contentsline {section}{\tocsubsection {}{1.1}{Foo}}{1}'
+%
+% We should be careful not to define \tocchapter and \tocsection if
+% tocbibind.sty is (or will be) loaded, because it provides its own definition
+% as \newcommand.
 
 \ifx\@empty\magyar@opt@@amstocnumskip \@@magyar@skiplong\fi
   % Similar to titleskip=, but AMS classes don't look at \@seccntformat
-  \def\tocsubsection{\tocsection}%
-  \let\tocsubsubsection\tocsubsection
-  \let\tocparagraph\tocsubsection
-  \let\tocsubparagraph\tocsubsection
-  \let\tocpart\tocsubsection
-  \let\tocchapter\tocsubsection
+  \def\@@magyar@amstocnumskip@lets{%
+    \ifx\tocsubsection\@undefined\else
+      \ifx\tocsubsection\tocparagraph
+	\def\tocsubsection{\tocsection}%
+	% These lines are similar to those in amsart.cls.
+	\let\tocsubsubsection\tocsubsection
+	\let\tocparagraph\tocsubsection
+	\let\tocsubparagraph\tocsubsection
+	\let\tocpart\tocsubsection
+	\let\tocchapter\tocsubsection
+      \fi
+    \fi
+  }%
   \def\@@magyar@amstocnumskip@defs{%
-    %** Overrides amsart.cls etc. Only for Hungarian \section{}s. Changes \quad to
-    %** \magyar@opt@@amstocnumskip in the definition.
-    \def\tocsection##1##2##3{%
-      %%\typeout{--##3--}%
-      \indentlabel{\@ifnotempty{##2}{\ignorespaces##1 ##2.\magyar@opt@@amstocnumskip}}##3%
-    }%
-    %** Overrides amsart.cls etc. Only for Hungarian \section{}s. Changes \quad to
-    %** \magyar@opt@@amstocnumskip in the definition.
-    \def\tocappendix##1##2##3{\indentlabel{##1\@ifnotempty{##2}{ ##2}.\magyar@opt@@amstocnumskip}##3}%
-  }
+    \ifx\tocsubsection\@undefined\else
+      \ifx\tocsubsection\tocparagraph
+	%** Overrides amsart.cls etc. Only for Hungarian \section{}s. Changes \quad to
+	%** \magyar@opt@@amstocnumskip in the definition.
+	\def\tocsection##1##2##3{%
+	  %%\typeout{--##3--}%
+	  \indentlabel{\@ifnotempty{##2}{\ignorespaces##1 ##2.\magyar@opt@@amstocnumskip}}##3%
+	}%
+	%** Overrides amsart.cls etc. Only for Hungarian \section{}s. Changes \quad to
+	%** \magyar@opt@@amstocnumskip in the definition.
+	\def\tocappendix##1##2##3{\indentlabel{##1\@ifnotempty{##2}{ ##2}.\magyar@opt@@amstocnumskip}##3}%
+      \fi
+    \fi
+  }%
+  \AtBeginDocument\@@magyar@amstocnumskip@lets  % must be before @defs
   \if2\magyar@opt@@amstocnumlang
-    \@@magyar@amstocnumskip@defs
+    \AtBeginDocument\@@magyar@amstocnumskip@defs
     %\let\@@magyar@amstocnumskip@defs\@undefined% for use by the user
   \else
     \expandafter\addto\csname extras\CurrentOption\endcsname{%
@@ -4377,6 +4397,8 @@
 \if0\magyar@opt@@hynumberline \@@magyar@skiplong\fi
   %** Overrides original definition (\def\Hy@numberline#1{#1 }) in
   %** pdfmark.def.
+  %** Also possible with:
+  %** \pdfstringdefDisableCommands{\renewcommand*{\numberline}[1]{#1. }}
   \def\@@magyar@@hynumberline@old#1{#1 }% as defined in pdfmark.def
   \def\@@magyar@@hynumberline@hu #1{#1. }%
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
