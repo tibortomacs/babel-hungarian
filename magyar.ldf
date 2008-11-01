@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2008/07/16 v1.5b Magyar support from the babel system]
+%%        [2008/11/01 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2008/07/16 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2008/11/01 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -226,6 +226,7 @@
 %**     sectiondot=safe,           % or =none or =problematic
 %**     shorthandcs=\shu,          % or =none or a csname or a \cs, e.g shorthandcs=\shu
 %**     shortrefcmds=yes,          % or =no
+%**     showfix=yes,               % or =unchanged
 %**     suggestions=yes,           % or =no
 %**     tablecaptions=hu,          % or =us or =unchanged
 %**     textqq=weak,               % or =no or =yes
@@ -286,6 +287,7 @@
   \magyar@opt@sectiondot@@safe
   \magyar@opt@shorthandcs{shorthandcs}{\shu}%
   \magyar@opt@shortrefcmds@@yes
+  \magyar@opt@showfix@@yes
   \magyar@opt@suggestions@@yes
   \magyar@opt@tablecaptions@@hu
   \magyar@opt@textqq{textqq}{weak}%
@@ -356,6 +358,7 @@
   \magyar@opt@sectiondot@@safe% we don't want =problematic
   \magyar@opt@shorthandcs{shorthandcs}{none}% OK
   \magyar@opt@shortrefcmds@@yes% OK
+  \magyar@opt@showfix@@yes% OK
   \magyar@opt@suggestions@@no% OK -- user has explicity requested defaults=compat-1.4
   \magyar@opt@tablecaptions@@hu% OK
   \magyar@opt@textqq{textqq}{no}% OK
@@ -419,6 +422,7 @@
   \magyar@opt@sectiondot@@none
   \magyar@opt@shorthandcs{shorthandcs}{none}%
   \magyar@opt@shortrefcmds@@no
+  \magyar@opt@showfix@@no
   \magyar@opt@suggestions@@yes
   \magyar@opt@tablecaptions@@unchanged
   \magyar@opt@textqq{textqq}{no}%
@@ -485,6 +489,7 @@
   \magyar@opt@sectiondot@@safe
   \magyar@opt@shorthandcs{shorthandcs}{\shu}%
   \magyar@opt@shortrefcmds@@no
+  \magyar@opt@showfix@@yes
   \magyar@opt@suggestions@@yes
   \magyar@opt@tablecaptions@@hu
   \magyar@opt@textqq{textqq}{yes}%
@@ -737,6 +742,9 @@
 \let\magyar@opt@babelmarkfix\magyar@enumarg
 \def\magyar@opt@babelmarkfix@@unchanged{\def\magyar@opt@@babelmarkfix{0}}
 \def\magyar@opt@babelmarkfix@@yes      {\def\magyar@opt@@babelmarkfix{1}}
+\let\magyar@opt@showfix\magyar@enumarg
+\def\magyar@opt@showfix@@unchanged{\def\magyar@opt@@showfix{0}}
+\def\magyar@opt@showfix@@yes      {\def\magyar@opt@@showfix{1}}
 \def\magyar@opt@labelenums@@unchanged{\def\magyar@opt@@labelenums{0}}
 \dMf magyar@opt@labelenums@@hu-a     {\def\magyar@opt@@labelenums{1}}
 \dMf magyar@opt@labelenums@@hu-A     {\def\magyar@opt@@labelenums{2}}
@@ -1658,6 +1666,32 @@
   \@gobble
 {^}%
 
+% --- showfix=
+%
+% Fix stupid \def\show{...} in AtBeginDocument in ucsencs.def by restoring the original
+% definition.
+
+\ifnum0<0%
+  \magyar@opt@@showfix\relax
+\space\else\@@magyar@skiplong\fi
+  \def\magyar@stripcolon#1:#2\vfuzz{#2}%
+  \def\magyar@show@begin@fix{%
+    \edef\reserved@a{\expandafter\magyar@stripcolon\meaning\show:\vfuzz}%
+    \ifx\reserved@a\@empty\else % \show is a macro
+      \let\show\@@magyar@orig@show
+    \fi
+  }
+  \edef\reserved@a{\expandafter\magyar@stripcolon\meaning\show:\vfuzz}%
+  \ifx\reserved@a\@empty % \show is not a macro
+    \let\@@magyar@orig@show\show
+    \expandafter\gdef\expandafter\@preamblecmds\expandafter{%
+      \expandafter\magyar@show@begin@fix\@preamblecmds}%
+    %\show\@begindocumenthook
+    %\AtBeginDocument{\magyar@show@begin@fix}%
+  \fi
+  \@gobble
+{^}%
+
 % --- captionfix=
 %
 % Fix ``1. ábra'' order in \caption defined by caption.sty 2004/07/16 v3.0c.
@@ -2060,7 +2094,6 @@
 	  \def\@svsechd{#4{\hskip #1\relax #5.}}%
 	\fi
 	\@xsect{#3}}}
-  \else
     % This implements option sectiondot=safe.
     %
     % [pts] We definitely want \numberline to emit table number in \listoftables as
@@ -2177,22 +2210,28 @@
 
 % --- Fixup Babel language selection glitches; toclang=
 
-% There is a fundamental problem of emitting \select@language items in LOT
-% files. When using \begin{table}...\end{table} \selectlanguage{foo}
+% There are fundamental problem of emitting \select@language items in LOT
+% files.
+%
+% Problem (3): When using \begin{table}...\end{table} \selectlanguage{foo}
 % \begin{table}...\end{table}, the LaTeX-Babel scheme will not emit a
 % \select@language{foo} between the two \contentsline{}s in \jobname.lot. The
 % TOC file is OK, because section titles aren't floats. (But what about
-% \mark{}s?). This is problem (3).
-%   There are other problems: (1) \selectlanguage emits .aux entries even
-% if the language isn't really changed; and (2) babel.def has
+% \mark{}s?).
+%
+% Problem (1): \selectlanguage emits .aux entries even
+% if the language isn't really changed.
+%
+% Problem (2): babel.def has
 % `\AtBeginDocument...\selectlanguage...\bbl@main@language', from which an
 % \immediate is missing, so the \select@language is emitted to the .aux file
 % after the first float has been typeset. A better solution would be
 % `\select@language{\languagename}', which forcibly activates the default
 % language.
-%   \ps@headings isn't run \AtBeginDocument, but book.cls runs
+%
+% Problem (4): \ps@headings isn't run \AtBeginDocument, but book.cls runs
 % \pagestyle{headings} when it is loaded. We should change this to
-% \AtBeginDocument or similar (4).
+% \AtBeginDocument or similar.
 
 \ifnum\magyar@opt@@toclang=0 \@@magyar@skiplong\fi
   \ifnum\magyar@opt@@toclang>1
@@ -2204,11 +2243,13 @@
     % only run when `magyar' is the default language (last arg of
     % \usepackage[...]{babel}). If that is run after \AtBeginDocument hooks,
     % then most packages will use 12 as \catcode\string``, which is intended.
-    %   \@@magyar@psheadings might just be run \AtBeginDocument, it doesn't
+    %   \@@magyar@setup@psheadings might just be run \AtBeginDocument, it doesn't
     % need \@preamblecmds -- but it must be after \select@language.
+    %
+    % \@preamblecmds is expanded after \@begindocumenthook
     \expandafter\gdef\expandafter\@preamblecmds\expandafter{\@preamblecmds
+      \@@magyar@setup@psheadings% Solve problem (4). Before \selectlanguage.
       \select@language{\languagename}% force initial language
-      \@@magyar@psheadings
     }%
     % Solve problem (1) and assist solving problem (2) by not emitting
     % \select@language twice.
@@ -2231,7 +2272,7 @@
 	  {\let\label\@gobble \let\index\@gobble \let\glossary\@gobble \let\select@language\relax}%
 	  {\string\@writefile{#1}{\string\select@language{\languagename} #2}}}
   \else
-    % Solve problem (2).
+    % Solve problems (2) and (4).
     \AtBeginDocument{%
       \if@filesw \immediate\write\@mainaux{%
         \string\select@language{\languagename}%
@@ -2239,8 +2280,8 @@
         \string\@writefile{lof}{\string\select@language{\languagename}}%
         \string\@writefile{lot}{\string\select@language{\languagename}}%
       }\fi
+      \@@magyar@setup@psheadings% Solve problem (4). Before \selectlanguage.
       \select@language{\languagename}% force initial language
-      \@@magyar@psheadings
     }
     % Solve problem (1) and assist solving problem (2) by not emitting
     % \select@language twice.
@@ -4430,68 +4471,90 @@
 
 % --- \documentclass-specific modifications; classmod=
 
-\let\@@magyar@psheadings\relax
+% Callback which redefines \ps@headings and runs it again if needed, when
+% magyar.ldf has an override for the standard \ps@headings, and
+% \pagestyle{headings} is active either explictly (e.g. in article.cls) or
+% by default (e.g. in book.cls).
+\let\@@magyar@setup@psheadings\relax
+
+%** Localized definition which replaces \ps@headings, if appropriate.
+\let\@@magyar@overridden@psheadings\@empty
 
 \ifx\magyar@opt@@classmod\relax\@@magyar@skiplong\fi
+
+%** Appends the first-level expansion of argless macro ##2 to ##1.
+\def\magyar@letappendto#1#2{%
+  \expandafter\expandafter\expandafter\def
+    \expandafter\expandafter\expandafter#1%
+    \expandafter\expandafter\expandafter{%
+    \expandafter#1#2}}%
+
+%** Defines #1 to the concatenation of \partmark ... \subparagraphmark,
+%** \oddfoot, \evenfoot, \oddhead, \evenhead.
+\def\magyar@mark@fingerprint@def#1{%
+  % We have ! here because some macros (such as \partmark) have #1, which
+  % gets expanded by \expandafter
+  \def#1{markfp: }%
+  \ifx\partmark\@undefined
+    \expandafter\def\expandafter\reserved@b\expandafter{%
+      \expandafter{-partmark}}%
+  \else
+    \expandafter\def\expandafter\reserved@b\expandafter{%
+      \expandafter{\partmark!:partmark}}%
+  \fi
+  \magyar@letappendto#1\reserved@b
+  %
+  \ifx\chaptermark\@undefined
+    \expandafter\def\expandafter\reserved@b\expandafter{%
+      \expandafter{-chaptermark}}%
+  \else
+    \expandafter\def\expandafter\reserved@b\expandafter{%
+      \expandafter{\chaptermark!:chaptermark}}%
+  \fi
+  \magyar@letappendto#1\reserved@b
+  %
+  \expandafter\def\expandafter\reserved@b\expandafter{%
+    \expandafter{\sectionmark!:sectionmark}}%
+  \magyar@letappendto#1\reserved@b
+  \expandafter\def\expandafter\reserved@b\expandafter{%
+    \expandafter{\subsectionmark!:subsectionmark}}%
+  \magyar@letappendto#1\reserved@b
+  \expandafter\def\expandafter\reserved@b\expandafter{%
+    \expandafter{\paragraphmark!:paragraphmark}}%
+  \magyar@letappendto#1\reserved@b
+  \expandafter\def\expandafter\reserved@b\expandafter{%
+    \expandafter{\subparagraphmark!}}%
+  \magyar@letappendto#1\reserved@b
+  \expandafter\def\expandafter\reserved@b\expandafter{%
+    \expandafter{\@oddfoot!:oddfoot}}%
+  \magyar@letappendto#1\reserved@b
+  \expandafter\def\expandafter\reserved@b\expandafter{%
+    \expandafter{\@evenfoot!:evenfoot}}%
+  \magyar@letappendto#1\reserved@b
+  \expandafter\def\expandafter\reserved@b\expandafter{%
+    \expandafter{\@evenhead!:evenhead}}%
+  \magyar@letappendto#1\reserved@b
+  \expandafter\def\expandafter\reserved@b\expandafter{%
+    \expandafter{\@oddhead!:oddhead}}%
+  \magyar@letappendto#1\reserved@b
+  % Dat: don't use \@mkboth (\let\@mkboth\markboth)
+}%
 
 %** Branches based on whether the \pagestyle has changed since loading the
 %** class file.
 %** @param #1 class file name, e.g. `book.cls'. Tested with book.cls and
 %**    report.cls.
-%** @param implicit-#2 then-branch
-%** @param implicit-#3 else-branch
-\def\magyar@if@originalpagestyle#1{%
+%** @param #2 tokens to insert before fingerprinting the current page style.
+%** @param implicit-#3 then-branch
+%** @param implicit-#4 else-branch
+\def\magyar@if@originalpagestyle#1#2{%
   \begingroup
   % Dat: no \paragraphmark or \subparagraphmark
-  \providecommand\partmark[1]{\relax}%
-  \providecommand\chaptermark[1]{\relax}%
   % vvv Dat: already defined in latex.ltx
   %\providecommand\sectionmark[1]{\relax}
   %\providecommand\subsectionmark[1]{\relax}
-  %** Appends the first-level expansion of argless macro ##2 to ##1.
-  \def\magyar@letappendto##1##2{%
-    \expandafter\expandafter\expandafter\def
-      \expandafter\expandafter\expandafter##1%
-      \expandafter\expandafter\expandafter{%
-      \expandafter##1##2}}%
-  %** Defines ##1 to the concatenation of \partmark ... \subparagraphmark,
-  %** \oddfoot, \evenfoot, \oddhead, \evenhead.
-  \def\magyar@mark@fingerprint@def##1{%
-    \expandafter\def\expandafter##1\expandafter{%
-      \expandafter{\partmark!}}%
-    \expandafter\def\expandafter\reserved@b\expandafter{%
-      \expandafter{\chaptermark!}}%
-    \magyar@letappendto##1\reserved@b
-    \expandafter\def\expandafter\reserved@b\expandafter{%
-      \expandafter{\sectionmark!}}%
-    \magyar@letappendto##1\reserved@b
-    \expandafter\def\expandafter\reserved@b\expandafter{%
-      \expandafter{\subsectionmark!}}%
-    \magyar@letappendto##1\reserved@b
-    \expandafter\def\expandafter\reserved@b\expandafter{%
-      \expandafter{\subsectionmark!}}%
-    \magyar@letappendto##1\reserved@b
-    \expandafter\def\expandafter\reserved@b\expandafter{%
-      \expandafter{\paragraphmark!}}%
-    \magyar@letappendto##1\reserved@b
-    \expandafter\def\expandafter\reserved@b\expandafter{%
-      \expandafter{\subparagraphmark!}}%
-    \magyar@letappendto##1\reserved@b
-    \expandafter\def\expandafter\reserved@b\expandafter{%
-      \expandafter{\@oddfoot}}%
-    \magyar@letappendto##1\reserved@b
-    \expandafter\def\expandafter\reserved@b\expandafter{%
-      \expandafter{\@evenfoot}}%
-    \magyar@letappendto##1\reserved@b
-    \expandafter\def\expandafter\reserved@b\expandafter{%
-      \expandafter{\@evenhead}}%
-    \magyar@letappendto##1\reserved@b
-    \expandafter\def\expandafter\reserved@b\expandafter{%
-      \expandafter{\@oddhead}}%
-    \magyar@letappendto##1\reserved@b
-    % Dat: don't use \@mkboth (\let\@mkboth\markboth)
-  }%
-  \magyar@mark@fingerprint@def\@@magyar@now@marks
+  #2\magyar@mark@fingerprint@def\@@magyar@now@marks
+  %
   \def\ProvidesClass##1[##2]{}%
   \def\NeedsTeXFormat##1[##2]{}% avoid ``can be used only in preamble''
   \long\def\DeclareOption##1##2{}%
@@ -4533,9 +4596,19 @@
   }%
   \def\newenvironment{\magyar@defenvironment}%
   \def\renewenvironment{\magyar@defenvironment}%
+  %
+  \ps@empty  % Clean \@oddhead as of latex.ltx
+  \let\@mkboth\@gobbletwo
+  \let\@oddhead\@empty
+  \let\@evenhead\@empty
+  \let\@oddfoot\@empty
+  \let\@evenfoot\@empty
+  %
   \def\input##1 {} % size10.clo etc.
   \makeatletter \@@input #1 %
-  \magyar@mark@fingerprint@def\@@magyar@class@marks
+  #2\magyar@mark@fingerprint@def\@@magyar@class@marks
+  %\message{AAA \meaning\@@magyar@now@marks}%
+  %\message{BBB \meaning\@@magyar@class@marks}%
   \ifx\@@magyar@now@marks\@@magyar@class@marks
     \endgroup\expandafter\@firstoftwo
   \else
@@ -4543,7 +4616,68 @@
   \fi
 }
 
+%\begingroup
+%\magyar@mark@fingerprint@def\OOO
+%\message{OOO \meaning\OOO}%
+%\endgroup
 
+%** Branches based on whether the specified \pagestyle is active.
+%** @param #1 tokens which change to the \pagestyle specified, e.g.
+%**   `\ps@headings'.
+%** @param implicit-#2 then-branch
+%** @param implicit-#3 else-branch
+\def\magyar@if@currentpagestyle#1{%
+  \begingroup
+  \magyar@mark@fingerprint@def\@@magyar@now@marks
+  #1%
+  \magyar@mark@fingerprint@def\@@magyar@specified@marks
+  \ifx\@@magyar@now@marks\@@magyar@specified@marks
+    \endgroup\expandafter\@firstoftwo
+  \else
+    \endgroup\expandafter\@secondoftwo
+  \fi
+}
+
+%** Redefine \@@magyar@setup@psheadings for #2.cls.
+%** @param #1 is the expanded value of \CurrentOption (`magyar').
+\def\magyar@def@psheadings#1#2{%
+  \def\@@magyar@setup@psheadings{%
+    % SUXX: \show doesn't work here.
+    \ifx\@@magyar@overridden@psheadings\ps@headings
+      \@@magyar@error{assert: \string\let\string\ps@headings\string\@@magyar@overridden@psheadings\space was too early}%
+    \else\ifx\@@magyar@overridden@psheadings\@empty
+      \@@magyar@error{assert: \string\@@magyar@overridden@psheadings\space should be redefined}%
+    \else
+      \magyar@if@originalpagestyle{#2.cls}{\ps@headings}{%
+        % \ps@headings still has its original definition (as of #1.cls).
+        %
+        % For efficiency reasons, we make the following restriction. If the
+        % user does \selectlanguage{...} throughout the document, he should
+        % call \pagetsyle{...} after that to make the pagestyle
+        % language-dependent.
+        %
+        % !! add support for \thispagestyle in the preamble.
+        % !! don't add this if extras gets cleared.
+        \expandafter\addto\csname extras#1\endcsname{%
+          \babel@save\ps@headings
+          \let\ps@headings\@@magyar@overridden@psheadings
+        }%
+        \magyar@if@currentpagestyle{\ps@headings}{%
+          % The current \pagestyle has been selected by the current
+          % \ps@headings, i.e. \pagestyle{headings} is active.
+          \edef\reserved@a{\languagename}%
+          \edef\reserved@a{\expandafter\strip@prefix\meaning\reserved@a}%
+          \edef\reserved@b{#1}%
+          \edef\reserved@b{\expandafter\strip@prefix\meaning\reserved@a}%
+          \ifx\reserved@a\reserved@b
+            % Localize the current \pagestyle to Hungarian `headings'.
+            \@@magyar@overridden@psheadings
+          \fi
+        }{}%
+      }{}%
+    \fi\fi
+  }%
+}
 
 %** Emits the rule to the running head. Must put something of zero width
 %** to the horizontal list.
@@ -4562,7 +4696,7 @@
 \@@magyar@ifclassloaded{book}{%
   % Headings: inserting dots, changing orders
   %\def\@@magyar@appendixname{\appendixname}% by appendixdot=
-  \def\@@magyar@book@psheadings{%
+  \def\@@magyar@overridden@psheadings{%
     \if@twoside
       \let\@oddfoot\@empty\let\@evenfoot\@empty
       \def\@evenhead{\@@magyar@headrule0\thepage\hfil\@@magyar@slshape\leftmark}%
@@ -4598,15 +4732,7 @@
 	  ##1}}}%
     \fi
   }%
-  \expandafter\addto\csname extras\CurrentOption\endcsname{%
-    \babel@save\ps@headings
-    \let\ps@headings\@@magyar@book@psheadings
-    % ^^^ Dat: the user has to run \pagestyle{headings} after \selectlanguage{magyar} -- for performance reasons
-  }
-  % !! only if Hungarian is active
-  \def\@@magyar@psheadings{%
-    \magyar@if@originalpagestyle{book.cls}{\ps@headings}{}%
-  }%
+  \expandafter\magyar@def@psheadings\expandafter{\CurrentOption}{book}%
   \def\magyar@ulladik{ulladik0}% [Nn]ulladik, `0' at end is intentional
   % Part: inserting dot, changing order, toc
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
@@ -4689,7 +4815,7 @@
 \@@magyar@ifclassloaded{report}{%
   %\def\@@magyar@appendixname{\appendixname}% by appendixdot=
   % Headings: inserting dots, changing orders
-  \def\@@magyar@report@psheadings{%
+  \def\@@magyar@overridden@psheadings{%
     \if@twoside
       \let\@oddfoot\@empty\let\@evenfoot\@empty
       \def\@evenhead{\@@magyar@headrule0\thepage\hfil\@@magyar@slshape\leftmark}%
@@ -4722,14 +4848,7 @@
 	  ##1}}}%
     \fi
   }%
-  \expandafter\addto\csname extras\CurrentOption\endcsname{%
-    \babel@save\ps@headings
-    \let\ps@headings\@@magyar@report@psheadings
-    % ^^^ Dat: the user has to run \pagestyle{headings} after \selectlanguage{magyar} -- for performance reasons
-  }
-  \def\@@magyar@psheadings{%
-    \magyar@if@originalpagestyle{report.cls}{\ps@headings}{}%
-  }%
+  \expandafter\magyar@def@psheadings\expandafter{\CurrentOption}{report}%
   \def\magyar@ulladik{ulladik0}% [Nn]ulladik, `0' at end is intentional
   % Chapter: dot, changing typeout, toc
   % Part...
@@ -4806,40 +4925,39 @@
 
 \@@magyar@ifclassloaded{article}{%
   % Headings: inserting dots
-  \expandafter\addto\csname extras\CurrentOption\endcsname{%
-    \babel@save\ps@headings
+  % In order for this to take effect, \pagestyle{plain} should be put below
+  % \begin{document}.
+  \def\@@magyar@overridden@psheadings{%
     \if@twoside
-      \def\ps@headings{%
-          \let\@oddfoot\@empty\let\@evenfoot\@empty
-	  % Dat: by pts: \slshape -> \relax
-          \def\@evenhead{\@@magyar@headrule0\thepage\hfil\@@magyar@slshape\leftmark}%
-          \def\@oddhead {\@@magyar@headrule1{\@@magyar@slshape\rightmark}\hfil\thepage}%
-          \let\@mkboth\markboth
-        \def\sectionmark##1{%
-          \markboth {\MakeUppercase{%
-            \ifnum \c@secnumdepth >\z@
-              \thesection.\magyar@opt@@hdrtitleskip
-            \fi
-            ##1}}{}}%
-        \def\subsectionmark##1{%
-          \markright {%
-            \ifnum \c@secnumdepth >\@ne
-              \thesubsection.\magyar@opt@@hdrtitleskip
-            \fi
-            ##1}}}%
-    \else
-      \def\ps@headings{%
-        \let\@oddfoot\@empty
-        \def\@oddhead{\@@magyar@headrule3{\@@magyar@slshape\rightmark}\hfil\thepage}%
+        \let\@oddfoot\@empty\let\@evenfoot\@empty
+        % Dat: by pts: \slshape -> \relax
+        \def\@evenhead{\@@magyar@headrule0\thepage\hfil\@@magyar@slshape\leftmark}%
+        \def\@oddhead {\@@magyar@headrule1{\@@magyar@slshape\rightmark}\hfil\thepage}%
         \let\@mkboth\markboth
-        \def\sectionmark##1{%
-          \markright {\MakeUppercase{%
-            \ifnum \c@secnumdepth >\m@ne
-              \thesection.\magyar@opt@@hdrtitleskip
-            \fi
-            ##1}}}}%
+      \def\sectionmark##1{%
+        \markboth {\MakeUppercase{%
+          \ifnum \c@secnumdepth >\z@
+            \thesection.\magyar@opt@@hdrtitleskip
+          \fi
+          ##1}}{}}%
+      \def\subsectionmark##1{%
+        \markright {%
+          \ifnum \c@secnumdepth >\@ne
+            \thesubsection.\magyar@opt@@hdrtitleskip
+          \fi
+          ##1}}%
+    \else
+      \let\@oddfoot\@empty
+      \def\@oddhead{\@@magyar@headrule3{\@@magyar@slshape\rightmark}\hfil\thepage}%
+      \let\@mkboth\markboth
+      \def\sectionmark##1{%
+        \markright {\MakeUppercase{%
+          \ifnum \c@secnumdepth >\m@ne
+            \thesection.\magyar@opt@@hdrtitleskip
+          \fi
+          ##1}}}
     \fi}%
-  %\def\@@magyar@psheadings{\ps@headings}% don't do this -- \pagestyle{plain} is the default
+  \expandafter\magyar@def@psheadings\expandafter{\CurrentOption}{article}%
   \def\magyar@ulladik{ulladik0}% [Nn]ulladik, `0' at end is intentional
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@part
@@ -4872,23 +4990,22 @@
 
 \@@magyar@ifclassloaded{letter}{%
   % Headings: inserting dots
-  \expandafter\addto\csname extras\CurrentOption\endcsname{%
-    \babel@save\ps@headings
+  % In order for this to take effect, \pagestyle{plain} should be put below
+  % \begin{document}.
+  \def\@@magyar@overridden@psheadings{%
     \if@twoside
-      \def\ps@headings{%
-          \let\@oddfoot\@empty\let\@evenfoot\@empty
-          \def\@oddhead{\@@magyar@headrule3\@@magyar@slshape\headtoname{:} \ignorespaces\toname
-                        \hfil \@date
-                        \hfil \thepage.~\pagename}%
-          \let\@evenhead\@oddhead}
+        \let\@oddfoot\@empty\let\@evenfoot\@empty
+        \def\@oddhead{\@@magyar@headrule3\@@magyar@slshape\headtoname{:} \ignorespaces\toname
+                      \hfil \@date
+                      \hfil \thepage.~\pagename}%
+        \let\@evenhead\@oddhead
     \else
-      \def\ps@headings{%
-          \let\@oddfoot\@empty
-          \def\@oddhead{\@@magyar@headrule3\@@magyar@slshape\headtoname{:} \ignorespaces\toname
-                        \hfil \@date
-                        \hfil \thepage.~\pagename}}
+        \let\@oddfoot\@empty
+        \def\@oddhead{\@@magyar@headrule3\@@magyar@slshape\headtoname{:} \ignorespaces\toname
+                      \hfil \@date
+                      \hfil \thepage.~\pagename}%
     \fi}%
-  %\def\@@magyar@psheadings{\ps@headings}% don't do this -- \pagestyle{plain} is the default
+  \expandafter\magyar@def@psheadings\expandafter{\CurrentOption}{letter}%
 }{}
 \@gobble
 {^}%
@@ -5205,7 +5322,7 @@
 % Dat:  \mathchardef\comma="613B  % a veszõ (,) ami matematikai módban elválasztó karakterként használható
 % Dat: additive \PassOptionsToPackage{foo=bar}{magyar.ldf}
 % Dat: for book.cls and article.cls: the user has to run \pagestyle{headings} after \selectlanguage{magyar} -- for performance reasons
-% Dat: doc: \let\@@magyar@psheadings\relax maybe needed in the preamble 
+% Dat: doc: \let\@@magyar@setup@psheadings\relax maybe needed in the preamble 
 % Dat: \pagestyle{headings} is forced \AtBeginDocument -- user should change it later
 % Dat: babel.def assumes we have: \textquotedblright \textquoteright \ll \gg
 %      < >
