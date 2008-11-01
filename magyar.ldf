@@ -267,7 +267,7 @@
   \magyar@opt@hunnewlabel@@yes
   \magyar@opt@hunumbers@@yes
   \magyar@opt@hutoday@@yes
-  \magyar@opt@hyphenation{hyphenation}{huhyph3}%
+  \magyar@opt@hyphenation{hyphenation}{huhyph3-or-any}%
   \magyar@opt@hyphenmins{hyphenmins}{22}% change over 1.4 Dat: Default LaTeX is {23}
   \magyar@opt@labelenums@@unchanged
   \magyar@opt@labelitems@@unchanged
@@ -338,7 +338,7 @@
   \magyar@opt@hunnewlabel@@yes% OK
   \magyar@opt@hunumbers@@no% OK
   \magyar@opt@hutoday@@yes% OK
-  \magyar@opt@hyphenation{hyphenation}{huhyph3}% OK
+  \magyar@opt@hyphenation{hyphenation}{huhyph3-or-any}% OK
   \magyar@opt@hyphenmins{hyphenmins}{unchanged}%
   \magyar@opt@labelenums@@unchanged% OK
   \magyar@opt@labelitems@@unchanged% OK
@@ -402,7 +402,7 @@
   \magyar@opt@hunnewlabel@@no
   \magyar@opt@hunumbers@@no
   \magyar@opt@hutoday@@no
-  \magyar@opt@hyphenation{hyphenation}{huhyph3}%
+  \magyar@opt@hyphenation{hyphenation}{huhyph3-or-any}%
   \magyar@opt@hyphenmins{hyphenmins}{unchanged}%
   \magyar@opt@labelenums@@unchanged
   \magyar@opt@labelitems@@unchanged
@@ -468,7 +468,7 @@
   \magyar@opt@hunnewlabel@@yes
   \magyar@opt@hunumbers@@yes
   \magyar@opt@hutoday@@yes
-  \magyar@opt@hyphenation{hyphenation}{composite}%
+  \magyar@opt@hyphenation{hyphenation}{composite-or-any}%
   \magyar@opt@hyphenmins{hyphenmins}{22}% Dat: Default LaTeX is {23}
   \magyar@opt@labelenums{labelenums}{hu-a}%
   \magyar@opt@labelitems@@hu
@@ -577,10 +577,14 @@
 \def\magyar@opt@hyphenation@@huhyphf  {\magyar@opt@hyphenation@@phonetic}
 \def\magyar@opt@hyphenation@@huhyphc  {\magyar@opt@hyphenation@@composite}
 \expandafter\ifx\csname @OFWO\endcsname\relax
-\def\magyar@opt@hyphenation@@none     {\def\magyar@opt@@hyphenation{}}
-\dMf magyar@opt@hyphenation@@huhyph3  {\def\magyar@opt@@hyphenation{3mwChN}}
-\def\magyar@opt@hyphenation@@huhyphn  {\def\magyar@opt@@hyphenation{nmwChN}}
-\def\magyar@opt@hyphenation@@composite{\def\magyar@opt@@hyphenation{cmwChN}}
+% Imp: fix --:hyphenation= reporting above
+\def\magyar@opt@hyphenation@@none              {\def\magyar@opt@@hyphenation{}}
+\dMf magyar@opt@hyphenation@@huhyph3           {\def\magyar@opt@@hyphenation{3mwChN}}
+\dMf magyar@opt@hyphenation@@huhyph3-or-any    {\def\magyar@opt@@hyphenation{3CmhwN}}
+\def\magyar@opt@hyphenation@@huhyphn           {\def\magyar@opt@@hyphenation{nmwChN}}
+\def\magyar@opt@hyphenation@@composite         {\def\magyar@opt@@hyphenation{cmwChN}}
+\dMf magyar@opt@hyphenation@@composite-or-any  {\def\magyar@opt@@hyphenation{cCmhwN}}
+\def\magyar@opt@hyphenation@@any               {\def\magyar@opt@@hyphenation{CmhwN}}
 \def\magyar@opt@hyphenation@@phonetic {\def\magyar@opt@@hyphenation{fwmChN}}
 \else% report to lafmtgen.pl
   \typeout{--:hyphenation-=\CurrentOption}
@@ -884,7 +888,7 @@
   \lowercase{\let~\fi}% \lowercase because catcode of ^ in \let^ would have been already assigned
   %\lowercase{\def~{\typeout{--skipto:\inputlineno}\fi}}%
   \catcode\string`\\14 % comment -- avoid using hash memory
-  \catcode\string`$14
+  \catcode\string`$14 % %$
   \iffalse
 }
 \@gobble\fi
@@ -900,6 +904,7 @@
   % Hungarian words won't be hyphenated automatically
   \expandafter\chardef\csname l@\CurrentOption\endcsname255
   \@@magyar@skiplong\fi
+% Define a warning, will be printed later.
 \def\@@magyar@suggpadef{%
   \def\magyar@sugg@pa##1{%
   \PackageWarningNoLine{##1.ldf}{%
@@ -920,7 +925,7 @@
     \expandafter\ifx\csname l@\CurrentOption\endcsname\relax\else
       \csname l@\CurrentOption\endcsname255 \fi
     \@@magyar@hyphenation@last
-  \else\if#1C%
+  \else\if#1C% use \CurrentOption
     \expandafter\ifx\csname l@\CurrentOption\endcsname\relax\else
       \@@magyar@hyphenation@last
     \fi
@@ -928,7 +933,7 @@
     % Dat: we reach this if no Hungarian patterns are available
     \expandafter\ifx\csname l@\CurrentOption\endcsname\relax\else
       \csname l@\CurrentOption\endcsname255 \fi
-    \@@magyar@suggpadef\@@magyar@hyphenation@last
+    \@@magyar@suggpadef
   \else\if#1h\@@magyar@hyphenation@def{hungarian}%
   \else\if#1m\@@magyar@hyphenation@def{magyar}%
   \else\if#13\@@magyar@hyphenation@def{magyar3}%
