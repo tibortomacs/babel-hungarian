@@ -579,13 +579,13 @@
 \expandafter\ifx\csname @OFWO\endcsname\relax
 % Imp: fix --:hyphenation= reporting above
 \def\magyar@opt@hyphenation@@none              {\def\magyar@opt@@hyphenation{}}
-\dMf magyar@opt@hyphenation@@huhyph3           {\def\magyar@opt@@hyphenation{3mwChN}}
+\dMf magyar@opt@hyphenation@@huhyph3           {\def\magyar@opt@@hyphenation{3rN}}
 \dMf magyar@opt@hyphenation@@huhyph3-or-any    {\def\magyar@opt@@hyphenation{3CmhwN}}
-\def\magyar@opt@hyphenation@@huhyphn           {\def\magyar@opt@@hyphenation{nmwChN}}
-\def\magyar@opt@hyphenation@@composite         {\def\magyar@opt@@hyphenation{cmwChN}}
+\def\magyar@opt@hyphenation@@huhyphn           {\def\magyar@opt@@hyphenation{nrN}}
+\def\magyar@opt@hyphenation@@composite         {\def\magyar@opt@@hyphenation{crN}}
 \dMf magyar@opt@hyphenation@@composite-or-any  {\def\magyar@opt@@hyphenation{cCmhwN}}
 \def\magyar@opt@hyphenation@@any               {\def\magyar@opt@@hyphenation{CmhwN}}
-\def\magyar@opt@hyphenation@@phonetic {\def\magyar@opt@@hyphenation{fwmChN}}
+\def\magyar@opt@hyphenation@@phonetic          {\def\magyar@opt@@hyphenation{frN}}
 \else% report to lafmtgen.pl
   \typeout{--:hyphenation-=\CurrentOption}
   \def\magyar@opt@@hyphenation{}%
@@ -905,10 +905,17 @@
   \expandafter\chardef\csname l@\CurrentOption\endcsname255
   \@@magyar@skiplong\fi
 % Define a warning, will be printed later.
-\def\@@magyar@suggpadef{%
+\def\@@magyar@suggpa@req@def{%
   \def\magyar@sugg@pa##1{%
   \PackageWarningNoLine{##1.ldf}{%
     Requested Hungarian hyphenation= patterns missing.\MessageBreak
+    To make LaTeX hyphenate Hungarian words, please\MessageBreak
+    modify language.dat and rerun initex or texconfig}}}%
+% Define a warning, will be printed later.
+\def\@@magyar@suggpa@all@def{%
+  \def\magyar@sugg@pa##1{%
+  \PackageWarningNoLine{##1.ldf}{%
+    All Hungarian hyphenation= patterns missing.\MessageBreak
     To make LaTeX hyphenate Hungarian words, please\MessageBreak
     modify language.dat and rerun initex or texconfig}}}%
 \def\@@magyar@hyphenation@last#1\@@magyar@hyphenation@next#2\hfuzz{#1}%
@@ -922,25 +929,24 @@
 \def\@@magyar@hyphenation@next#1{%
   \ifx#1\hfuzz
   \else\if#1N% none
-    \expandafter\ifx\csname l@\CurrentOption\endcsname\relax\else
-      \csname l@\CurrentOption\endcsname255 \fi
+    % Turn of hyphenation.
+    \expandafter\chardef\csname l@\CurrentOption\endcsname255
     \@@magyar@hyphenation@last
-  \else\if#1C% use \CurrentOption
+  \else\if#1C% use l@\CurrentOption if defined
     \expandafter\ifx\csname l@\CurrentOption\endcsname\relax\else
       \@@magyar@hyphenation@last
     \fi
-  \else\if#1w%
-    % Dat: we reach this if no Hungarian patterns are available
-    \expandafter\ifx\csname l@\CurrentOption\endcsname\relax\else
-      \csname l@\CurrentOption\endcsname255 \fi
-    \@@magyar@suggpadef
+  \else\if#1w% print the all-missing-warning
+    \@@magyar@suggpa@all@def
+  \else\if#1r% print the req-missing-warning
+    \@@magyar@suggpa@req@def
   \else\if#1h\@@magyar@hyphenation@def{hungarian}%
   \else\if#1m\@@magyar@hyphenation@def{magyar}%
   \else\if#13\@@magyar@hyphenation@def{magyar3}%
   \else\if#1c\@@magyar@hyphenation@def{magyarc}%
   \else\if#1f\@@magyar@hyphenation@def{magyarf}%
   \else\if#1n\@@magyar@hyphenation@def{magyarn}%
-  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\@@magyar@hyphenation@next
+  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\@@magyar@hyphenation@next
   % Dat: no \adddialect\l@magyar... - it's only a chardef
 }%
 
@@ -952,7 +958,8 @@
   \expandafter\newcount\csname l@\CurrentOption\endcsname
   % ^^^ BUGFIX at Tue Oct 12 14:13:54 CEST 2004
 \fi
-\let\@@magyar@suggpadef\@undefined
+\let\@@magyar@suggpa@all@def\@undefined
+\let\@@magyar@suggpa@req@def\@undefined
 \@gobble
 {^}
 
