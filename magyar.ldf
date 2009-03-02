@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2009/02/11 v1.5b Magyar support from the babel system]
+%%        [2009/03/02 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/02/11 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/03/02 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -1364,84 +1364,95 @@
   %     better solution to that. (??) !!
   \@@magyar@skiplong\fi
 
-% vvv commented out by pts@fazekas.hu at Fri Aug  1 01:24:59 CEST 2003
-% [pts] Code commented out causes the strange `Package hyperref Warning: No
-% destination for bookmark of \addcontentsline.'. Strange, the original
-% definition in latex.ltx seems to do the same. So why we would need this
-% redefinition? Old magyar.ldf doc says: \refstepcounter must be redefined
-% in order to have \@currentlabel unexpanded. But why?
-%. An example when to problem occurs:
-%  \documentclass{book}
-%  \usepackage[english,magyar]{babel}
-%  \usepacakge{hyperref}
-%  \begin{document}\section{foo}\end{document}
-%\expandafter\addto\csname extras\CurrentOption\endcsname{%
-%  \babel@save\refstepcounter
-%  \def\refstepcounter#1{\stepcounter{#1}%
-%    \def\@currentlabel{\csname p@#1\endcsname\csname the#1\endcsname}}%
-%}
+% [pts] Done properly by pts@fazekas.hu at Mon Mar  2 21:53:30 CET 2009
+%
+% \label will be redefined to write another line to .aux file:
+% \hunnewlabel{...}{...}: similar to \newlabel{sectionStructNr}{pageNr},
+% where the roman numerals are replaced by their arabic representations, so
+% \aref and \apageref will work (`a II. rész'). The name \hunnewlabel is a
+% legacy.
+%
+% We have to redefine \refstepcounter, which defines \@currentlabel, so we
+% can define \magyar@@currentlabel@arabic, wich is the same as \@currentlabel,
+% but it contains the number in arabic instead of roman. Without
+% \magyar@@currentlabel@arabic, \label would have no clue that a roman number
+% was involved. hyperref.sty also redefines \refstepcounter, but we are
+% agnostic to that: it doesn't matter if we are first.
 
-% \label is redefined to write another line to aux file:
-% \hunnewlabel{...}{...} where the roman numerals are replaced by their
-% arabic representations. The name \hunnewlabel is a legacy.
+\let\magyar@@orig@refstepcounter\refstepcounter
+% \relax, or {currentlabel}{pagenumber}
+\let\magyar@@currentlabel@intact\relax
+% \relax, or {currentlabel-in-arabic}{pagenumber-in-arabic}
+\let\magyar@@currentlabel@arabic\relax
+
+\def\refstepcounter#1{%
+  \magyar@@orig@refstepcounter{#1}%
+  \begingroup
+    % Imp: wait till \shipout before expanding \thepage, in case of
+    % \pagenumbering{roman}.
+    % \c@page might be wrong (it's correcy at \shipout only), se we fake it.
+    \c@page\@m
+    \edef\reserved@b{{\thepage}}%
+    \let\reserved@a\@currentlabel
+    % Append \reserved@b to \reserved@a, add {...} as well.
+    \expandafter\expandafter\expandafter\def
+      \expandafter\expandafter\expandafter\reserved@a%
+      \expandafter\expandafter\expandafter{%
+      \expandafter\expandafter\expandafter{%
+      \expandafter\reserved@a\expandafter}\reserved@b}%
+    \expandafter\def\expandafter\reserved@b\expandafter{%
+      \expandafter\def\expandafter\magyar@@currentlabel@intact\expandafter{%
+	\reserved@a}}%
+  \expandafter\endgroup\reserved@b
+  \begingroup
+    \c@page\@m
+    \let\romannumeral\number
+    \let\@Roman\@roman  % avoid uppercasing
+    % This \protected@edef is from the \refstepcounter code.
+    \protected@edef\reserved@a{%
+      {\csname p@#1\endcsname\csname the#1\endcsname}{\thepage}}%
+    \let\reserved@b\@empty
+    \ifx\reserved@a\@currentlabel\else
+      \expandafter\def\expandafter\reserved@b\expandafter{%
+        \expandafter\def\expandafter\magyar@@currentlabel@arabic\expandafter{%
+	  \reserved@a}}%
+    \fi
+  \expandafter\endgroup\reserved@b
+}
+
 %** Make its expansion short so \ifx would be fast down in noextras...
 \def\@@magyar@labela{\@@magyar@labelb}%
 \def\@@magyar@labelb#1{%
   \@@magyar@orig@label{#1}% output \newlabel to \@auxout
-  % Hacked in detail by pts@fazekas.hu at Thu Jul 31 23:01:04 CEST 2003
-  % [pts]
-  % Now output \hunnewlabel: similar to \newlabel{sectionStructNr}{pageNr},
-  % but roman numbers are converted to arabic, so \aref and \apageref work.
-  \begingroup
-    % vvv We mustn't wait \shipout for \@currentlabel, but we should for
-    % \thepage, in case of \pagenumbering{roman}. But its effect is immediate,
-    % (42 -> xlii), only \c@page might be incorrect.
-    \edef\reserved@a{{\@currentlabel}{\thepage}}%
-    % Now \@currentlabel is something like
-    % `\csname p@subsubsection\endcsname \csname thesubsubsection\endcsname'
-    % \p@subsubsection is usually empty, and \thesubsubsection begins with
-    % \thesubsection etc. while the first real expansion is usually
-    % \@arabic\c@chapter. We want to change \@roman, \@Roman, \romannumeral
-    % and \@arabic to \number, while keep \@alph and \@Alph intact. A
-    % subsection number `iv.v.6' can be converted to `4.v.6' or `4.5.6' -- we
-    % do the later.
-    \let\romannumeral\number
-    \let\@roman\@arabic% Dat: latex.ltx defines \def\@arabic#1{\number #1}
-    \let\@Roman\@arabic
-    \let\protect\@unexpandable@protect % so \H and other accents won't expand in the section title
-    \edef\reserved@b{\@currentlabel}%
-    \edef\reserved@c{{\@currentlabel}{\thepage}}% arabic instead of roman
-    \ifx\reserved@a\reserved@c
-      \let\reserved@b\@gobble
-    \else
-      % Emit \hunnewlabel only if \@currentlabel or \thepage contained roman
-      % numbers.
-      %
-      % Converting the page number (\thepage) is trickier than a simple \edef,
-      % because \@roman\c@page has to be converted to \noexpand\number\c@page,
-      % so \protected@write will expand it to \number\c@page, and a whatsit
-      % node will be created, and \number\c@page will be expanded to 42 when
-      % the page is shipped out to the DVI. Luckily \@alph and \@Alph don't
-      % contain \number. Also note that \rommanumeral, \@roman and \@Roman has
-      % already been redefined.
-      %   We don't want to say `\let\thepage\relax' here, because we want to
-      % expand the _formatting_ of \thepage, but not the number.
-      \def\number{\noexpand\noexpand\noexpand\number}%
-      \let\romannumeral\number
-      \def\@arabic##1{\noexpand\noexpand\noexpand\number##1}% Dat: macro expansion eats a brace; no space in latex.ltx
-      \def\@alph{\noexpand\noexpand\noexpand\@alph}%
-      \def\@Alph{\noexpand\noexpand\noexpand\@Alph}%
-      \def\@huordinal{\noexpand\noexpand\noexpand\@huordinal}%
-      \def\@Huordinal{\noexpand\noexpand\noexpand\@Huordinal}%
-      \def\@hunumeral{\noexpand\noexpand\noexpand\@hunumeral}%
-      \def\@Hunumeral{\noexpand\noexpand\noexpand\@Hunumeral}%
-      % Imp: other numbering schemes...
-      \edef\reserved@b##1{\noexpand\protected@write\@auxout{}{%
-	\string\hunnewlabel{##1}{{\reserved@b}{\thepage}}%
-      }}%
-    \fi
-  \expandafter\endgroup\reserved@b{#1}% clever hack to pass arg unexpanded
-}%
+  \ifx\magyar@@currentlabel\relax\else
+    \begingroup
+      \edef\reserved@a{{\@currentlabel}{\thepage}}%
+      \c@page\@m
+      \edef\reserved@b{{\thepage}}%
+      \let\reserved@a\@currentlabel
+      % Append \reserved@b to \reserved@a, add {...} as well.
+      \expandafter\expandafter\expandafter\def
+	\expandafter\expandafter\expandafter\reserved@a%
+	\expandafter\expandafter\expandafter{%
+	\expandafter\expandafter\expandafter{%
+	\expandafter\reserved@a\expandafter}\reserved@b}%
+      \ifx\reserved@a\magyar@@currentlabel@intact
+	\ifx\magyar@@currentlabel@arabic\magyar@@currentlabel@intact\else
+	  \expandafter\@@magyar@labelc\magyar@@currentlabel@arabic{#1}%
+	\fi
+      \fi
+    \endgroup
+  \fi
+}
+% @param #1 \@currentlabel expanded as roman
+% @param #2 `1'
+% @param #3 name of the label
+\def\@@magyar@labelc#1#2#3{%
+  % We have \noexpand\number below to prevent the \edef in \protected@write
+  % from expanding the page number. It will be expanded at \shipout.
+  \protected@write\@auxout{}{%
+    \string\hunnewlabel{#3}{{#1}{\noexpand\number\c@page}}}%
+}
 
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   %%\message{--EXTRAS--}\show\label
