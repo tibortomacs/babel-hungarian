@@ -506,7 +506,7 @@
 \dMf magyar@opt@defaults@@hu-min {%
   \csname magyar@opt@defaults@@over-1.4\endcsname
   % Dat: no openqq=unchanged (!)
-  \magyar@doopt activespace=safe,amstocnumskip=\enskip,frenchspacing=yes,
+  \magyar@doopt  activespace=safe,amstocnumskip=\enskip,frenchspacing=yes,
     captions=hu,classmod=yes,figurecaptions=hu,
     footnote=huplain,frenchspacing=yes,hyphenmins=22,
     labelenums=hu-d,labelitems=hu,fancyhdr=hu,
