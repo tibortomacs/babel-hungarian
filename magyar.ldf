@@ -867,12 +867,35 @@
 \fi
 \expandafter\ifx\csname magyar@needopt@hunumbers\endcsname\relax\else
   \ifnum\magyar@opt@@hunumbers=0
-    \@@magyar@error{(chapter|part)number=... implies hunumbers=yes}%
+    \@@magyar@error{(chapter|part)number=... needs hunumbers=yes}%
+    \magyar@opt@@hunumbers1
   \fi
+  %** Replace \thechapter at the beginning of the definition of \thesection
+  %** with \@arabic\c@chapter if appropriate.
+  %** @param #1#2 the first-level expansion of \thesection
+  \def\@@magyar@fix@thesection@huordinal#1#2\hfuzz{%
+    \def\reserved@a{\thechapter}%
+    \def\reserved@b{#1}%
+    \ifx\reserved@a\reserved@b
+      \def\magyar@ulladik{ulladik0}% [Nn]ulladik, `0' at end is intentional
+      \begingroup
+        \c@chapter0
+        \edef\reserved@a{\thechapter}%
+        \edef\reserved@a{\expandafter\@gobble\reserved@a0}%
+        \ifx\reserved@a\magyar@ulladik% \thechapter is a huordinal
+          \endgroup
+          \def\thesection{\@arabic\c@chapter#2}%
+        \else
+      \endgroup\fi
+    \fi
+  }%
+  \AtBeginDocument{\expandafter\@@magyar@fix@thesection@huordinal
+    \thesection\@empty\hfuzz}
 \fi
 \if0\magyar@opt@@shorthandcs\else
   \if\magyar@opt@@active0%
     \@@magyar@error{active=none implies shorthandcs=none}%
+    \magyar@opt@@active2 % active=safe
   \fi
 \fi
 % Imp: undef \magyar\@opt@* to save memory
@@ -4727,6 +4750,40 @@
   }%
 }
 
+\def\magyar@ulladik{ulladik0}% [Nn]ulladik, `0' at end is intentional
+
+%** Define control sequence #1 to be empty if \the#2 is huordinal,
+%** otherwise define #1 to be `.'.
+%** support \def\thepart{\@Huordinal\c@part}} without dots
+\def\@@magyar@huordinal@dotdef#1#2{%
+  \begingroup% support \def\thepart{\@Huordinal\c@part}} without dots
+    \csname c@#2\endcsname0
+    \edef\reserved@a{\csname the#2\endcsname}%
+    \edef\reserved@a{\expandafter\@gobble\reserved@a0}%
+    \edef\reserved@a{\def\noexpand\reserved@a{\ifx\reserved@a\magyar@ulladik\else.\fi}}%
+  \expandafter\endgroup#1%
+}
+
+%** Define \magyar@@toc@thechapter to \thechapter expanded but huordinal in
+%** arabic.
+\def\@@magyar@def@toc@thechapter{%
+  \begingroup
+    \let\@Huordinal\@arabic
+    \let\@huordinal\@arabic
+    \edef\magyar@@toc@thechapter{\thechapter}%
+  \expandafter\endgroup\expandafter\def\expandafter\magyar@@toc@thechapter
+    \expandafter{\magyar@@toc@thechapter}%
+}
+
+%** Convert \@currentlabel to lowercase \@huordinal if \thechapter is a
+%** huordinal or a Huordinal.
+\def\@@magyar@lowercase@currentlabel@toc@thechapter{%
+  \ifx\vfuzz\magyar@@toc@thechapter\vfuzz\else
+    % Convert to lower case.
+    \protected@edef\@currentlabel{\@huordinal\c@chapter}%
+  \fi
+}
+
 %** Emits the rule to the running head. Must put something of zero width
 %** to the horizontal list.
 %** @param #1 0: even page, 1: odd page, 3: page w/o [twoside]
@@ -4751,10 +4808,13 @@
       \def\@oddhead {\@@magyar@headrule1{\@@magyar@slshape\rightmark}\hfil\thepage}%
       \let\@mkboth\markboth
       \def\chaptermark##1{%
+        \@@magyar@huordinal@dotdef\reserved@a{chapter}\reserved@a
 	\markboth {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
-	    \if@mainmatter% Dat: csak book.cls-ben van, report.cls-ben nincs
-	      \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else.~\fi
+	    \if@mainmatter% Dat: mainmatter only in book.cls, not in report.cls
+	      \thechapter
+              % \reserved@a is empty or a dot, by \@magyar@huordinal@dotdef
+              \ifx\@chapapp\@@magyar@appendixname\enspace\else\reserved@a~\fi
 	      \@chapapp.\magyar@opt@@hdrtitleskip% \ %
 	    \fi
 	  \fi
@@ -4770,10 +4830,13 @@
       \def\@oddhead{\@@magyar@headrule3{\@@magyar@slshape\rightmark}\hfil\thepage}%
       \let\@mkboth\markboth
       \def\chaptermark##1{%
+        \@@magyar@huordinal@dotdef\reserved@a{chapter}\reserved@a
 	\markright {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
 	    \if@mainmatter
-	      \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else.~\fi
+	      \thechapter
+              % \reserved@a is empty or a dot, by \@magyar@huordinal@dotdef
+              \ifx\@chapapp\@@magyar@appendixname\enspace\else\reserved@a~\fi
 	      \@chapapp.\magyar@opt@@hdrtitleskip% \ %
 	    \fi
 	  \fi
@@ -4781,7 +4844,6 @@
     \fi
   }%
   \expandafter\magyar@def@psheadings\expandafter{\CurrentOption}{book}%
-  \def\magyar@ulladik{ulladik0}% [Nn]ulladik, `0' at end is intentional
   % Part: inserting dot, changing order, toc
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@part
@@ -4797,12 +4859,7 @@
          \interlinepenalty \@M
          \normalfont
          \ifnum \c@secnumdepth >-2\relax
-           \begingroup% support \def\thepart{\@Huordinal\c@part}} without dots
-             \c@part=0
-             \edef\reserved@a{\thepart}%
-	     \edef\reserved@a{\expandafter\@gobble\reserved@a0}%
-	     \edef\reserved@a{\def\noexpand\reserved@a{\ifx\reserved@a\magyar@ulladik\else.\fi}}%
-	   \expandafter\endgroup\reserved@a
+           \@@magyar@huordinal@dotdef\reserved@a{part}%
            \huge\bfseries \thepart\reserved@a~\partname
            \csname par\endcsname
            \vskip 20\p@
@@ -4817,9 +4874,12 @@
          \if@mainmatter
            \refstepcounter{chapter}%
            \typeout{\thechapter\ifx\@chapapp\@@magyar@appendixname\else.\fi\space\@chapapp.}%
+           \@@magyar@def@toc@thechapter
+           \@@magyar@lowercase@currentlabel@toc@thechapter
            \ifx\@chapapp\@@magyar@appendixname
-                \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter\protect\@gobble}#1}%
-           \else\addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#1}\fi
+                % \@gobble gobbles the dot emitted by \numberline.
+                \addcontentsline{toc}{chapter}{\protect\numberline{\magyar@@toc@thechapter\protect\@gobble}#1}%
+           \else\addcontentsline{toc}{chapter}{\protect\numberline{\magyar@@toc@thechapter}#1}\fi
          \else
            \addcontentsline{toc}{chapter}{#1}%
          \fi
@@ -4846,8 +4906,11 @@
           \ifnum \c@secnumdepth >\m@ne
             \if@mainmatter
               \huge\bfseries \thechapter
-	      \ifx\@chapapp\@@magyar@appendixname\enspace\else.~\fi
-	      \@chapapp{}
+	      \ifx\@chapapp\@@magyar@appendixname\enspace\else
+                \@@magyar@huordinal@dotdef\reserved@a{chapter}%
+	        \reserved@a~%  \reserved@a is a dot or empty
+	      \fi
+	      \@chapapp{}%
               \csname par\endcsname\nobreak
               \vskip 20\p@
             \fi
@@ -4870,9 +4933,12 @@
       \def\@oddhead {\@@magyar@headrule1{\@@magyar@slshape\rightmark}\hfil\thepage}%
       \let\@mkboth\markboth
       \def\chaptermark##1{%
+        \@@magyar@huordinal@dotdef\reserved@a{chapter}\reserved@a
 	\markboth {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
-	    \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else.~\fi
+	    \thechapter
+            % \reserved@a is empty or a dot, by \@magyar@huordinal@dotdef
+            \ifx\@chapapp\@@magyar@appendixname\enspace\else\reserved@a~\fi
 	    \@chapapp.\magyar@opt@@hdrtitleskip% \ %
 	  \fi
 	  ##1}}{}}%
@@ -4888,29 +4954,31 @@
         \@@magyar@headrule3{\@@magyar@slshape\rightmark}\hfil\thepage}%
       \let\@mkboth\markboth
       \def\chaptermark##1{%
+        \@@magyar@huordinal@dotdef\reserved@a{chapter}\reserved@a
 	\markright{\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
-	    \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else.~\fi
+            \thechapter
+            % \reserved@a is empty or a dot, by \@magyar@huordinal@dotdef
+            \ifx\@chapapp\@@magyar@appendixname\enspace\else\reserved@a~\fi
 	    \@chapapp.\magyar@opt@@hdrtitleskip% \ %
 	  \fi
 	  ##1}}}%
     \fi
   }%
   \expandafter\magyar@def@psheadings\expandafter{\CurrentOption}{report}%
-  \def\magyar@ulladik{ulladik0}% [Nn]ulladik, `0' at end is intentional
   % Chapter: dot, changing typeout, toc
   % Part...
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@chapter
     \def\@chapter[#1]#2{%
       \ifnum \c@secnumdepth >\m@ne
-           %\typeout{\meaning\@chapapp}
-           %\typeout{\meaning\@@magyar@appendixname}
            \refstepcounter{chapter}%
            \typeout{\thechapter\ifx\@chapapp\@@magyar@appendixname\else.\fi\space\@chapapp.}%
+           \@@magyar@def@toc@thechapter
+           \@@magyar@lowercase@currentlabel@toc@thechapter
            \ifx\@chapapp\@@magyar@appendixname
-                \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter\protect\@gobble}#1}%
-           \else\addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#1}\fi
+                \addcontentsline{toc}{chapter}{\protect\numberline{\magyar@@toc@thechapter\protect\@gobble}#1}%
+           \else\addcontentsline{toc}{chapter}{\protect\numberline{\magyar@@toc@thechapter}#1}\fi
       \else
         \addcontentsline{toc}{chapter}{#1}%
       \fi
@@ -4935,13 +5003,8 @@
 	{\centering
 	 \interlinepenalty \@M
 	 \normalfont
-	 \ifnum \c@secnumdepth >-2\relax
-	   \begingroup% support \def\thepart{\@Huordinal\c@part}} without dots
-	     \c@part=0
-	     \edef\reserved@a{\thepart}%
-	     \edef\reserved@a{\expandafter\@gobble\reserved@a0}%
-	     \edef\reserved@a{\def\noexpand\reserved@a{\ifx\reserved@a\magyar@ulladik\else.\fi}}%
-	   \expandafter\endgroup\reserved@a
+	 \ifnum \c@secnumdepth >-2\relax                                             
+           \@@magyar@huordinal@dotdef\reserved@a{part}%
 	   \huge\bfseries \thepart\reserved@a~\partname% hu
 	   \csname par\endcsname
 	   \vskip 20\p@
@@ -4957,10 +5020,12 @@
         \vspace*{50\p@}%
         {\parindent \z@ \raggedright \normalfont
           \ifnum \c@secnumdepth >\m@ne
-              \huge\bfseries \thechapter%,,%
-              %\meaning\@chapapp;\meaning\@@magyar@appendixname((%
-              \ifx\@chapapp\@@magyar@appendixname\else.\fi~\@chapapp{}
-              \csname par\endcsname\nobreak
+              \huge\bfseries \thechapter
+	      \ifx\@chapapp\@@magyar@appendixname\enspace\else
+                \@@magyar@huordinal@dotdef\reserved@a{chapter}%
+	        \reserved@a~%  \reserved@a is a dot or empty
+	      \fi
+	      \@chapapp{}%
               \vskip 20\p@
           \fi
           \interlinepenalty\@M
@@ -5006,7 +5071,6 @@
           ##1}}}
     \fi}%
   \expandafter\magyar@def@psheadings\expandafter{\CurrentOption}{article}%
-  \def\magyar@ulladik{ulladik0}% [Nn]ulladik, `0' at end is intentional
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@part
     \def\@part[#1]#2{% added at Fri Jul 23 11:45:57 CEST 2004
@@ -5020,12 +5084,7 @@
        \interlinepenalty \@M
        \normalfont
        \ifnum \c@secnumdepth >\m@ne
-	 \begingroup% support \def\thepart{\@Huordinal\c@part}} without dots
-	   \c@part=0
-	   \edef\reserved@a{\thepart}%
-	   \edef\reserved@a{\expandafter\@gobble\reserved@a0}%
-	   \edef\reserved@a{\def\noexpand\reserved@a{\ifx\reserved@a\magyar@ulladik\else.\fi}}%
-	 \expandafter\endgroup\reserved@a
+         \@@magyar@huordinal@dotdef\reserved@a{part}%
 	 \Large\bfseries \thepart\reserved@a~\partname% hu
 	 \csname par\endcsname\nobreak
        \fi
@@ -5224,9 +5283,13 @@
       % vvv Imp: do we need \if@twoside to set \subsectionmark here?
       \def\subsectionmark#1{\markright {\ifnum \c@secnumdepth >\@ne
         \thesubsection.\magyar@opt@@hdrtitleskip \fi #1}}%
-    }{\def\chaptermark#1{\markboth{\MakeUppercase{\ifnum \c@secnumdepth>\m@ne
+    }{\def\chaptermark#1{
+        \@@magyar@huordinal@dotdef\reserved@a{chapter}\reserved@a
+        \markboth{\MakeUppercase{\ifnum \c@secnumdepth>\m@ne
         \csname if@mainmatter\endcsname% report.cls doesn't have it
-        \thechapter\ifx\@chapapp\@@magyar@appendixname\enspace\else\space \fi
+        \thechapter
+        % \reserved@a is empty or a dot, by \@magyar@huordinal@dotdef
+        \ifx\@chapapp\@@magyar@appendixname\enspace\else\reserved@a~\fi
         \@chapapp.\magyar@opt@@hdrtitleskip
         \expandafter\ifx\csname if@mainmatter\endcsname\relax
           \csname iftrue\endcsname\fi
