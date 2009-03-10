@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2009/03/02 v1.5b Magyar support from the babel system]
+%%        [2009/03/10 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/03/02 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/03/10 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -1385,6 +1385,11 @@
 % \relax, or {currentlabel-in-arabic}{pagenumber-in-arabic}
 \let\magyar@@currentlabel@arabic\relax
 
+\def\@@magyar@setup@romantoarabic{%
+  \let\romannumeral\number
+  \let\@Roman\@roman  % avoid uppercasing
+}
+
 \def\refstepcounter#1{%
   \magyar@@orig@refstepcounter{#1}%
   \begingroup
@@ -1394,7 +1399,7 @@
     \c@page\@m
     \edef\reserved@b{{\thepage}}%
     \let\reserved@a\@currentlabel
-    % Append \reserved@b to \reserved@a, add {...} as well.
+    % Wrap \reserved@a in {...}, and then append \reserved@b to \reserved@a.
     \expandafter\expandafter\expandafter\def
       \expandafter\expandafter\expandafter\reserved@a%
       \expandafter\expandafter\expandafter{%
@@ -1406,8 +1411,7 @@
   \expandafter\endgroup\reserved@b
   \begingroup
     \c@page\@m
-    \let\romannumeral\number
-    \let\@Roman\@roman  % avoid uppercasing
+    \@@magyar@setup@romantoarabic
     % This \protected@edef is from the \refstepcounter code.
     \protected@edef\reserved@a{%
       {\csname p@#1\endcsname\csname the#1\endcsname}{\thepage}}%
@@ -1424,28 +1428,34 @@
 \def\@@magyar@labela{\@@magyar@labelb}%
 \def\@@magyar@labelb#1{%
   \@@magyar@orig@label{#1}% output \newlabel to \@auxout
-  \ifx\magyar@@currentlabel\relax\else
-    \begingroup
-      \edef\reserved@a{{\@currentlabel}{\thepage}}%
-      \c@page\@m
-      \edef\reserved@b{{\thepage}}%
-      \let\reserved@a\@currentlabel
-      % Append \reserved@b to \reserved@a, add {...} as well.
-      \expandafter\expandafter\expandafter\def
-	\expandafter\expandafter\expandafter\reserved@a%
-	\expandafter\expandafter\expandafter{%
-	\expandafter\expandafter\expandafter{%
-	\expandafter\reserved@a\expandafter}\reserved@b}%
-      \ifx\reserved@a\magyar@@currentlabel@intact
-	\ifx\magyar@@currentlabel@arabic\magyar@@currentlabel@intact\else
-	  \expandafter\@@magyar@labelc\magyar@@currentlabel@arabic{#1}%
-	\fi
+  \begingroup
+    \c@page\@m
+    \edef\reserved@b{{\thepage}}%
+    \let\reserved@a\@currentlabel
+    % Wrap \reserved@a in {...}, and then append \reserved@b to \reserved@a.
+    \expandafter\expandafter\expandafter\def
+      \expandafter\expandafter\expandafter\reserved@a%
+      \expandafter\expandafter\expandafter{%
+      \expandafter\expandafter\expandafter{%
+      \expandafter\reserved@a\expandafter}\reserved@b}%
+    \ifx\reserved@a\magyar@@currentlabel@intact
+      % \@currentlabel created by our overridden \refstepcounter.
+      \ifx\magyar@@currentlabel@arabic\magyar@@currentlabel@intact\else
+	\expandafter\@@magyar@labelc\magyar@@currentlabel@arabic{#1}%
       \fi
-    \endgroup
-  \fi
+    \else
+      % \@currentlabel from unknown origin.
+      % Emit \hunnewlabel if \thepage is roman.
+      \@@magyar@setup@romantoarabic
+      \edef\reserved@c{{\thepage}}%
+      \ifx\reserved@b\reserved@c\else % \thepage is roman
+        \@@magyar@labelc\@currentlabel{}{#1}%
+      \fi
+    \fi
+  \endgroup
 }
-% @param #1 \@currentlabel expanded as roman
-% @param #2 `1'
+% @param #1 \@currentlabel (maybe expanded) as roman converted to arabic
+% @param #2 any page number in any format; ignored
 % @param #3 name of the label
 \def\@@magyar@labelc#1#2#3{%
   % We have \noexpand\number below to prevent the \edef in \protected@write
@@ -4205,7 +4215,7 @@
     %     for each float, and number with \thempfootnote.
     % vvv Very tricky use of `#' in expansion.
     % Dat: \magyar@fo@mp@show is idempotent
-    % vvv Prepend \magyat@fo@mp@show to the definition of \@makecaption
+    % vvv Prepend \magyar@fo@mp@show to the definition of \@makecaption
     \expandafter\def\expandafter\@makecaption\expandafter##\expandafter1%
       \expandafter##\expandafter2\expandafter{\expandafter\magyar@fo@mp@show%
       \@makecaption{##1}{##2}%
