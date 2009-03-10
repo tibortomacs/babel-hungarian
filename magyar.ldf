@@ -4301,7 +4301,7 @@
   \@gobble
 {^}
 
-\if2\magyar@opt@@mathbrk\else \@@magyar@skiplong\fi
+\if2\magyar@opt@@mathbrk\else \@@magyar@skiplong\fi  % mathbrk=fix
   \def\@@magyar@resetmathchars{%
     \mathcode`+"202B \catcode`+12
     \mathcode`-"2200 \catcode`-12
@@ -4320,7 +4320,9 @@
     %\mathcode`."013A \catcode`.12
   }
   %** Dat: don't do `/', because slash is unbreakable
-  \def\@@magyar@domathbins{\do+\do-\do*\do>\do<\do=\do:}%
+  \def\@@magyar@domathbins{%
+    \do-\@@magyar@fix@newmcodes@dash
+    \do+\do*\do>\do<\do=\do:}%
   %** @param #1 a char token with \mathcode != "8000, like +
   \def\@@magyar@fixmathbinchar#1{%
     \ifnum\mathcode`#1="8000 \else
@@ -4335,6 +4337,18 @@
     \fi
     \catcode`#112
   }
+  %** \newmcodes@ defined in amsopn.sty doesn't work (triggered by 
+  %** \DeclareMathOperator{\tg}{tg} $\tg$) because it wants to assign
+  %** \mathchardef\std@minus\mathcode`\-, which is "8000, which is a bad
+  %** matchar. We fix that by prepending \mathcode`-45 to \newmcodes@ .
+  %** This is OK, because \newmcodes@ is protected by a block set up by
+  %** \qopname.
+  \def\@@magyar@fix@newmcodes@dash{%
+    \ifx\newmcodes@\@undefined\else
+      \let\magyar@@newmcodes\newmcodes@
+      \def\newmcodes@{\mathcode`-"45 \magyar@@newmcodes}%
+    \fi
+  }%
 
   %** @param #1 `\mathchar', all catcodes
   %** @param #2 hex code
