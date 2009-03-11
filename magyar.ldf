@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2009/03/10 v1.5b Magyar support from the babel system]
+%%        [2009/03/11 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/03/10 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/03/11 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -4808,7 +4808,7 @@
       \def\@oddhead {\@@magyar@headrule1{\@@magyar@slshape\rightmark}\hfil\thepage}%
       \let\@mkboth\markboth
       \def\chaptermark##1{%
-        \@@magyar@huordinal@dotdef\reserved@a{chapter}\reserved@a
+        \@@magyar@huordinal@dotdef\reserved@a{chapter}%
 	\markboth {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
 	    \if@mainmatter% Dat: mainmatter only in book.cls, not in report.cls
@@ -4830,7 +4830,7 @@
       \def\@oddhead{\@@magyar@headrule3{\@@magyar@slshape\rightmark}\hfil\thepage}%
       \let\@mkboth\markboth
       \def\chaptermark##1{%
-        \@@magyar@huordinal@dotdef\reserved@a{chapter}\reserved@a
+        \@@magyar@huordinal@dotdef\reserved@a{chapter}%
 	\markright {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
 	    \if@mainmatter
@@ -4933,7 +4933,7 @@
       \def\@oddhead {\@@magyar@headrule1{\@@magyar@slshape\rightmark}\hfil\thepage}%
       \let\@mkboth\markboth
       \def\chaptermark##1{%
-        \@@magyar@huordinal@dotdef\reserved@a{chapter}\reserved@a
+        \@@magyar@huordinal@dotdef\reserved@a{chapter}%
 	\markboth {\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
 	    \thechapter
@@ -4954,7 +4954,7 @@
         \@@magyar@headrule3{\@@magyar@slshape\rightmark}\hfil\thepage}%
       \let\@mkboth\markboth
       \def\chaptermark##1{%
-        \@@magyar@huordinal@dotdef\reserved@a{chapter}\reserved@a
+        \@@magyar@huordinal@dotdef\reserved@a{chapter}%
 	\markright{\MakeUppercase{%
 	  \ifnum \c@secnumdepth >\m@ne
             \thechapter
@@ -5284,7 +5284,7 @@
       \def\subsectionmark#1{\markright {\ifnum \c@secnumdepth >\@ne
         \thesubsection.\magyar@opt@@hdrtitleskip \fi #1}}%
     }{\def\chaptermark#1{
-        \@@magyar@huordinal@dotdef\reserved@a{chapter}\reserved@a
+        \@@magyar@huordinal@dotdef\reserved@a{chapter}%
         \markboth{\MakeUppercase{\ifnum \c@secnumdepth>\m@ne
         \csname if@mainmatter\endcsname% report.cls doesn't have it
         \thechapter
