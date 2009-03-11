@@ -4385,7 +4385,9 @@
     \edef\reserved@b{\string\mathchar}%
     \ifx\reserved@a\reserved@b
       \ifnum"#2<"8000 % redundant sanity check, trueness implied by #1==\mathchar
-	\edef#4{\noexpand\protect\csname \expandafter\@gobble\string#4 \endcsname}%
+        % Make #4 robust.
+	\edef#4{\noexpand\protect\expandafter\noexpand\csname
+          \expandafter\@gobble\string#4 \endcsname}%
 	% vvv Imp: \def would be better than \edef?
 	\expandafter\edef\csname\expandafter\@gobble\string#4 \endcsname{%
 	  % Dat: \mathchar already produces: `! Missing $ inserted.'
