@@ -1839,11 +1839,14 @@
 % --- labelenums=
 
 \if0\magyar@opt@@labelenums \@@magyar@skiplong\fi
-  \providecommand\@greekalph[1]{\relax\ifcase#1\or\(\alpha\)\or\(\beta\)\or\(\gamma\)\or\(\delta\)%
-    \or\(\varepsilon\)\or\(\zeta\)\or\(\eta\)\or\(\vartheta\)\or\(\iota\)\or\(\kappa\)%
-    \or\(\lambda\)\or\(\mu\)\or\(\nu\)\or\(\xi\)\or\(\varphi\)\or\(\varpi\)\or\(\varrho\)%
-    \or\(\varsigma\)\or\(\tau\)\or\(\upsilon\)\or\(\chi\)\or\(\psi\)\or\(\omega\)%
-    \else\@ctrerr\fi}
+  \providecommand\@greekalph[1]{%
+    % We use the robust \ensuremath here, similarly to \def\@fnsymbol in
+    % latex.ltx.
+    \ensuremath{\ifcase#1\or\alpha\or\beta\or\gamma\or\delta%
+    \or\varepsilon\or\zeta\or\eta\or\vartheta\or\iota\or\kappa%
+    \or\lambda\or\mu\or\nu\or\xi\or\varphi\or\varpi\or\varrho%
+    \or\varsigma\or\tau\or\upsilon\or\chi\or\psi\or\omega%
+    \else\@ctrerr\fi}}
   \expandafter\ifx\csname c@enumv\endcsname\relax
     \@definecounter{enumv}% call this before \def\theenumv
   \fi
