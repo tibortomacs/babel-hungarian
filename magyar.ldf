@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2009/03/11 v1.5b Magyar support from the babel system]
+%%        [2009/03/13 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/03/11 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/03/13 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -4381,6 +4381,7 @@
   %** @param #3 ignored
   %** @param #4 a \cs
   \def\@@magyar@fixmathcmd@low#1"#2"#3\hfuzz#4{%
+    % Imp: check \cong and \notin with txfonts and pxfonts. Do they look OK?
     \def\reserved@a{#1}%
     \edef\reserved@b{\string\mathchar}%
     \ifx\reserved@a\reserved@b
@@ -4769,15 +4770,16 @@
   \expandafter\endgroup#1%
 }
 
-%** Define \magyar@@toc@thechapter to \thechapter expanded but huordinal in
-%** arabic.
-\def\@@magyar@def@toc@thechapter{%
+%** Define \magyar@@toc@thechapter (#1) to \thechapter (#2) expanded but
+%** huordinal in arabic.
+%** @param #1 control sequence to define
+%** @param #2 counter to expand, e.g. \thechapter or \thepart
+\def\@@magyar@def@arabic#1#2{%
   \begingroup
     \let\@Huordinal\@arabic
     \let\@huordinal\@arabic
-    \edef\magyar@@toc@thechapter{\thechapter}%
-  \expandafter\endgroup\expandafter\def\expandafter\magyar@@toc@thechapter
-    \expandafter{\magyar@@toc@thechapter}%
+    \edef#1{#2}%
+  \expandafter\endgroup\expandafter\def\expandafter#1\expandafter{#1}%
 }
 
 %** Convert \@currentlabel to lowercase \@huordinal if \thechapter is a
@@ -4786,6 +4788,15 @@
   \ifx\vfuzz\magyar@@toc@thechapter\vfuzz\else
     % Convert to lower case.
     \protected@edef\@currentlabel{\@huordinal\c@chapter}%
+  \fi
+}
+
+%** Convert \@currentlabel to lowercase \@huordinal if \thepart is a
+%** huordinal or a Huordinal.
+\def\@@magyar@lowercase@currentlabel@toc@thepart{%
+  \ifx\vfuzz\magyar@@toc@thepart\vfuzz\else
+    % Convert to lower case.
+    \protected@edef\@currentlabel{\@huordinal\c@part}%
   \fi
 }
 
@@ -4852,10 +4863,12 @@
   % Part: inserting dot, changing order, toc
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@part
-    \def\@part[#1]#2{%
+    \def\@part[#1]#2{% book
         \ifnum \c@secnumdepth >-2\relax
           \refstepcounter{part}%
-          \addcontentsline{toc}{part}{\thepart.\hspace{1em}#1}%
+          \@@magyar@def@arabic\magyar@@toc@thepart\thepart
+          \@@magyar@lowercase@currentlabel@toc@thepart
+          \addcontentsline{toc}{part}{\magyar@@toc@thepart.\hspace{1em}#1}%
         \else
           \addcontentsline{toc}{part}{#1}%
         \fi
@@ -4879,7 +4892,7 @@
          \if@mainmatter
            \refstepcounter{chapter}%
            \typeout{\thechapter\ifx\@chapapp\@@magyar@appendixname\else.\fi\space\@chapapp.}%
-           \@@magyar@def@toc@thechapter
+           \@@magyar@def@arabic\magyar@@toc@thechapter\thechapter
            \@@magyar@lowercase@currentlabel@toc@thechapter
            \ifx\@chapapp\@@magyar@appendixname
                 % \@gobble gobbles the dot emitted by \numberline.
@@ -4979,7 +4992,7 @@
       \ifnum \c@secnumdepth >\m@ne
            \refstepcounter{chapter}%
            \typeout{\thechapter\ifx\@chapapp\@@magyar@appendixname\else.\fi\space\@chapapp.}%
-           \@@magyar@def@toc@thechapter
+           \@@magyar@def@arabic\magyar@@toc@thechapter\thechapter
            \@@magyar@lowercase@currentlabel@toc@thechapter
            \ifx\@chapapp\@@magyar@appendixname
                 \addcontentsline{toc}{chapter}{\protect\numberline{\magyar@@toc@thechapter\protect\@gobble}#1}%
@@ -4997,10 +5010,12 @@
         \@afterheading
       \fi}%
     \babel@save\@part
-    \def\@part[#1]#2{% added at Fri Jul 23 11:45:57 CEST 2004
+    \def\@part[#1]#2{% report; added at Fri Jul 23 11:45:57 CEST 2004
       \ifnum \c@secnumdepth >-2\relax
 	\refstepcounter{part}%
-	\addcontentsline{toc}{part}{\thepart.\hspace{1em}#1}% hu dot
+        \@@magyar@def@arabic\magyar@@toc@thepart\thepart
+        \@@magyar@lowercase@currentlabel@toc@thepart
+        \addcontentsline{toc}{part}{\magyar@@toc@thepart.\hspace{1em}#1}%
       \else
 	\addcontentsline{toc}{part}{#1}%
       \fi
@@ -5078,10 +5093,12 @@
   \expandafter\magyar@def@psheadings\expandafter{\CurrentOption}{article}%
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\@part
-    \def\@part[#1]#2{% added at Fri Jul 23 11:45:57 CEST 2004
+    \def\@part[#1]#2{% article % added at Fri Jul 23 11:45:57 CEST 2004
       \ifnum \c@secnumdepth >\m@ne
 	\refstepcounter{part}%
-	\addcontentsline{toc}{part}{\thepart.\hspace{1em}#1}% hu dot
+        \@@magyar@def@arabic\magyar@@toc@thepart\thepart
+        \@@magyar@lowercase@currentlabel@toc@thepart
+        \addcontentsline{toc}{part}{\magyar@@toc@thepart.\hspace{1em}#1}%
       \else
 	\addcontentsline{toc}{part}{#1}%
       \fi
