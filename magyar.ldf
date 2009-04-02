@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2009/03/25 v1.5b Magyar support from the babel system]
+%%        [2009/04/02 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/03/25 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/04/02 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -2761,7 +2761,7 @@
   \ifnum#1=-1 m\'nusz egyedik\else
   \ifnum#1=-2 m\'nusz kettedik\else
   \ifnum#1<0 m\'inusz \expandafter\@huordinal\expandafter{\number-#1 }\else
-  \ifcase#1 nulladik\or els\H o\or m\'asodik\or harmadik\or negyedik\or
+  \ifcase\number#1 nulladik\or els\H o\or m\'asodik\or harmadik\or negyedik\or
     \"ot\"odik\or hatodik\or hetedik\or nyolcadik\or kilencedik\else
     \ifnum#1>999 \expandafter\@@magyar@ezresedik\number#1.\else
     \ifnum#1>99 \expandafter\@@magyar@szazasodik\number#1\else
@@ -4803,19 +4803,29 @@
 %** Convert \@currentlabel to lowercase \@huordinal if \thechapter is a
 %** huordinal or a Huordinal.
 \def\@@magyar@lowercase@currentlabel@toc@thechapter{%
-  \ifx\vfuzz\magyar@@toc@thechapter\vfuzz\else
-    % Convert to lower case.
-    \protected@edef\@currentlabel{\@huordinal\c@chapter}%
-  \fi
+  \begingroup
+    \csname c@chapter\endcsname0
+    \edef\reserved@a{\csname thechapter\endcsname}%
+    \edef\reserved@a{\expandafter\@gobble\reserved@a0}%
+    \ifx\reserved@a\magyar@ulladik
+       \endgroup\expandafter\@firstofone\else
+       \endgroup\expandafter\@gobble\fi
+  {% Convert to lower case.
+    \protected@edef\@currentlabel{\@huordinal\c@chapter}}%
 }
 
 %** Convert \@currentlabel to lowercase \@huordinal if \thepart is a
 %** huordinal or a Huordinal.
 \def\@@magyar@lowercase@currentlabel@toc@thepart{%
-  \ifx\vfuzz\magyar@@toc@thepart\vfuzz\else
-    % Convert to lower case.
-    \protected@edef\@currentlabel{\@huordinal\c@part}%
-  \fi
+  \begingroup
+    \csname c@part\endcsname0
+    \edef\reserved@a{\csname thepart\endcsname}%
+    \edef\reserved@a{\expandafter\@gobble\reserved@a0}%
+    \ifx\reserved@a\magyar@ulladik
+       \endgroup\expandafter\@firstofone\else
+       \endgroup\expandafter\@gobble\fi
+  {% Convert to lower case.
+    \protected@edef\@currentlabel{\@huordinal\c@part}}%
 }
 
 %** Emits the rule to the running head. Must put something of zero width
