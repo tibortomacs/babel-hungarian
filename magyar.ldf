@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2009/04/10 v1.5b Magyar support from the babel system]
+%%        [2009/04/21 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/04/10 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/04/21 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -3644,7 +3644,7 @@
   \endgroup
 }
 
-\def\@@magyar@chapapp{\appendixname}%
+\def\@@magyar@appendix@chapapp{\appendixname}%
 
 %** Input is \reserved@a, output is \reserved@c
 %** @param #1 the control sequence \r@foo:bar
@@ -3675,8 +3675,8 @@
   \def\reserved@c{chapter}\edef         \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
   \def\reserved@c{appendix}\edef        \reserved@b{\expandafter\ifx\csname c@chapter\endcsname\relax\else\@Alph\c@chapter\fi}\ifx\reserved@a\reserved@b\else% Imp: do this without changing counters in \appendix
   \def\reserved@c{part}\edef            \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
-  %%\show\@chapapp \show\@@magyar@chapapp
-  \ifx\@chapapp\@@magyar@chapapp% we're in an appendix referring to a normal chapter
+  %%\show\@chapapp \show\@@magyar@appendix@chapapp
+  \ifx\@chapapp\@@magyar@appendix@chapapp% we're in an appendix referring to a normal chapter
     \def\thechapter{\@arabic\c@chapter}\fi
   \def\reserved@c{subsubparagraph}\edef \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
   \def\reserved@c{subparagraph}\edef    \reserved@b{\csname the\reserved@c\endcsname}\ifx\reserved@a\reserved@b\else
@@ -4846,11 +4846,13 @@
          \if@mainmatter
            \refstepcounter{chapter}%
            \typeout{\thechapter\ifx\@chapapp\@@magyar@appendixname\else.\fi\space\@chapapp.}%
-           \ifnum\magyar@opt@@chapternumber>0 \protected@edef\@currentlabel{\@huordinal\c@chapter}\fi
-           \ifx\@chapapp\@@magyar@appendixname
-                % \@gobble gobbles the dot emitted by \numberline.
-                \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter\protect\@gobble}#1}%
-           \else\addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#1}\fi
+           \ifx\@chapapp\@@magyar@appendix@chapapp
+             % \@gobble gobbles the dot emitted by \numberline.
+             \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter\protect\@gobble}#1}%
+           \else
+             \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#1}
+             \ifnum\magyar@opt@@chapternumber>0 \protected@edef\@currentlabel{\@huordinal\c@chapter}\fi
+           \fi
          \else
            \addcontentsline{toc}{chapter}{#1}%
          \fi
@@ -4936,10 +4938,13 @@
       \ifnum \c@secnumdepth >\m@ne
            \refstepcounter{chapter}%
            \typeout{\thechapter\ifx\@chapapp\@@magyar@appendixname\else.\fi\space\@chapapp.}%
-           \ifnum\magyar@opt@@chapternumber>0 \protected@edef\@currentlabel{\@huordinal\c@chapter}\fi
-           \ifx\@chapapp\@@magyar@appendixname
-                \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter\protect\@gobble}#1}%
-           \else\addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#1}\fi
+           \ifx\@chapapp\@@magyar@appendix@chapapp
+             % \@gobble gobbles the dot emitted by \numberline.
+             \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter\protect\@gobble}#1}%
+           \else
+             \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#1}\fi
+             \ifnum\magyar@opt@@chapternumber>0 \protected@edef\@currentlabel{\@huordinal\c@chapter}\fi
+           \fi
       \else
         \addcontentsline{toc}{chapter}{#1}%
       \fi
