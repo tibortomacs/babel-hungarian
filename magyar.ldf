@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2009/04/27 v1.5b Magyar support from the babel system]
+%%        [2009/05/10 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/04/27 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/05/10 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -2889,7 +2889,13 @@
 \def\@@magyar@suffix@nal#1{n\ifcase  #1 \'a\or \'e\or \'e\or\'a\or \'e\or \'e\or\'a\or \'e\or\'a\or \'e\or \'e\or \'e\or \'e\or\'a\or \'e\or \'a\or \'a\or \'a\or\'a\or \'e\or\'a\fi l}%
 \def\@@magyar@suffix@@ol#1{\ifcase   #1 \'o\or\H o\or\H o\or\'o\or\H o\or\H o\or\'o\or\H o\or\'o\or\H o\or\H o\or\H o\or\H o\or\'o\or\H o\or \'o\or \'o\or \'o\or\'o\or\H o\or\'o\fi l}%
 \def\@@magyar@suffix@ul#1{\ifcase    #1   u\or \"u\or \"u\or  u\or \"u\or \"u\or  u\or \"u\or  u\or \"u\or \"u\or \"u\or \"u\or  u\or \"u\or   u\or   u\or   u\or  u\or \"u\or  u\fi l}%
-\def\@@magyar@suffix@val#1{\ifcase   #1  va\or gye\or  ve\or ma\or gye\or  te\or ta\or  te\or ca\or  ce\or  ze\or gye\or  ve\or za\or  re\or  va\or  da\or sza\or ca\or  ne\or na\fi l}%
+\def\@@magyar@suffix@val#1{\ifcase   #1  va\or gye\or ve\or ma\or gye\or  te\or ta\or  te\or ca\or  ce\or  ze\or gye\or  ve\or za\or  re\or  va\or  da\or sza\or ca\or  ne\or na\fi l}%
+% @example: \atold(2.31)+es+sel{}
+\def\@@magyar@suffix@sal#1{\ifcase   #1  sa\or se\or  se\or sa\or  se\or  se\or sa\or  se\or sa\or  se\or  se\or  se\or  se\or sa\or  se\or  sa\or  sa\or  sa\or sa\or  se\or sa\fi l}%
+% @example: \atold(2.31)+ed+del{}
+\def\@@magyar@suffix@dal#1{\ifcase   #1  da\or de\or  de\or da\or  de\or  de\or da\or  de\or da\or  de\or  de\or  de\or  de\or da\or  de\or  da\or  da\or  da\or da\or  de\or da\fi l}%
+% @example: \atold(2.31)+edik+kel{}
+\def\@@magyar@suffix@kal#1{\ifcase   #1  ka\or ke\or  ke\or ka\or  ke\or  ke\or ka\or  ke\or ka\or  ke\or  ke\or  ke\or  ke\or ka\or  ke\or  ka\or  ka\or  ka\or ka\or  ke\or da\fi l}%
 \def\@@magyar@suffix@an{\@@magyar@suffix@@an}% make \ifx\@@magyar@suffix@an faster
 \def\@@magyar@suffix@at{\@@magyar@suffix@@at}% make \ifx\@@magyar@suffix@at faster
 \def\@@magyar@suffix@hoz{h\@@magyar@suffix@@hoz z}
@@ -2908,17 +2914,24 @@
 %** Usage: \@@magyar@suffix@aS{5}\magyar@@suffix@hoz
 \def\@@magyar@suffix@aS#1#2{%
   \ifnum#2=5 \ifx#1\@@magyar@suffix@at \"oset\else\@@magyar@skipfi\fi\else
-    \ifcase#2  \or e\or e\or a\or e\or \"o\or o\or e\or a\or e\or e\or e\or e\or a\or e\or  \or a\or a\or a\or e\or a\fi s\expandafter#1%
+    \ifcase#2  \or e\or e\or a\or e\or \"o\or o\or e\or a\or e\or e\or e\or e\or a\or e\or  \or a\or a\or a\or e\or a\fi s%
+    \expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+    \ifx#1\@@magyar@suffix@val\@@magyar@suffix@sal\else#1\fi % +es+vel -> +es+sel
+    % Imp: +ad+val, +adik+val etc.
     \ifcase#2 3\or 1\or 1\or 3\or 1\or   5\or 3\or 1\or 3\or 1\or 1\or 1\or 1\or 3\or 1\or 3\or 3\or 3\or 3\or 1\or 3\fi
   \fi
 }%
 \def\@@magyar@suffix@aD#1#2{%
-  \ifcase#2  \or e\or e\or a\or e\or \"o\or o\or e\or a\or e\or e\or e\or e\or a\or e\or  \or a\or a\or a\or e\or a\fi d\expandafter#1%
+  \ifcase#2  \or e\or e\or a\or e\or \"o\or o\or e\or a\or e\or e\or e\or e\or a\or e\or  \or a\or a\or a\or e\or a\fi d%
+  \expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+  \ifx#1\@@magyar@suffix@val\@@magyar@suffix@dal\else#1\fi % +ed+vel -> +ed+del
   \ifcase#2 3\or 1\or 1\or 3\or 1\or   5\or 3\or 1\or 3\or 1\or 1\or 1\or 1\or 3\or 1\or 3\or 3\or 3\or 3\or 1\or 3\fi
 }%
 \def\@@magyar@suffix@adiK#1#2{%
   \ifnum#2=1 \ifx#1\@@magyar@suffix@at s\"ot\else\@@magyar@skipfi\fi\else
-    \ifcase#2  \or e\or e\or a\or e\or \"o\or o\or e\or a\or e\or e\or e\or e\or a\or e\or  \or a\or a\or a\or e\or a\fi dik\expandafter#1%
+    \ifcase#2  \or e\or e\or a\or e\or \"o\or o\or e\or a\or e\or e\or e\or e\or a\or e\or  \or a\or a\or a\or e\or a\fi dik%
+    \expandafter\expandafter\expandafter\expandafter\expandafter\expandafter
+    \ifx#1\@@magyar@suffix@val\@@magyar@suffix@kal\else#1\fi % +edik+vel -> +ed+kel
     \ifcase#2 3\or 1\or 1\or 3\or 1\or   1\or 3\or 1\or 3\or 1\or 1\or 1\or 1\or 3\or 1\or 3\or 3\or 3\or 3\or 1\or 3\fi
   \fi
 }%
@@ -2943,8 +2956,10 @@
 \def\@@magyar@fs@#1{%
   \if a\noexpand#1\@@magyar@swaprelax\@@magyar@fs@a\else
   \if b\noexpand#1\@@magyar@swaprelax\@@magyar@fs@b\else
+  \if d\noexpand#1\@@magyar@swaprelax\@@magyar@fs@d\else
   \if e\noexpand#1\@@magyar@swaprelax\@@magyar@fs@e\else
   \if h\noexpand#1\@@magyar@swaprelax\@@magyar@fs@h\else
+  \if k\noexpand#1\@@magyar@swaprelax\@@magyar@fs@k\else
   \if n\noexpand#1\@@magyar@swaprelax\@@magyar@fs@n\else
   \if o\noexpand#1\@@magyar@swaprelax\@@magyar@fs@o\else
   \if r\noexpand#1\@@magyar@swaprelax\@@magyar@fs@r\else
@@ -2952,7 +2967,8 @@
   \if t\noexpand#1\@@magyar@swaprelax\@@magyar@fs@t\else
   \if u\noexpand#1\@@magyar@swaprelax\@@magyar@fs@u\else
   \if v\noexpand#1\@@magyar@swaprelax\@@magyar@fs@v\else
-  \@@magyar@badsuffix{#1}\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\relax
+  % Imp: SUXX: badsuffix doesn't work for +qal here -- fix error reporting
+  \@@magyar@badsuffix{#1}{}\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\relax
 }
 \def\@@magyar@fs@a#1{%
   %\if -\noexpand#1\@@magyar@swapno\else
@@ -2973,7 +2989,7 @@
 }
 \def\@@magyar@fs@adi#1{%
   \if k\noexpand#1\@@magyar@swaprelax\@@magyar@fs@adik\else
-  \@@magyar@badsuffix{adi#1}\fi\relax
+  \@@magyar@badsuffix{adi#1}{}\fi\relax
 }
 \def\@@magyar@fs@adik#1{%
   %\if -\noexpand#1\@@magyar@swapno\else
@@ -2991,7 +3007,7 @@
   \if a\noexpand#1\@@magyar@swaprelax\@@magyar@fs@ba\else
   \if e\noexpand#1\@@magyar@swaprelax\@@magyar@fs@ba\else
   \if o\noexpand#1\@@magyar@swaprelax\@@magyar@fs@bo\else
-  \@@magyar@badsuffix{b#1}\fi\fi\fi\relax
+  \@@magyar@badsuffix{b#1}{}\fi\fi\fi\relax
 }
 \def\@@magyar@fs@ba#1{%
   \if n\noexpand#1\noexpand\@@magyar@suffix@ban\@@magyar@contn\else
@@ -3000,7 +3016,16 @@
 }
 \def\@@magyar@fs@bo#1{%
   \if l\noexpand#1\noexpand\@@magyar@suffix@bol\@@magyar@contn\else
-  \@@magyar@badsuffix{bo#1}\fi\relax
+  \@@magyar@badsuffix{bo#1}{}\fi\relax
+}
+\def\@@magyar@fs@d#1{%
+  \if a\noexpand#1\@@magyar@swaprelax\@@magyar@fs@da\else
+  \if e\noexpand#1\@@magyar@swaprelax\@@magyar@fs@da\else
+  \@@magyar@badsuffix{d#1}{}\fi\fi\relax
+}
+\def\@@magyar@fs@da#1{%
+  \if l\noexpand#1\noexpand\@@magyar@suffix@dal\@@magyar@contn\else
+  \@@magyar@badsuffix{da#1}{}\fi\relax
 }
 \def\@@magyar@fs@e#1{%
   \if d\noexpand#1\@@magyar@swaprelax\@@magyar@fs@ad\else
@@ -3008,59 +3033,74 @@
   \if t\noexpand#1\noexpand\@@magyar@suffix@at\@@magyar@contn\else
   \if n\noexpand#1\noexpand\@@magyar@suffix@an\@@magyar@contn\else
   \if +\noexpand#1\noexpand\@@magyar@suffix@A\@@magyar@swaprelax\@@magyar@fs@\else
-  %\@@magyar@badsuffix{e#1}
-  \@@magyar@conta\@@magyar@suffix@a{#1}%
+  %\@@magyar@badsuffix{e#1}{}
+  \@@magyar@conta\@@magyar@suffix@a{#1}{}%
   \fi\fi\fi\fi\fi\relax
 }
 \def\@@magyar@fs@h#1{%
   \if e\noexpand#1\@@magyar@swaprelax\@@magyar@fs@ho\else
   \if o\noexpand#1\@@magyar@swaprelax\@@magyar@fs@ho\else
-  \@@magyar@badsuffix{h#1}\fi\fi\relax
+  \@@magyar@badsuffix{h#1}{}\fi\fi\relax
 }
 \def\@@magyar@fs@ho#1{%
   \if z\noexpand#1\noexpand\@@magyar@suffix@hoz\@@magyar@contn\else
-  \@@magyar@badsuffix{ho#1}\fi\relax
+  \@@magyar@badsuffix{ho#1}{}\fi\relax
+}
+\def\@@magyar@fs@k#1{%
+  \if a\noexpand#1\@@magyar@swaprelax\@@magyar@fs@ka\else
+  \if e\noexpand#1\@@magyar@swaprelax\@@magyar@fs@ka\else
+  \@@magyar@badsuffix{k#1}{}\fi\fi\relax
+}
+\def\@@magyar@fs@ka#1{%
+  \if l\noexpand#1\noexpand\@@magyar@suffix@kal\@@magyar@contn\else
+  \@@magyar@badsuffix{ka#1}{}\fi\relax
 }
 \def\@@magyar@fs@n#1{%
   \if a\noexpand#1\@@magyar@swaprelax\@@magyar@fs@na\else
   \if e\noexpand#1\@@magyar@swaprelax\@@magyar@fs@na\else
-  \@@magyar@badsuffix{n#1}\fi\fi\relax
+  \@@magyar@badsuffix{n#1}{}\fi\fi\relax
 }
 \def\@@magyar@fs@na#1{%
   \if k\noexpand#1\noexpand\@@magyar@suffix@nak\@@magyar@contn\else
   \if l\noexpand#1\noexpand\@@magyar@suffix@nal\@@magyar@contn\else
-  \@@magyar@badsuffix{na#1}\fi\fi\relax
+  \@@magyar@badsuffix{na#1}{}\fi\fi\relax
 }
 \def\@@magyar@fs@o#1{%
   \if d\noexpand#1\@@magyar@swaprelax\@@magyar@fs@ad\else
   \if n\noexpand#1\noexpand\@@magyar@suffix@on\@@magyar@contn\else
   \if s\noexpand#1\@@magyar@swaprelax\@@magyar@fs@as\else
   \if t\noexpand#1\noexpand\@@magyar@suffix@at\@@magyar@contn\else
-  \@@magyar@badsuffix{o#1}\fi\fi\fi\fi\relax
+  \@@magyar@badsuffix{o#1}{}\fi\fi\fi\fi\relax
 }
 \def\@@magyar@fs@r#1{%
   \if a\noexpand#1\noexpand\@@magyar@suffix@ra\@@magyar@contn\else
   \if e\noexpand#1\noexpand\@@magyar@suffix@ra\@@magyar@contn\else
   \if o\noexpand#1\@@magyar@swaprelax\@@magyar@fs@ro\else
-  \@@magyar@badsuffix{r#1}\fi\fi\fi\relax
+  \@@magyar@badsuffix{r#1}{}\fi\fi\fi\relax
 }
 \def\@@magyar@fs@ro#1{%
   \if l\noexpand#1\noexpand\@@magyar@suffix@rol\@@magyar@contn\else
-  \@@magyar@badsuffix{ro#1}\fi\relax
+  \@@magyar@badsuffix{ro#1}{}\fi\relax
 }
 \def\@@magyar@fs@s#1{%
   \if z\noexpand#1\@@magyar@swaprelax\@@magyar@fs@sz\else
+  \if a\noexpand#1\@@magyar@swaprelax\@@magyar@fs@sa\else
+  \if e\noexpand#1\@@magyar@swaprelax\@@magyar@fs@sa\else
   \if t\noexpand#1\noexpand\@@magyar@suffix@st\@@magyar@contn\else
-  \@@magyar@badsuffix{s#1}\fi\fi\relax
+  \@@magyar@badsuffix{s#1}{}\fi\fi\fi\fi\relax
+}
+\def\@@magyar@fs@sa#1{%
+  \if l\noexpand#1\noexpand\@@magyar@suffix@sal\@@magyar@contn\else
+  \@@magyar@badsuffix{sa#1}{}\fi\relax
 }
 \def\@@magyar@fs@sz#1{%
   \if o\noexpand#1\@@magyar@swaprelax\@@magyar@fs@szo\else
   \if e\noexpand#1\@@magyar@swaprelax\@@magyar@fs@szo\else
-  \@@magyar@badsuffix{sz#1}\fi\fi\relax
+  \@@magyar@badsuffix{sz#1}{}\fi\fi\relax
 }
 \def\@@magyar@fs@szo#1{%
   \if r\noexpand#1\noexpand\@@magyar@suffix@szor\@@magyar@contn\else
-  \@@magyar@badsuffix{szo#1}\fi\relax
+  \@@magyar@badsuffix{szo#1}{}\fi\relax
 }
 \def\@@magyar@fs@t#1{%
   \if o\noexpand#1\@@magyar@swaprelax\@@magyar@fs@to\else% Dat: works even if #1 is empty
@@ -3069,20 +3109,20 @@
 }
 \def\@@magyar@fs@to#1{%
   \if l\noexpand#1\noexpand\@@magyar@suffix@tol\@@magyar@contn\else
-  \@@magyar@badsuffix{to#1}\fi\relax
+  \@@magyar@badsuffix{to#1}{}\fi\relax
 }
 \def\@@magyar@fs@u#1{%
   \if l\noexpand#1\noexpand\@@magyar@suffix@ul\@@magyar@contn\else
-  \@@magyar@badsuffix{u#1}\fi\relax
+  \@@magyar@badsuffix{u#1}{}\fi\relax
 }
 \def\@@magyar@fs@v#1{%
   \if a\noexpand#1\@@magyar@swaprelax\@@magyar@fs@va\else
   \if e\noexpand#1\@@magyar@swaprelax\@@magyar@fs@va\else
-  \@@magyar@badsuffix{v#1}\fi\fi\relax
+  \@@magyar@badsuffix{v#1}{}\fi\fi\relax
 }
 \def\@@magyar@fs@va#1{%
   \if l\noexpand#1\noexpand\@@magyar@suffix@val\@@magyar@contn\else
-  \@@magyar@badsuffix{va#1}\fi\relax
+  \@@magyar@badsuffix{va#1}{}\fi\relax
 }
 
 % vvv Classification
@@ -3387,9 +3427,11 @@
 %** @in \reserved@a is suffix classification in braces: {0}, {1} ... or {16}
 %** @param #1 \@empty or a char token
 \def\@@magyar@told@cont#1{%
-  \reserved@a% add the suffix class
+  \reserved@a% add the suffix class, example: {11}
   #1%\if/\noexpand#1\else#1\fi% add extra char unless `/'
   \if{.\fi}% close \edef\reserved@b opened in \@@magyar@told
+  % Now: example \reserved@b: \@@magyar@suffix@aS \@@magyar@suffix@sal {11}
+  % Now: example \reserved@b: \@@magyar@suffix@aS \@@magyar@suffix@val {11}
   % Dat: \reserved@b is now like \@@magyar@suffix@A \@@magyar@suffix@ban
   % vvv Dat: \aref in \reserved@c may modify \reserved@b, so we call it
   %     late by \expandafter
