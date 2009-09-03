@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2009/05/10 v1.5b Magyar support from the babel system]
+%%        [2009/09/03 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/05/10 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/09/03 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -1630,7 +1630,9 @@
   \magyar@opt@@amsuppercasefix
   \expandafter\ifx\csname altucnm\endcsname\relax\else 1\fi
 \space\else\@@magyar@skiplong\fi
-  \AtEndOfPackage{\RequirePackage{textcase}}
+  % textcase.sty is not available by default (Ubuntu 8.04 TeX Live), and
+  % newer amsart.cls doesn't have this bug (\'\i gets capitalized properly)
+  \AtEndOfPackage{\IfFileExists{textcase.sty}{\RequirePackage{textcase}}{}}
   \@gobble
 {^}%
 
@@ -2225,15 +2227,49 @@
   \def\@@magyar@amstocnumskip@defs{%
     \ifx\tocsubsection\@undefined\else
       \ifx\tocsubsection\tocparagraph
-	%** Overrides amsart.cls etc. Only for Hungarian \section{}s. Changes \quad to
-	%** \magyar@opt@@amstocnumskip in the definition.
+	%** Overrides amsart.cls, amsbook.cls etc.
+	%** Only for Hungarian \section{}s. Changes \quad to
+	%** \magyar@opt@@amstocnumskip in the definition. Also changes
+	%** ``fejezet 1'' to ``1. fejezet'' for \chapter
+	%** (We have \def\tocchapter{\tocsection} by default.)
 	\def\tocsection##1##2##3{%
 	  %%\typeout{--##3--}%
-	  \indentlabel{\@ifnotempty{##2}{\ignorespaces##1 ##2.\magyar@opt@@amstocnumskip}}##3%
-	}%
+	  \indentlabel{%
+	    \def\reserved@a{##1}%
+	    \def\reserved@b{##2}%
+	    \ifx\reserved@b\empty
+	    \else\ifx\reserved@a\chaptername
+	      % * Sometimes (but not in \tableofcontents) #1 is
+	      %   `\csname chaptername\endcsname'. Why?
+	      % * \tocappendix is called instead of \tocsection for the
+	      %   appendix.
+              \ifnum\magyar@opt@@chapternumber=1      \@huordinal{##2}~%
+              \else\ifnum\magyar@opt@@chapternumber=2 \@Huordinal{##2}~%
+              \else##2.~%
+              \fi\fi
+              ##1.\magyar@opt@@amstocnumskip
+	    \else\ifx\reserved@a\partname
+              \ifnum\magyar@opt@@partnumber=1      \@huordinal{##2}~%
+              \else\ifnum\magyar@opt@@partnumber=2 \@Huordinal{##2}~%
+              \else##2.~%
+              \fi\fi
+              ##1.\magyar@opt@@amstocnumskip
+            \else
+              \ignorespaces##1 ##2.\magyar@opt@@amstocnumskip
+	    \fi\fi\fi}%
+	  ##3}%
 	%** Overrides amsart.cls etc. Only for Hungarian \section{}s. Changes \quad to
 	%** \magyar@opt@@amstocnumskip in the definition.
-	\def\tocappendix##1##2##3{\indentlabel{##1\@ifnotempty{##2}{ ##2}.\magyar@opt@@amstocnumskip}##3}%
+	\def\tocappendix##1##2##3{%
+	  \indentlabel{%
+	    \def\reserved@a{##1}%
+	    \ifx\reserved@a\appendixname
+              ##2\ifx\@@magyar@appendixname\@empty.\fi~##1%
+	    \else
+	      ##1\@ifnotempty{##2}{ ##2}%
+	    \fi
+	    .\magyar@opt@@amstocnumskip}%
+	  ##3}%
       \fi
     \fi
   }%
@@ -4817,6 +4853,75 @@
     \ifx\reserved@a\magyar@opt@@classmod #2\fi
    }
 \fi
+
+\@@magyar@ifclassloaded{amsbook}{%
+  \let\magyar@hunumbers@errmsg\@empty
+  \let\@@magyar@orig@makechapterhead\@makechapterhead
+  \def\@makechapterhead#1{%
+    \begingroup
+    \let\@@magyar@orig@centerline\centerline
+    \def\centerline##1{%
+      \@@magyar@orig@centerline{%
+        \normalsize\mdseries
+        \ifx\chaptername\appendixname
+          \ifx\@@magyar@appendixname\@empty
+            % print a dot in the appendix only if appendixdot=yes
+            \thechapter.~
+          \else
+            \thechapter\enspace
+          \fi
+        \else\ifnum\magyar@opt@@chapternumber=1
+          \uppercase\@xp{\@huordinal\c@chapter}~%
+        \else\ifnum\magyar@opt@@chapternumber=2
+          \uppercase\@xp{\@Huordinal\c@chapter}~%
+        \else\thechapter.~%
+        \fi\fi\fi
+        \uppercase\@xp{\chaptername}%
+      }%
+    }%
+    \@@magyar@orig@makechapterhead{#1}%
+    \endgroup
+  }%
+  \let\@@magyar@orig@chapter\@chapter
+  \def\@chapter{%
+    \let\@@magyar@orig@chapter@typeout\typeout
+    \def\typeout##1{%
+      % Original: \typeout{\chaptername\space\@secnumber}
+      \@@magyar@orig@chapter@typeout{%
+        \ifnum\c@secnumdepth<\z@
+          \chaptername\space
+        \else
+          \thechapter\ifx\chaptername\appendixname\else.\fi
+          \space\chaptername
+        \fi
+      }%
+      \let\typeout\@@magyar@orig@chapter@typeout
+    }%
+    \@@magyar@orig@chapter
+  }%
+  % Just to be sure, no need for this in amsbook.cls 2004/08/06
+  \@ifundefined{tocpart}{\let\tocpart\tocsection}{}
+  % TODO(pts): Override only parts of \@part
+  \def\@part[#1]#2{%
+    \ifnum \c@secnumdepth >-2\relax \refstepcounter{part}%
+      % TODO(pts): What does \tocpart do for a non-hungarian \tableofcontents?
+      \addcontentsline{toc}{part}{\protect\tocpart{\partname}{\thepart}%
+          {#1}}%
+    \else
+      \addcontentsline{toc}{part}{#1}\fi
+    \begingroup\centering
+    \ifnum \c@secnumdepth >-2\relax
+         {\fontsize{\@xviipt}{22}\bfseries
+          \ifnum\magyar@opt@@partnumber=1      \@huordinal\c@part~%
+          \else\ifnum\magyar@opt@@partnumber=2 \@Huordinal\c@part~%
+          \else\thechapter.~%
+          \fi\fi
+          \partname
+         } \vskip 20\p@ \fi
+    \fontsize{\@xxpt}{25}\bfseries
+        #1\vfil\vfil\endgroup \newpage\thispagestyle{empty}}
+}{}
+
 \@@magyar@ifclassloaded{book}{%
   \let\magyar@hunumbers@errmsg\@empty
   % Headings: inserting dots, changing orders
