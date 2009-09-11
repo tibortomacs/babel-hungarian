@@ -2455,9 +2455,12 @@
     \ifx\reserved@a\reserved@b\else
       \def\reserved@a{utf8}%
       \ifx\reserved@a\reserved@b\else
-        \def\reserved@a{cp1250}%
+        \def\reserved@a{utf8x}%
         \ifx\reserved@a\reserved@b\else
-          \magyar@sugg@ie@lowb{#4}%
+          \def\reserved@a{cp1250}%
+          \ifx\reserved@a\reserved@b\else
+            \magyar@sugg@ie@lowb{#4}%
+          \fi
         \fi
       \fi
     \fi
