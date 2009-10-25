@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2009/09/11 v1.5b Magyar support from the babel system]
+%%        [2009/10/25 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/09/11 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/10/25 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -4335,7 +4335,9 @@
     \fi
   }
 
-  %** Only works if \cs of #1 doesn't have macro arguments
+  %** Only works if \cs of #1 doesn't have macro arguments. It works for
+  %** \figure and \table, because their optional argument `[b]' etc. is not
+  %** a macro argument.
   %** @example \makeFootnotable{figure}
   %** @example \makeFootnotable{} -- current instance of current environment
   \def\makeFootnotable#1{%
@@ -4347,8 +4349,9 @@
       \csname end#1\endcsname
     \fi
   }
+  %** @example \magyar@fo@makef@low\table\endtable
   \def\magyar@fo@makef@low#1#2{\expandafter\def\expandafter#1\expandafter{%
-    #1\magyar@fo@mp@setup#2}}%
+    \expandafter\magyar@fo@mp@setup\expandafter#2#1}}%
 
   \if2\magyar@opt@@footnote \fos@huplain\fi
   \if3\magyar@opt@@footnote \fos@starplain\fi
