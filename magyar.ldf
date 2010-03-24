@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2009/11/17 v1.5b Magyar support from the babel system]
+%%        [2010/03/24 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2009/11/17 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2010/03/24 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -1131,6 +1131,7 @@
   \let\cite\@@magyar@zerocite \let\eqref\@@magyar@zeroeqref
   % ^^^ fix so \az{\ref{...}} works
   \let\refstruc\@@magyar@zerorefplus
+  \let\refstrucparen\@@magyar@zerorefplus
   \def\setbox ##1{}% to get rid of accents and special letters
   \def\hbox ##1{}%
   \def\accent ##1 ##2{##2}%
@@ -3418,7 +3419,7 @@
   \let\-\relax
 %  \let\@@magyar@save@tilde~%
   \let~\relax% influenced by \@safe@activestrue
-  \let\refstruc\relax
+  \let\refstruc\relax  \let\refstrucparen\relax
   \let \ref\relax \let \pageref\relax \let \cite\relax % all unexpandable, even for \@@magyar@the
   \let\aref\relax \let\apageref\relax \let\acite\relax
   \let\Aref\relax \let\Apageref\relax \let\Acite\relax
@@ -3431,6 +3432,7 @@
   \def\@@magyar@toldas##1{.##1.}% emit the number
   \let\romannumeral\number
   \def\refstruc##1{0}%
+  \def\refstrucparen##1{0}%
   \let\@safe@activestrue\@empty% babel puts these inside \b@...: % Dat: \def\b@abook{\@safe@activesfalse 2}% (what is \@safe@actives??)
   \let\@safe@activesfalse\@empty% \b@DuplanJauneau1986 ->\@safe@activesfalse 15
   \def\hyper@@link[##1]##2##3##4{##4}% Dat: \def\b@abook{\hyper@@link [cite]{}{cite.sokt}{2}}% with hyperref.sty % BUGFIX at Tue Nov 21 03:15:32 CET 2006
@@ -3655,9 +3657,14 @@
   \else\csname#1\endcsname\fi
 }%
 
+%** @param #1 a label name
+\def\@@magyar@refstruc@ref#1{%
+  \ref{#1}.~%
+}
+
 %** May not touch \reserved@a
 \def\@@magyar@refstruc@split#1+#2\vfuzz#3{%
-  \if\noexpand#30\else\ref{#1}.~\fi
+  \if\noexpand#30\else\@@magyar@refstruc@ref{#1}\fi
   \ifx\vfuzz#2%
     \textbf{??}%
     \G@refundefinedtrue
@@ -3687,8 +3694,7 @@
     \edef\reserved@c{\expandafter\@@magyar@strucname\expandafter{\reserved@c}}%
     \let\-\@@magyar@save@m
     \let\@@magyar@suffix@at\@@magyar@suffix@st% fix the -t suffix
-    \ifx\reserved@b\@empty
-    \else
+    \ifx\reserved@b\@empty\else
       \@@magyar@refstruc@splitb#2\vfuzz% strip `+' from the end of #2
     \fi
   \fi
@@ -3724,7 +3730,9 @@
   \else
     \expandafter\@@magyar@refstruc@parse#1..\vfuzz% sets \reserved@a to ref target
     %%\show\reserved@a% first arg of ref, i.e section number, eg. `1.2.3' -- or \relax
-    \if\noexpand#30\else{\ref{#2}.}~\fi% Dat: \ref might redefine \reserved@a, especially in hyperref.sty
+    \if\noexpand#30\else
+      \begingroup% Dat: \ref might redefine \reserved@a, especially in hyperref.sty
+      \@@magyar@refstruc@ref{#2}\endgroup\fi
     \@@magyar@refstruc@work#1%
     \expandafter\@@magyar@strucname\expandafter{\reserved@c}%
   \fi
@@ -3782,17 +3790,27 @@
 }
 
 \def\@@magyar@refstruc@hu#1{\@@magyar@refstruc@name{#1}1}%
+% Imp: Undocumented: \refstrucparen can be used instead of \refstruc
+% to format the section number inside parentheses.
+\def\@@magyar@refstrucparen@hu#1{%
+  \begingroup
+  \def\@@magyar@refstruc@ref##1{\told(\ref{##1})+es{}~}%
+  \@@magyar@refstruc@name{#1}1%
+  \endgroup}%
 \def\@@magyar@refstruc#1{\@@magyar@refstruc@name{#1}0~\ref{#1}}%
+\def\@@magyar@refstrucparen#1{\@@magyar@refstruc@name{#1}0~(\ref{#1})}%
 
 \expandafter\addto\csname extras\CurrentOption\endcsname{%
   \babel@save\@@magyar@refstruc
   \babel@save\@@magyar@strucname
   \let\@@magyar@refstruc \@@magyar@refstruc@hu
+  \let\@@magyar@refstrucparen \@@magyar@refstrucparen@hu
   \let\@@magyar@strucname\@@magyar@strucname@hu
 }
 
 \ifnum\magyar@opt@@refstruc \expandafter\ifx\csname refstruc\endcsname\relax1\fi>1 % 21, 2, 11, 1
   \DeclareRobustCommand\refstruc{\@@magyar@refstruc}%
+  \DeclareRobustCommand\refstrucparen{\@@magyar@refstrucparen}%
 \fi
 \@gobble
 {^}
