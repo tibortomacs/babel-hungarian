@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2010/04/13 v1.5b Magyar support from the babel system]
+%%        [2010/05/04 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2010/04/13 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2010/05/04 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -650,12 +650,12 @@
 \def\magyar@opt@hunnewlabel@@yes{\def\magyar@opt@@hunnewlabel{2}}
 \let\magyar@opt@hunnewlabel\magyar@enumarg
 \def\magyar@opt@partnumber@@unchanged{\def\magyar@opt@@partnumber{0}}
-\def\magyar@opt@partnumber@@huordinal{\def\magyar@opt@@partnumber{1}\let\magyar@needopt@hunumbers\@empty \def\magyar@hunumbers@errmsg{\magyar@hunumbers@noclassmod}}
-\def\magyar@opt@partnumber@@Huordinal{\def\magyar@opt@@partnumber{2}\let\magyar@needopt@hunumbers\@empty \def\magyar@hunumbers@errmsg{\magyar@hunumbers@noclassmod}}
+\def\magyar@opt@partnumber@@huordinal{\def\magyar@opt@@partnumber{1}}
+\def\magyar@opt@partnumber@@Huordinal{\def\magyar@opt@@partnumber{2}}
 \let\magyar@opt@partnumber\magyar@enumarg
 \def\magyar@opt@chapternumber@@unchanged{\def\magyar@opt@@chapternumber{0}}
-\def\magyar@opt@chapternumber@@huordinal{\def\magyar@opt@@chapternumber{1}\let\magyar@needopt@hunumbers\@empty \def\magyar@hunumbers@errmsg{\magyar@hunumbers@noclassmod}}
-\def\magyar@opt@chapternumber@@Huordinal{\def\magyar@opt@@chapternumber{2}\let\magyar@needopt@hunumbers\@empty \def\magyar@hunumbers@errmsg{\magyar@hunumbers@noclassmod}}
+\def\magyar@opt@chapternumber@@huordinal{\def\magyar@opt@@chapternumber{1}}
+\def\magyar@opt@chapternumber@@Huordinal{\def\magyar@opt@@chapternumber{2}}
 \let\magyar@opt@chapternumber\magyar@enumarg
 \def\magyar@opt@accents@@high{\def\magyar@opt@@umlaut{\umlauthigh}}
 \def\magyar@opt@accents@@low{\def\magyar@opt@@umlaut{\umlautlow\umlautelow}}
@@ -865,14 +865,18 @@
     \def\magyar@opt@@openqq{2}% =down
   \fi
 \fi
+\ifnum\magyar@opt@@partnumber   >0 \let\magyar@needopt@hunumbers\@empty \fi
+\ifnum\magyar@opt@@chapternumber>0 \let\magyar@needopt@hunumbers\@empty \fi
 \expandafter\ifx\csname magyar@needopt@hunumbers\endcsname\relax\else
   \ifnum\magyar@opt@@hunumbers=0
     \@@magyar@error{(chapter|part)number=... needs hunumbers=yes}%
     \magyar@opt@@hunumbers1
   \fi
   \def\magyar@hunumbers@noclassmod{%
-    \@@magyar@error{unsupported \string\documentclass,\MessageBreak (chapter|part)number=... disabled}%
+    \@@magyar@error{unsupported \string\documentclass,\MessageBreak
+      hunumbers=yes,chapternumber=,partnumber= disabled}%
   }%
+  \def\magyar@hunumbers@errmsg{\magyar@hunumbers@noclassmod}%
   \AtBeginDocument\magyar@hunumbers@errmsg
 \fi
 \if0\magyar@opt@@shorthandcs\else
