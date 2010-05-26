@@ -4008,7 +4008,9 @@
 
 % --- titleskip=
 
-\ifx\magyar@opt@@titleskip\magyar@@unchanged \@@magyar@skiplong\fi
+\ifx\magyar@opt@@titleskip\magyar@@unchanged
+  \def\magyar@opt@@titleskip{\enspace}%  for the appendix with appendixdot=no
+\@@magyar@skiplong\fi
   \expandafter\addto\csname extras\CurrentOption\endcsname{\magyar@@seccntfix}%
   \let\magyar@@seccntfix\@empty
   \let\magyar@@default@seccntformat\@seccntformat
