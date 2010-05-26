@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2010/05/04 v1.5b Magyar support from the babel system]
+%%        [2010/05/26 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2010/05/04 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2010/05/26 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -4865,7 +4865,7 @@
 
 %** \thechapter (possibly with huordinal), dot, space.
 \def\magyar@huordinal@chapterheaddot{%
-  \ifx\@chapapp\@@magyar@appendixname \thechapter\enspace % appendixdot=no
+  \ifx\@chapapp\@@magyar@appendixname \thechapter\hbox{\magyar@opt@@titleskip}% appendixdot=no
   \else\ifx\@chapapp\@@magyar@macro@appendixname \thechapter.~%
   \else\ifnum\magyar@opt@@chapternumber=1 \@huordinal\c@chapter~%
   \else\ifnum\magyar@opt@@chapternumber=2 \@Huordinal\c@chapter~%
@@ -4905,12 +4905,12 @@
     \def\centerline##1{%
       \@@magyar@orig@centerline{%
         \normalsize\mdseries
-        \ifx\chaptername\appendixname
+        \ifx\chaptername\appendixname  % We're in the appendix.
           \ifx\@@magyar@appendixname\@empty
             % print a dot in the appendix only if appendixdot=yes
-            \thechapter.~
+            \thechapter.~%
           \else
-            \thechapter\enspace
+            \thechapter\hbox{\magyar@opt@@titleskip}%
           \fi
         \else\ifnum\magyar@opt@@chapternumber=1
           \uppercase\@xp{\@huordinal\c@chapter}~%
