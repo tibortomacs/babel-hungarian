@@ -4468,10 +4468,13 @@
   %** matchar. We fix that by prepending \mathcode`-45 to \newmcodes@ .
   %** This is OK, because \newmcodes@ is protected by a block set up by
   %** \qopname.
+  \def\@@magyar@newmcodes@fixed{\mathcode`-"45 \magyar@@newmcodes}%
   \def\@@magyar@fix@newmcodes@dash{%
     \ifx\newmcodes@\@undefined\else
-      \let\magyar@@newmcodes\newmcodes@
-      \def\newmcodes@{\mathcode`-"45 \magyar@@newmcodes}%
+      \ifx\newmcodes@\@@magyar@newmcodes@fixed\else  % Protect against double redefinition such as in \begin{align*}\tg\end{align*}
+        \let\magyar@@newmcodes\newmcodes@
+        \let\newmcodes@\@@magyar@newmcodes@fixed
+      \fi
     \fi
   }%
 
