@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2010/10/09 v1.5b Magyar support from the babel system]
+%%        [2010/11/20 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2010/10/09 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2010/11/20 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -501,20 +501,88 @@
   \magyar@opt@cjhebrewfix@@yes
 }
 
+%** Expands to the \magyarOptions changes defaults=hu-min makes over
+%** defaults=safest.
+\def\magyar@@humin@options{%
+  active=safe,
+  activeprefix=babelopt2,
+  activespace=safe,
+  amslevelfix=fix-ams,
+  amspostsectiondot=no,
+  amstocnumlang=all,
+  amstocnumskip=\enskip,
+  appendixdot=no,
+  az=weak,
+  captions=hu,
+  chapterhead=yes,
+  cjhebrewfix=yes,
+  classmod=yes,
+  classmod=yes,
+  dottedtocline=fix,
+  emitdate=weak,
+  extras=yes,
+  fancyhdr=hu,
+  figurecaptions=hu,
+  footnote=huplain,
+  frenchspacing=yes,
+  hang=weak,
+  hunnewlabel=yes,
+  hunumbers=yes,
+  hutoday=yes,
+  hynumberline=hu,
+  hyphenmins=22,
+  labelenums=hu-d,
+  labelitems=hu,
+  longcaption=centered,
+  mathbrk=define,
+  mathbrk=fix,
+  mathfactorial=define,
+  mathhucomma=fix,
+  mathreal=weak,
+  mond=weak,
+  openqq=maybedown,
+  postdescription=dot,
+  postpara=diamond,
+  postsubpara=star,
+  refstruc=weak,
+  sectiondot=safe,
+  shorthandcs=\shu,
+  shortrefcmds=yes,
+  showfix=yes,
+  tablecaptions=hu,
+  textqq=weak,
+  theoremtitle=hu,
+  titles=\enskip,
+  toclang=good,
+  told=weak,
+  varioref=hu,
+}
+
 %** Matches Hungarian typographic orders most closely -- and most
 %** simplistically.
 \dMf magyar@opt@defaults@@hu-min {%
-  \csname magyar@opt@defaults@@over-1.4\endcsname
+  %\csname magyar@opt@defaults@@over-1.4\endcsname
+  \csname magyar@opt@defaults@@safest\endcsname
   % Dat: no openqq=unchanged (!)
-  \magyar@doopt  activespace=safe,amstocnumskip=\enskip,frenchspacing=yes,
-    captions=hu,classmod=yes,figurecaptions=hu,
-    footnote=huplain,frenchspacing=yes,hyphenmins=22,
-    labelenums=hu-d,labelitems=hu,fancyhdr=hu,
-    longcaption=centered,mathbrk=fix,mathhucomma=fix,
-    postpara=diamond,postsubpara=star,postdescription=dot,
-    sectiondot=safe,tablecaptions=hu,theoremtitle=hu,
-    appendixdot=no,hynumberline=hu,
-    titles=\enskip,\hfuzz,%
+  \expandafter\magyar@doopt\magyar@@humin@options\hfuzz,%
+}
+
+\def\magyarDumpHuMin{%
+  \begingroup
+  \typeout{}
+  \typeout{\expandafter\@gobble\string\% for defaults=hu-min}%
+  \typeout{\string\def\string\magyarOptions\expandafter\@gobble\string\{}%
+  \typeout{ \space defaults=safest,}%
+  \typeout{ \space\expandafter\@gobble\string\%}%
+  \def\magyar@applyopt##1##2{%
+    \def\reserved@a{##1=##2,}%
+    \typeout{ \space\expandafter\strip@prefix\meaning\reserved@a}%
+  }%
+  \expandafter\magyar@doopt\magyar@@humin@options\hfuzz,%
+  \typeout{\expandafter\@gobble\string\}}%
+  \typeout{\string\usepackage[magyar]{babel}}%
+  \typeout{}%
+  \endgroup
 }
 
 \let\magyar@opt@defaults\magyar@enumarg
@@ -799,6 +867,7 @@
   \fi
 }
 \@gobble\iftrue% \def\magyar@doopt@low contains `\fi'. Make it skippable.
+\def\magyar@applyopt#1#2{\csname magyar@opt@#1\endcsname{#1}{#2}}%
 %** @param #1 is here for gobbling space tokens
 \def\magyar@doopt@low#1#2=#3,#4\fi{%
   % Dat: Normal case: #1#2 is key, #3 is value, #4 is `=,'
@@ -818,7 +887,7 @@
     \expandafter\ifx\csname magyar@opt@#1#2\endcsname\relax
       \@@magyar@error{Unknown option: #1#2 (= #3)}%
     \else
-      \csname magyar@opt@#1#2\endcsname{#1#2}{#3}%
+      \magyar@applyopt{#1#2}{#3}%
     \fi
     \expandafter\magyar@doopt
   \fi
@@ -855,7 +924,7 @@
 }
 
 
-\magyar@opt@defaults{defaults}{over-1.4}
+\magyar@opt@defaults{defaults}{over-1.4}  % defaults=over-1.4 by default
 \def\magyar@opt@@hdrtitleskip{\enskip}% !! option for that
 \magyar@dooptions% in \magyarOptions
 \ifnum\magyar@opt@@openqq=3 % =maybedown
