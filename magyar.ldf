@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2010/11/20 v1.5b Magyar support from the babel system]
+%%        [2011/01/31 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2010/11/20 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2011/01/31 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -216,6 +216,7 @@
 %**     mathmuskips=unchanged,     % or =latex or =hu
 %**     mathreal=weak,             % or =no or =yes
 %**     mond=weak,                 % or =no or =yes
+%**     ntheoremfix=yes,           % or =unchanged
 %**     openqq=maybedown,          % or =up or =down or =unchanged
 %**     partnumber=unchanged,      % or =huordinal or =Huordinal
 %**     postdescription=unchanged, % see postpara=
@@ -259,7 +260,7 @@
   \magyar@opt@emitdate{emitdate}{weak}%
   \magyar@opt@extras@@yes
   \magyar@opt@chapterhead@@yes
-  \magyar@opt@fancyhdr@@hu% !! other places, too
+  \magyar@opt@fancyhdr@@hu% change over 1.4
   \magyar@opt@figurecaptions@@hu
   \magyar@opt@footnote@@yes
   \magyar@opt@frenchspacing@@unchanged
@@ -279,6 +280,7 @@
   \magyar@opt@hynumberline@@unchanged
   \magyar@opt@mathreal{mathreal}{weak}%
   \magyar@opt@mond{mond}{weak}%
+  \magyar@opt@ntheoremfix@@yes
   \magyar@opt@openqq@@maybedown
   \magyar@opt@partnumber@@unchanged
   \magyar@opt@postpara{}{unchanged}%
@@ -330,7 +332,7 @@
   \magyar@opt@dottedtocline@@unchanged% OK
   \magyar@opt@emitdate{emitdate}{no}% OK
   \magyar@opt@extras@@yes% OK
-  \magyar@opt@fancyhdr@@hu
+  \magyar@opt@fancyhdr@@unchanged% OK
   \magyar@opt@figurecaptions@@hu% OK
   \magyar@opt@footnote@@unchanged% OK
   \magyar@opt@frenchspacing@@unchanged% OK
@@ -350,6 +352,7 @@
   \magyar@opt@hynumberline@@unchanged% OK
   \magyar@opt@mathreal{mathreal}{no}%
   \magyar@opt@mond{mond}{no}% OK
+  \magyar@opt@ntheoremfix@@yes% OK
   \magyar@opt@openqq@@maybedown% OK
   \magyar@opt@partnumber@@unchanged% OK
   \magyar@opt@postpara{}{unchanged}% OK
@@ -414,6 +417,7 @@
   \magyar@opt@hynumberline@@unchanged
   \magyar@opt@mathreal{mathreal}{no}%
   \magyar@opt@mond{mond}{no}%
+  \magyar@opt@ntheoremfix@@unchanged
   \magyar@opt@openqq@@unchanged
   \magyar@opt@partnumber@@unchanged
   \magyar@opt@postpara{}{unchanged}%
@@ -480,6 +484,7 @@
   \magyar@opt@hynumberline@@hu
   \magyar@opt@mathreal{mathreal}{yes}%
   \magyar@opt@mond{mond}{yes}%
+  \magyar@opt@ntheoremfix@@yes
   \magyar@opt@openqq@@maybedown
   \magyar@opt@partnumber@@Huordinal
   \magyar@opt@postdescription{}{dot}%
@@ -540,6 +545,7 @@
   mathhucomma=fix,
   mathreal=weak,
   mond=weak,
+  ntheoremfix=yes,
   openqq=maybedown,
   postdescription=dot,
   postpara=diamond,
@@ -558,8 +564,8 @@
   varioref=hu,
 }
 
-%** Matches Hungarian typographic orders most closely -- and most
-%** simplistically.
+%** Matches Hungarian typographic rules most closely -- and most
+%** simplistically (minimally).
 \dMf magyar@opt@defaults@@hu-min {%
   %\csname magyar@opt@defaults@@over-1.4\endcsname
   \csname magyar@opt@defaults@@safest\endcsname
@@ -680,6 +686,9 @@
 \def\magyar@opt@fancyhdr@@unchanged{\def\magyar@opt@@fancyhdr{0}}
 \def\magyar@opt@fancyhdr@@hu{\def\magyar@opt@@fancyhdr{1}}
 \let\magyar@opt@fancyhdr\magyar@enumarg
+\def\magyar@opt@ntheoremfix@@unchanged{\def\magyar@opt@@ntheoremfix{0}}
+\def\magyar@opt@ntheoremfix@@yes{\def\magyar@opt@@ntheoremfix{1}}
+\let\magyar@opt@ntheoremfix\magyar@enumarg
 \def\magyar@opt@figurecaptions@@unchanged{\def\magyar@opt@@figurecaptions{0}}
 \def\magyar@opt@figurecaptions@@hu{\def\magyar@opt@@figurecaptions{1}}
 \def\magyar@opt@figurecaptions@@us{\def\magyar@opt@@figurecaptions{2}}
@@ -5543,6 +5552,36 @@
 \@gobble
 {^}%
 
+% vvv ntheoremfix=
+
+%** Fix for the `! Undefined control sequence. \select' error message with
+%** ntheorem.sty
+%**
+%** The reason for the error is that magyar.ldf emits
+%** \select@language{magyar} into .thm files (as well as .toc, .lof, .lot
+%** etc. files), and LaTeX cannot read those files without \makeatletter
+%** because of the @ in the \select@language command.
+%**
+%** Our solution: add \makeatletter somewhere before \@input{\jobname.thm} to
+%** the macro which reads the .thm file (\thm@processlist) in ntheorem.sty .
+\if0\magyar@opt@@ntheoremfix \@@magyar@skiplong\fi
+  \def\magyar@@ntheoremfix{%
+    \expandafter\ifx\csname ver@ntheorem.sty\endcsname\relax\else
+      \ifx\thm@processlist\@undefined\else
+        % This doesn't work, because the body of \thm@processlist contains #
+        %\expandafter\def\expandafter\thm@processlist\expandafter{%
+        %  \expandafter\begingroup\expandafter\makeatletter
+        %  \thm@processlist\endgroup}%
+        \expandafter\@temptokena\expandafter{%
+          \expandafter\begingroup\expandafter\makeatletter
+          \thm@processlist\endgroup}%
+        \edef\thm@processlist{\the\@temptokena}%
+      \fi
+    \fi
+  }
+  \AtBeginDocument{\magyar@@ntheoremfix}
+  \@gobble
+{^}%
 
 % vvv extras=, must be last
 
