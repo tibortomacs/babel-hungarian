@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2011/01/31 v1.5b Magyar support from the babel system]
+%%        [2011/02/27 v1.5b Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2011/01/31 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2011/02/27 v1.5b Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -4586,10 +4586,12 @@
     \expandafter\@@magyar@fixmathcmd@low\meaning#1""\hfuzz#1%
   }
 
+  \let\@@magyar@domathbins@prefix\@empty
   \def\@@magyar@fixeverymathcmds@appendto#1{%
     \expandafter\def\expandafter#1\expandafter{#1% append
       \@@magyar@resetmathchars
-      \let\do\@@magyar@fixmathbinchar \@@magyar@domathbins% only in math mode start
+      \let\do\@@magyar@fixmathbinchar
+      \@@magyar@domathbins@prefix\@@magyar@domathbins% only in math mode start
     }%
   }
   \def\@@magyar@fixeverymathcmds@setup{%
@@ -4597,6 +4599,21 @@
 	 \@@magyar@fixeverymathcmds@appendto\check@mathfonts
     \else\@@magyar@fixeverymathcmds@appendto\mathoptions@on\fi
   }
+
+  % The definition of \@tabular contains a $, which calls
+  % \@@magyar@domathbins, which has some unintended side effects of changing
+  % \catcode values and the meaning of the active character : . This magic
+  % prevents the call to \@@magyar@domathbins .
+  %
+  % Test code: \author{a:b} \maketitle
+  % Test code: \def\foo{a:b} \begin{tabular}[t]{c}x\foo y\end{tabular}
+  \def\@@magyar@mathbins@tabularfix#1${%
+    #1\def\@@magyar@domathbins@prefix{%
+      \let\@@magyar@domathbins@prefix\@empty\@gobble}$}%
+  \expandafter\expandafter\expandafter\def
+  \expandafter\expandafter\expandafter\@tabular
+  \expandafter\expandafter\expandafter{%
+    \expandafter\@@magyar@mathbins@tabularfix\@tabular}
 
   \def\@@magyar@fixmathcmds{%
     \let\do\@@magyar@fixmathcmd
