@@ -4142,7 +4142,7 @@
   %** Dat: footnotes inside \begin{minipage} are not affected -- intentionally.
   %** Will be called by \stepcounter{...} after `\advance\c@footnote1'
   \def\magyar@fo@resetzero@afterpage{%
-    \begingroup
+    {% { is better \begingroup, because { works in a tabular
     \@tempcnta\c@footnote@add
     \advance\@tempcnta\c@footnote
     \let\reserved@a\@empty% default
@@ -4176,7 +4176,7 @@
     %     references.' in case a footnote is removed or changed, and also for
     %     the very first run. Fine.
     \reserved@a
-    \endgroup
+    }%\endgroup
   }  
 
   \let\magyar@fo@resetzero\relax
