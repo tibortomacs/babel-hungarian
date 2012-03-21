@@ -1163,18 +1163,20 @@
   \ifcase\magyar@textqq@level
     \def\magyar@textqq@level{1}%
     % Dat: \hskip instead of \kern to allow hyphenation
-    \quotedblbase\nobreak\hskip-.06em\nobreak#1\kern\z@\textquotedblright% skip OK for the CM and EC fonts
+    % \nobreak\hskip-.06em adds a non-breakable skip and allows hyphenation
+    % of the following word.
+    \quotedblbase\nobreak\hskip-.06em\relax#1\kern\z@\textquotedblright% skip OK for the CM and EC fonts
     \def\magyar@textqq@level{0}%
   \or
     \def\magyar@textqq@level{2}%
-    \guillemotright\nobreak\hskip-.07em\nobreak#1\kern-0.05em\guillemotleft% skip OK for CM and EC fonts
+    \guillemotright\nobreak\hskip-.07em\relax#1\kern-0.05em\guillemotleft% skip OK for CM and EC fonts
     \def\magyar@textqq@level{1}%
   \or
     \def\magyar@textqq@level{3}%
-    \textquoteright\nobreak#1\kern\z@\textquoteright
+    \textquoteright\nobreak\hskip\z@\relax#1\kern\z@\textquoteright
     \def\magyar@textqq@level{2}%
   \else
-    \quotedblbase\nobreak\hskip-.06em#1\kern\z@\textquotedblright% skip OK for the CM and EC fonts
+    \quotedblbase\nobreak\hskip-.06em\relax#1\kern\z@\textquotedblright% skip OK for the CM and EC fonts
   \fi
 }}%
 
@@ -2525,7 +2527,7 @@
   \def\magyar@sugg@vr#1{%
     \expandafter\expandafter\expandafter\@@magyar@grep@reftextcurrent
        \csname extras#1\endcsname\hbox${#1}\@@magyar@ignorehbox@pree%$
-       \def\reftextlabelrange23456\AtBeginDocument78\hbox${#1}%
+       \def\reftextlabelrange23456\AtBeginDocument78\hbox${#1}%$
   }
   \def\magyar@sugg@to#1{%
     \def\reserved@a{T1}
@@ -2738,6 +2740,8 @@
 %
 % Dat: active=safe isn't safe unless other .ldf files used don't call
 %      \initiate@active@char{`}.
+%
+% `` `' `= `_ `-- `- `| `< `> `" `~ etc.
 
 \ifnum\magyar@opt@@active=0
   \ifnum\magyar@opt@@openqq>0 \@@magyar@error{active=none implies openqq=unchanged}\fi
@@ -2749,7 +2753,7 @@
   %
   \ifnum\magyar@opt@@openqq>1 % =down
     % Same as in in ukraineb.ldf
-    \@@magyar@declare@shorthandx`{\glqq}% down 99
+    \@@magyar@declare@shorthandx`{\glqq}% down 99  \glqq is Babel's macro containing \quotedblbase
     \@@magyar@declare@shorthandx'{\grqq}% up 66
   \else\ifnum\magyar@opt@@openqq>0 % =up
     \@@magyar@declare@shorthandx`{\grqq}% up 66
