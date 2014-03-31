@@ -3525,6 +3525,7 @@
   \let\Aref\relax \let\Apageref\relax \let\Acite\relax
   \let\autoref\relax
   \let\hbox\@firstofone  % Make \hbox{...} work by removing the braces. TODO(pts): Make \hbox to...{...} work.
+  \let\@@magyar@told@optdot\@empty  % The optional dot disappears.
   %\set@display@protect% \string. Why?? doesn't seem to screw up \r
   \set@typeset@protect% \relax.
   \edef\reserved@c{#1-}%
@@ -3572,6 +3573,7 @@
   \edef\reserved@a{{\number\expandafter\@gobble\reserved@a}}% keeps 17,18,19 for +val
   \expandafter\edef\expandafter\reserved@b\expandafter{\if}.\fi\@@magyar@fs@
 }
+\def\@@magyar@told@optdot{.}
 %** @in \reserved@a is suffix classification in braces: {0}, {1} ... or {16}
 %** @param #1 \@empty or a char token
 \def\@@magyar@told@cont#1{%
@@ -3934,11 +3936,11 @@
 }
 
 \def\@@magyar@date@a#1#2#3{#1-\@@magyar@month@a{#2}-\two@digits{#3}}
-\def\@@magyar@date@b#1#2#3{#1.~\@@magyar@month@b{#2} \number#3.\hbox{}}% Dat: \hbox is to force \frenchspacing
-\def\@@magyar@date@c#1#2#3{#1.~\@@magyar@month@c{#2} \number#3.\hbox{}}
-\def\@@magyar@date@d#1#2#3{#1.~\@@magyar@month@d{#2}.\ \number#3.\hbox{}}
-\def\@@magyar@date@e#1#2#3{#1.~\@@magyar@month@a{#2}.\ \two@digits{#3}.\hbox{}}
-\def\@@magyar@date@f#1#2#3{#1.~\@@magyar@month@b{#2}}% Dat: \hbox is to force \frenchspacing
+\def\@@magyar@date@b#1#2#3{#1.~\@@magyar@month@b{#2} \number#3\@@magyar@told@optdot\hbox{}}% Dat: \hbox is to force \frenchspacing
+\def\@@magyar@date@c#1#2#3{#1.~\@@magyar@month@c{#2} \number#3\@@magyar@told@optdot\hbox{}}
+\def\@@magyar@date@d#1#2#3{#1.~\@@magyar@month@d{#2}.\ \number#3\@@magyar@told@optdot\hbox{}}
+\def\@@magyar@date@e#1#2#3{#1.~\@@magyar@month@a{#2}.\ \two@digits{#3}\@@magyar@told@optdot\hbox{}}
+\def\@@magyar@date@f#1#2#3{#1.~\@@magyar@month@b{#2}}
 \def\@@magyar@date@g#1#2#3{#1.~\@@magyar@month@b{#2} \number#3}% Dat: \told{\@@magyar@date@g{1848}{3}{15}}+e{}
 \def\@@magyar@date@h#1#2#3{#1~\@@magyar@month@b{#2}}% Imp: suffixes to months
 \def\@@magyar@date@i#1#2#3{#1/\@@magyar@month@a{#2}/\two@digits{#3}}% not Hungarian
