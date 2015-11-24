@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2015/11/17 v1.5b Magyar support from the babel system]
+%%        [2015/11/24 v1.5c Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -32,7 +32,7 @@
 %%              P\'eter SZAB\'O 2000-03-15--2001-03-06--2003-08-10--
 %%
 %
-% magyar.ldf -- LaTeX Language Definition for `magyar' (Hungarian), v1.5b
+% magyar.ldf -- LaTeX Language Definition for `magyar' (Hungarian), v1.5c
 %
 % The newest version of this magyar.ldf is part of MagyarLaTeX, available from
 % http://www.math.bme.hu/latex/ . The web page is in Hungarian language, but
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2015/11/17 v1.5b Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2015/11/24 v1.5c Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
