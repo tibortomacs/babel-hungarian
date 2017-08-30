@@ -1224,10 +1224,20 @@
   \def\accent ##1 ##2{##2}%
   \def\add@accent ##1##2{##2}%
   \def\@text@composite@x ##1##2{##2}%
-  \def\i{i}\def\j{j}%
+  % TODO(pts): Add more from t1enc.def
+  %\let\`\@empty \let\'\@empty \let\^\@empty \let\~\@empty \let\"\@empty
+  %\let\H\@empty \let\r\@empty \let\v\@empty \let\u\@empty \let\=\@empty
+  %\let\.\@empty
+  \def\DH{DH}\def\DJ{DJ}\def\NG{NG}\def\O{O}\def\SS{S}\def\TH{TH}\def\IJ{IJ}%
+  \def\dh{dh}\def\dj{dj}\def\o{o}\def\ng{ng}\def\l{l}%
+  \def\th{th}\def\i{i}\def\j{j}\def\ij{ij}%
   \def\ae{a}\def\AE{A}\def\oe{o}\def\OE{O}%
-  \def\ss{s}\def\L{L}%
-  \def\d{}\def\b{}\def\c{}\def\t{}% Dat: no need to redefine \H and \.
+  \def\ss{s}\def\L{L}\def\i{i}\def\j{j}%
+  \def\d{}\def\b{}\def\c{}\def\t{}%
+  %
+  \def\IeC{}% \usepackage[utf8]{inputenc} generates \IeC{\'a}.
+  \def\ { }%
+  %
   % Dat: no need to remove \textsf or \mdseries, because they are
   % handled properly by \protect == \string here.
   \let\@safe@activestrue\@empty% babel puts these inside \b@...: % Dat: \def\b@abook{\@safe@activesfalse 2}% (what is \@safe@actives??)
@@ -1252,21 +1262,30 @@
 
 %** Usage: \az{alma} -> `az alma'; \Az*{alma} -> `az'
 %** Usage: \az+\ref{foo} is equivalent to \az{\ref{foo}}
+%** TODO(pts): fix \aref{l5} if the body of l5 is empty.
 \def\@@magyar@az@lowt{\@ifstar{\@@magyar@az@lowy}{\@ifnextchar+\@@magyar@az@lowz\@@magyar@az@lowx}}
+%** #1 is +.
 \def\@@magyar@az@lowz#1#2#3{\@@magyar@az@lowy{#2{#3}}~#2{#3}}
 %** Used by new varioref.sty
 \def\@@magyar@az@lowxu{\unskip\@@magyar@az@lowx}%
-\def\@@magyar@az@lowx#1{\@@magyar@az@lowy{#1}~#1}
-\def\@@magyar@az@lowy#1{{%
+\def\@@magyar@az@lowx#1{\@@magyar@az@lowy{#1}~\ignorespaces#1}
+\def\@@magyar@az@lowy#1{%
+  \begingroup
   \begingroup
   %\def\protect{\noexpand\protect\noexpand}%
-  \set@display@protect% screws up \r
+  % TODO(pts): Is \set@display@protect called in other invocations of
+  %            \@@magyar@az@vfuzzedef, such as \aref or \az+\ref? Make it
+  %            consistent.
+  % latex.ltx: \let\@typeset@protect\relax
+  % latex.ltx: \def\set@display@protect{\let\protect\string}
+  % latex.ltx: \def\set@typeset@protect{\let\protect\@typeset@protect}
+  \set@display@protect% \let\protect\string; screws up \r
   \@@magyar@az@vfuzzedef{#1}%
-  %%\show\vfuzz
   \expandafter\endgroup\expandafter
     \set@display@protect\expandafter% fixes \r; why??
     \@@magyar@az@set\expandafter{\vfuzz}\hbox$%
-}}
+  \endgroup
+}
 
 \def\@@magyar@firstarg#1#2\hbox${#1}%
 
@@ -1337,17 +1356,17 @@
 \def\@@magyar@azuc#1#2#3{%
   \if\noexpand#1Az%
   \else\if\noexpand#1Ez%
-  \else\if\noexpand#1F\ifnum11=\the\catcode\string`#2\else z\fi
+  \else\if\noexpand#1F\ifcat a\noexpand#2\else z\fi
   \else\if\noexpand#1Iz%
-  \else\if\noexpand#1L\ifnum11=\the\catcode\if\noexpand#2Y\string`#3\else\string`#2\fi\else z\fi
-  \else\if\noexpand#1M\ifnum11=\the\catcode\string`#2\else z\fi
-  \else\if\noexpand#1N\ifnum11=\the\catcode\if\noexpand#2Y\string`#3\else\string`#2\fi\else z\fi
+  \else\if\noexpand#1L\ifcat a\if\noexpand#2Y\expandafter\noexpand#3\else\expandafter\noexpand#2\fi\else z\fi
+  \else\if\noexpand#1M\ifcat a\noexpand#2\else z\fi
+  \else\if\noexpand#1N\ifcat a\if\noexpand#2Y\expandafter\noexpand#3\else\expandafter\noexpand#2\fi\else z\fi
   \else\if\noexpand#1Oz%
-  \else\if\noexpand#1S\ifnum11=\the\catcode\if\noexpand#2Z\string`#3\else\string`#2\fi\else z\fi
-  \else\if\noexpand#1R\ifnum11=\the\catcode\string`#2\else z\fi
+  \else\if\noexpand#1S\ifcat a\if\noexpand#2Z\expandafter\noexpand#3\else\expandafter\noexpand#2\fi\else z\fi
+  \else\if\noexpand#1R\ifcat a\noexpand#2\else z\fi
   \else\if\noexpand#1Uz%
-  \else\if\noexpand#1X\ifnum11=\the\catcode\string`#2\else z\fi
-  \else\if\noexpand#1Y\ifnum11=\the\catcode\string`#2\else z\fi
+  \else\if\noexpand#1X\ifcat a\noexpand#2\else z\fi
+  \else\if\noexpand#1Y\ifcat a\noexpand#2\else z\fi
   \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
 }
 \def\@@magyar@azuc@pre#1#2#3#4\hbox${%
@@ -1374,7 +1393,7 @@
 
 \@gobble\iftrue
 \def\@@magyar@azrb@stop#1#2\fi{#1}%
-%** Strips spaces and braces automatically
+%** Strips spaces and braces, up to \hfuzz.
 %** @expands to `z' or nothing (last char of definite article)
 %** @example \message{R:\removebraces {{foo}{{}{b}{{{{a\fi}}}}r}}\hfuzz;}
 \def\@@magyar@azrb#1{%
@@ -1393,6 +1412,44 @@
   \fi
 }
 
+% Expandable macro which removes single-letter control sequences, converts
+% multiletter control sequences to dots, and keeps letters, and converts
+% everything else (i.e. non-letter, non-control sequence tokens) to `other'.
+%
+% Usage: \@@magyar@azro...\hfuzz, where ... doesn't contain braces, spaces
+% or \hfuzz.
+%
+% Wizardry: this uses the following tricks:
+%
+%   \expandafter\@gobble\if...\fi\@@selfcontinue trick.
+%
+%   % Tests that #1 is a control sequence token, provided it's a single, non-space, non-brace token.
+%   \def\testcs#1{\ifcat a\expandafter\@gobble\string#1aNO\else CS\fi}
+%
+%   % Tests that #1 is a control sequence token of 1 character, provided it's a single control sequence token.
+%   \def\testcso#1{\ifcat a\expandafter\@gobbletwo\string#1\@empty aCSO\else NO\fi}
+%
+%   % Tests that #1 is other character, provided it's a single, non-space, non-brace token.
+%   \def\testother#1{\ifcat\string*\noexpand#1OTHER\else NO\fi}
+\def\@@magyar@azro#1{%
+  \ifx#1\hfuzz\expandafter\@gobble% Stop at \hfuzz.
+  \else\ifcat a\expandafter\@gobble\string#1a% Not a control sequence.
+    \ifcat a\noexpand#1\else\expandafter\string\fi#1% Keep letters, convert everything else with \string.
+  \else\ifcat a\expandafter\@gobbletwo\string#1\@empty a% Single-character control sequence, e.g. \/, \', \H, \ , remove it.
+  \else.% Replace multiletter control sequence with a dot.
+  \fi\fi\fi\@@magyar@azro}
+
+% Expandable macro which converts outermost spaces to dots, and occasionally
+% removes some layers of braces. It also adds an extra dot (as a side
+% effect).
+%
+% Usage: `\\@magyar@azrs...\hfuzz ', where ... argument doesn't contain
+% \if..., \else and \fi tokens.
+\def\@@magyar@azrs#1 {%
+  \ifx\hfuzz#1\expandafter\@gobble% Stop at \hfuzz.
+  \else#1.%
+  \fi\@@magyar@azrs}%
+
 %** @param #1 might not be \cs -- and isn't empty
 \def\@@magyar@aznospace@short#1{%
   \if5\noexpand#1z% Dat: emit `az 5'
@@ -1404,14 +1461,10 @@
     \@@magyar@swaprelax\@@magyar@ignorehbox@pre
   \else\if-\noexpand#1% \az{-5} yields `a~-5'
     \@@magyar@swaprelax\@@magyar@ignorehbox@pre
-  \else\ifcat\string*\noexpand#1% ignore non-digit (non-letter) `other' char
-    % Wizardary: (undocumented)
-    % This is a really smart way to ignore control sequence chars resulting
-    % from \string\textrm etc. Fortunately, most control sequences don't
-    % contain digits.
-    \@@magyar@swaprelax\@@magyar@aznospace
+  \else\ifcat\string*\noexpand#1% puncuation in the beginning, such as `(' in `(5)'
+    \@@magyar@swaprelax\@@magyar@aznospace  % ignore punctuation
   \else
-    \@@magyar@swaprelax{\@@magyar@azuc@pre#1}% safe to call, no \cs
+    \@@magyar@swaprelax{\@@magyar@azuc@pre#1}%
   \fi\fi\fi\fi\fi\relax
 }
 
@@ -1421,7 +1474,10 @@
 %**   tokens.
 \def\@@magyar@az@set#1#2\hbox${% by pts
   % ^^^ Dat: we have `$' instead of `!' because of catcode changes (shouldn't affect)
-  \edef\reserved@a{\@@magyar@azrb#1\hfuzz}%
+  % We use \@firstofone to strip a leading space.
+  \edef\reserved@a{\expandafter\@@magyar@azrs\@firstofone#1 \hfuzz\@gobble{} }%
+  \edef\reserved@a{\expandafter\@@magyar@azrb\reserved@a\hfuzz}%
+  \edef\reserved@a{\expandafter\@@magyar@azro\reserved@a\hfuzz}%
   \expandafter\@@magyar@aznospace\reserved@a[b][][] \hbox$%
   % ^^^ Wizardry: [b][][] is a smart sentinel for \@@magyar@azuc and `b' for
   %	\@@magyar@aznospace@short. First `[' is there for aesthetics. Space
