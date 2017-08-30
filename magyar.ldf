@@ -2008,8 +2008,8 @@
 
 \expandafter\ifx\csname magyar@opt@@paragraphs\endcsname\relax\@@magyar@skiplong\fi
   % Dat: We make sure that hspaces emitted by \magyar@post@... are unstretchable
-  \def\magyar@post@dot{.\enskip}%
-  \def\magyar@post@bfdot{\textbf.\enskip}%
+  \def\magyar@post@dot{\textmd.\enskip}%
+  \def\magyar@post@bfdot{\textbf.\enskip}%  \bfseries is the default anyway
   \let\magyar@post@quad\quad% not recommended in Hungarian
   \let\magyar@post@enskip\enskip% not recommended in Hungarian
   \def\magyar@post@em{\hskip1em\relax}%
