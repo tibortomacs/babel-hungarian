@@ -283,8 +283,9 @@
   \magyar@opt@ntheoremfix@@yes
   \magyar@opt@openqq@@maybedown
   \magyar@opt@partnumber@@unchanged
-  \magyar@opt@postpara{}{unchanged}%
-  \magyar@opt@postsubpara{}{unchanged}%
+  \magyar@opt@postdescription{postdescription}{unchanged}%
+  \magyar@opt@postpara{postpara}{unchanged}%
+  \magyar@opt@postsubpara{postsubpara}{unchanged}%
   \magyar@opt@refstruc{refstruc}{weak}%
   \magyar@opt@sectiondot@@safe
   \magyar@opt@shorthandcs{shorthandcs}{\shu}%
@@ -355,8 +356,9 @@
   \magyar@opt@ntheoremfix@@yes% OK
   \magyar@opt@openqq@@maybedown% OK
   \magyar@opt@partnumber@@unchanged% OK
-  \magyar@opt@postpara{}{unchanged}% OK
-  \magyar@opt@postsubpara{}{unchanged}% OK
+  \magyar@opt@postdescription{postdescription}{unchanged}% OK
+  \magyar@opt@postpara{postpara}{unchanged}% OK
+  \magyar@opt@postsubpara{postsubpara}{unchanged}% OK
   \magyar@opt@refstruc{refstruc}{no}% OK
   \magyar@opt@sectiondot@@safe% we don't want =problematic
   \magyar@opt@shorthandcs{shorthandcs}{none}% OK
@@ -420,8 +422,9 @@
   \magyar@opt@ntheoremfix@@unchanged
   \magyar@opt@openqq@@unchanged
   \magyar@opt@partnumber@@unchanged
-  \magyar@opt@postpara{}{unchanged}%
-  \magyar@opt@postsubpara{}{unchanged}%
+  \magyar@opt@postdescription{postdescription}{unchanged}%
+  \magyar@opt@postpara{postpara}{unchanged}%
+  \magyar@opt@postsubpara{postsubpara}{unchanged}%
   \magyar@opt@refstruc{refstruc}{no}%
   \magyar@opt@sectiondot@@none
   \magyar@opt@shorthandcs{shorthandcs}{none}%
@@ -487,9 +490,9 @@
   \magyar@opt@ntheoremfix@@yes
   \magyar@opt@openqq@@maybedown
   \magyar@opt@partnumber@@Huordinal
-  \magyar@opt@postdescription{}{dot}%
-  \magyar@opt@postpara{}{diamond}%
-  \magyar@opt@postsubpara{}{star}%
+  \magyar@opt@postdescription{postdescription}{dot}%
+  \magyar@opt@postpara{postpara}{diamond}%
+  \magyar@opt@postsubpara{postsubpara}{star}%
   \magyar@opt@refstruc{refstruc}{yes}%
   \magyar@opt@sectiondot@@safe
   \magyar@opt@shorthandcs{shorthandcs}{\shu}%
@@ -545,7 +548,7 @@
   mathreal=weak,
   mond=weak,
   ntheoremfix=yes,
-  openqq=maybedown,
+  openqq=maybedown,  % Not: openqq=unchanged
   postdescription=dot,
   postpara=diamond,
   postsubpara=star,
@@ -566,9 +569,7 @@
 %** Matches Hungarian typographic rules most closely -- and most
 %** simplistically (minimally).
 \dMf magyar@opt@defaults@@hu-min {%
-  %\csname magyar@opt@defaults@@over-1.4\endcsname
-  \csname magyar@opt@defaults@@safest\endcsname
-  % Dat: no openqq=unchanged (!)
+  \magyar@opt@defaults@@safest
   \expandafter\magyar@doopt\magyar@@humin@options\hfuzz,%
 }
 
@@ -846,17 +847,14 @@
 \dMf magyar@opt@afterindent@@force-yes {\def\magyar@opt@@afterindent{1}}
 \dMf magyar@opt@afterindent@@unchanged {\def\magyar@opt@@afterindent{9}}
 \let\magyar@opt@afterindent\magyar@enumarg
-\def\magyar@opt@postpara#1#2{%
-  \def\reserved@a{#2}%
-  \ifx#2\magyar@@unchanged
-    \let\magyar@opt@@paragraphs\@undefined
-  \else
+\def\magyar@paragraphopt#1#2{%
+  \ifx#2\magyar@@unchanged\else
     \expandafter\def\csname magyar@opt@@#1\endcsname{#2}%
-    \let\magyar@opt@@paragraphs\@empty
   \fi
 }
-\let\magyar@opt@postsubpara\magyar@opt@postpara
-\let\magyar@opt@postdescription\magyar@opt@postpara
+\let\magyar@opt@postdescription\magyar@paragraphopt
+\let\magyar@opt@postpara\magyar@paragraphopt
+\let\magyar@opt@postsubpara\magyar@paragraphopt
 
 % --- Option processing code of \magyarOptions
 %
@@ -2006,7 +2004,15 @@
 
 % --- postpara= and postsubpara= and postdescription=
 
-\expandafter\ifx\csname magyar@opt@@paragraphs\endcsname\relax\@@magyar@skiplong\fi
+%\show\magyar@opt@@postpara
+%\show\magyar@@unchanged
+\let\magyar@opt@override@paragraphs\@empty
+  \ifx\magyar@opt@@postpara\magyar@@unchanged
+  \ifx\magyar@opt@@postsubpara\magyar@@unchanged
+  \ifx\magyar@opt@@postdescription\magyar@@unchanged
+  \let\magyar@opt@override@paragraphs\@undefined
+  \fi\fi\fi
+\expandafter\ifx\csname magyar@opt@override@paragraphs\endcsname\relax\@@magyar@skiplong\fi
   % Dat: We make sure that hspaces emitted by \magyar@post@... are unstretchable
   \def\magyar@post@dot{.\enskip}%  \bfseries is the default, same as =bfdot
   \def\magyar@post@mddot{\textmd.\enskip}%
@@ -2090,28 +2096,31 @@
       }%
     \fi\fi\fi
   }
-  % !! Imp: change Hungarian \paragraphs only, with dual load
-  \expandafter\ifx\csname magyar@opt@@postpara\endcsname\relax\else
-    \magyar@paragraphfix\paragraph
+  % !! Imp: change Hungarian \paragraph()s only, with dual load
+  \ifx\magyar@opt@@postpara\magyar@@unchanged\else
     \expandafter\let\expandafter\magyar@post@paragraph\csname magyar@post@\magyar@opt@@postpara\endcsname
     \ifx\magyar@post@paragraph\relax
       \@@magyar@error{Invalid arg for option: postpara = \magyar@opt@@postpara}%
+    \else
+      \magyar@paragraphfix\paragraph
     \fi
   \fi
-  \expandafter\ifx\csname magyar@opt@@postsubpara\endcsname\relax\else
-    \magyar@paragraphfix\subparagraph
+  \ifx\magyar@opt@@postsubpara\magyar@@unchanged\else
     \expandafter\let\expandafter\magyar@post@subparagraph\csname magyar@post@\magyar@opt@@postsubpara\endcsname
     \ifx\magyar@post@subparagraph\relax
       \@@magyar@error{Invalid arg for option: postsubpara = \magyar@opt@@postsubpara}%
+    \else
+      \magyar@paragraphfix\subparagraph
     \fi
   \fi
-  \expandafter\ifx\csname magyar@opt@@postdescription\endcsname\relax\else
+  \ifx\magyar@opt@@postdescription\magyar@@unchanged\else
     \expandafter\let\expandafter\magyar@post@description\csname magyar@post@\magyar@opt@@postdescription\endcsname
     \ifx\magyar@post@description\relax
       \@@magyar@error{Invalid arg for option: postdescription = \magyar@opt@@postdescription}%
+    \else
+      \def\magyar@@descriptionfont{\normalfont\bfseries}%
+      \def\descriptionlabel#1{\hskip\labelsep{\magyar@@descriptionfont#1}\magyar@post@description\hskip-\labelsep}%
     \fi
-    \def\magyar@@descriptionfont{\normalfont\bfseries}%
-    \def\descriptionlabel#1{\hskip\labelsep{\magyar@@descriptionfont#1}\magyar@post@description\hskip-\labelsep}%
   \fi
   \@gobble
 {^}%
