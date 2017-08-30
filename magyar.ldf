@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2015/11/24 v1.5c Magyar support from the babel system]
+%%        [2017/08/30 v1.5c Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2015/11/24 v1.5c Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2017/08/30 v1.5c Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -539,7 +539,6 @@
   labelenums=hu-d,
   labelitems=hu,
   longcaption=centered,
-  mathbrk=define,
   mathbrk=fix,
   mathfactorial=define,
   mathhucomma=fix,
@@ -4486,7 +4485,7 @@
 
 % --- mathbrk=
 
-\if0\magyar@opt@@mathbrk \@@magyar@skiplong\fi
+\if0\magyar@opt@@mathbrk \@@magyar@skiplong\fi  % mathbrk=define and mathbrk=fix
   %** Similar to \@@magyar@fixmathcmd@low, but inserts symbol immediately.
   %** @param #1 `\mathchar', all catcodes
   %** @param #2 hex code
@@ -4609,17 +4608,18 @@
   }
 
   \let\@@magyar@domathbins@prefix\@empty
-  \def\@@magyar@fixeverymathcmds@appendto#1{%
-    \expandafter\def\expandafter#1\expandafter{#1% append
-      \@@magyar@resetmathchars
-      \let\do\@@magyar@fixmathbinchar
-      \@@magyar@domathbins@prefix\@@magyar@domathbins% only in math mode start
-    }%
+  \def\@@magyar@onmathstart{%
+    \@@magyar@resetmathchars
+    \let\do\@@magyar@fixmathbinchar
+    \@@magyar@domathbins@prefix\@@magyar@domathbins% only in math mode start
   }
+
+  \def\@@magyar@fixeverymathcmds@appendto#1#2{% A generic \appendto.
+    \expandafter\def\expandafter#1\expandafter{#1#2}}%
   \def\@@magyar@fixeverymathcmds@setup{%
     \expandafter\ifx\csname mathoptions@on\endcsname\relax% no nath.sty
-	 \@@magyar@fixeverymathcmds@appendto\check@mathfonts
-    \else\@@magyar@fixeverymathcmds@appendto\mathoptions@on\fi
+         \@@magyar@fixeverymathcmds@appendto\check@mathfonts\@@magyar@onmathstart
+    \else\@@magyar@fixeverymathcmds@appendto\mathoptions@on\@@magyar@onmathstart\fi
   }
 
   % The definition of \@tabular contains a $, which calls
@@ -4658,7 +4658,22 @@
     \def\slash{\nobreak/\nobreak}% only in math-mode start, \nobreak
     % ^^^ Dat: \slash is fragile in latex.ltx
   }
-  \AtBeginDocument{\@@magyar@fixmathcmds\@@magyar@fixeverymathcmds@setup}
+
+  % This fixes \url defined in url.sty, by making \@@magyar@onmathstart a no-op
+  % with a URL. This is important because \url defines its own math mode with
+  % its own \mathcode and \catcode values, and we don't want mathbrk=fix clash
+  % with that.
+  \def\@@magyar@mathfixurl{%
+    \ifx\Url\@undefined\else
+      % Prepend \let\@@magyar@onmathstart\@empty to \Url.
+      \expandafter\def\expandafter\Url\expandafter{%
+        \expandafter\let\expandafter\@@magyar@onmathstart\expandafter\@empty
+        \Url}%
+    \fi
+  }%
+
+  \AtBeginDocument{%
+     \@@magyar@mathfixurl\@@magyar@fixmathcmds\@@magyar@fixeverymathcmds@setup}
   \@gobble
 {^}
 
