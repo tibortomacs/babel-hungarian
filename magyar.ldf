@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2017/08/30 v1.5c Magyar support from the babel system]
+%%        [2018/08/21 v1.5c Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2017/08/30 v1.5c Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2018/08/21 v1.5c Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -2612,10 +2612,8 @@
       Please use \string\usepackage[latin2]{inputenc}\MessageBreak
       or \string\usepackage[utf8]{inputenc}\MessageBreak
       with \string\usepackage[#1]{babel}}}%
-  %** @param #1 empty (old) or \protect
-  %** @param #2 input encoding name
-  \def\magyar@sugg@ie@low#1\@inpenc@undefined@#2#3\vfuzz#4{%
-    \def\reserved@b{#2}%
+  %** @param #1 Code to run if encoding in \reserved@b is unknown.
+  \def\magyar@sugg@ie@lowu#1{%
     \def\reserved@a{latin2}%
     \ifx\reserved@a\reserved@b\else
       \def\reserved@a{utf8}%
@@ -2624,22 +2622,35 @@
         \ifx\reserved@a\reserved@b\else
           \def\reserved@a{cp1250}%
           \ifx\reserved@a\reserved@b\else
-            \magyar@sugg@ie@lowb{#4}%
+            #1%
           \fi
         \fi
       \fi
     \fi
-  }
+  }%
+  %** @param #1 empty (old) or \protect
+  %** @param #2 input encoding name
+  \def\magyar@sugg@ie@low#1\@inpenc@undefined@#2#3\vfuzz#4{%
+    \def\reserved@b{#2}%
+    \magyar@sugg@ie@lowu{\magyar@sugg@ie@lowb{#4}}%
+  }%
   \def\magyar@sugg@ie#1{%
-    % Dat: don't print warning for missing \usepackage
-    \expandafter\ifx\csname @inpenc@undefined\endcsname\relax
-      \magyar@sugg@ie@lowb{#1}%
-    \else
-      % from inputenc.sty: \edef\@inpenc@undefined{\noexpand\@inpenc@undefined@{#1}}%
-      % > \@inpenc@undefined=macro:
-      % ->\@inpenc@undefined@ {latin2}.
-      \expandafter\magyar@sugg@ie@low\@inpenc@undefined....\vfuzz{#1}%
-    \fi
+    \expandafter\expandafter\expandafter\def\expandafter\expandafter\expandafter
+      \reserved@b\expandafter\expandafter\expandafter{%
+      \csname inputencodingname\endcsname}%
+    \magyar@sugg@ie@lowu{%
+      \ifx\reserved@a\reserved@b\else
+        % Dat: don't print warning for missing \usepackage
+        \expandafter\ifx\csname @inpenc@undefined\endcsname\relax
+          \magyar@sugg@ie@lowb{#1}%
+        \else
+          % from inputenc.sty: \edef\@inpenc@undefined{\noexpand\@inpenc@undefined@{#1}}%
+          % > \@inpenc@undefined=macro:
+          % ->\@inpenc@undefined@ {latin2}.
+          \expandafter\magyar@sugg@ie@low\@inpenc@undefined....\vfuzz{#1}%
+        \fi
+      \fi
+    }%
   }%
   \def\magyar@sugg@af#1{%
     \expandafter\ifx\csname#1Options\endcsname\relax\else
