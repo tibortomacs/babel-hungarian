@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2018/08/21 v1.5c Magyar support from the babel system]
+%%        [2018/12/07 v1.5c Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2018/08/21 v1.5c Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2018/12/07 v1.5c Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -1731,7 +1731,8 @@
           \mkern \@dotsep mu\hbox{.}\mkern \@dotsep
           mu\)}\hfill
        \nobreak
-       \setbox\@tempboxa\hbox{\normalfont \normalcolor #5}% ****pts****
+       % \begingroup needed because of https://tex.stackexchange.com/a/316692/820
+       \setbox\@tempboxa\hbox{\begingroup\normalfont \normalcolor #5\endgroup}% ****pts****
        \ifdim\wd\@tempboxa<\@pnumwidth\setbox\@tempboxa\hb@xt@\@pnumwidth{\hfil\unhbox\@tempboxa}\fi
        \box\@tempboxa
        \par}%
