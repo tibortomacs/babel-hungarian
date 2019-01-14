@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2018/12/07 v1.5c Magyar support from the babel system]
+%%        [2019/01/14 v1.5c Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2003
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2018/12/07 v1.5c Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2019/01/14 v1.5c Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -2602,11 +2602,14 @@
        \def\reftextlabelrange23456\AtBeginDocument78\hbox${#1}%$
   }
   \def\magyar@sugg@to#1{%
-    \def\reserved@a{T1}
-    \edef\reserved@b{\encodingdefault}% \encodingdefault is \long for t1enc.sty, but not for fontenc.sty
-    \ifx\reserved@a\reserved@b\else
-      \@latex@warning@no@line{Please use \string\usepackage{t1enc} with\MessageBreak \string\usepackage[#1]{babel}, to get accented chars hyphenated}%
-      % ^^^ Dat: \usepackage[T1]{fontenc} is equally good, but less effective
+    % In lualatex, the (unchecked) recommendation is: don't do \usepackage{t1enc}.
+    \ifnum0\ifx\luatexversion\@undefined1\fi\ifx\luatexversion\relax1\fi>0
+      \def\reserved@a{T1}%
+      \edef\reserved@b{\encodingdefault}% \encodingdefault is \long for t1enc.sty, but not for fontenc.sty
+      \ifx\reserved@a\reserved@b\else
+        \@latex@warning@no@line{Please use \string\usepackage{t1enc} with\MessageBreak \string\usepackage[#1]{babel}, to get accented chars hyphenated}%
+        % ^^^ Dat: \usepackage[T1]{fontenc} is equally good, but less effective
+      \fi
     \fi
   }
   \def\magyar@sugg@ie@lowb#1{\@latex@warning@no@line{%
@@ -2636,22 +2639,25 @@
     \magyar@sugg@ie@lowu{\magyar@sugg@ie@lowb{#4}}%
   }%
   \def\magyar@sugg@ie#1{%
-    \expandafter\expandafter\expandafter\def\expandafter\expandafter\expandafter
-      \reserved@b\expandafter\expandafter\expandafter{%
-      \csname inputencodingname\endcsname}%
-    \magyar@sugg@ie@lowu{%
-      \ifx\reserved@a\reserved@b\else
-        % Dat: don't print warning for missing \usepackage
-        \expandafter\ifx\csname @inpenc@undefined\endcsname\relax
-          \magyar@sugg@ie@lowb{#1}%
-        \else
-          % from inputenc.sty: \edef\@inpenc@undefined{\noexpand\@inpenc@undefined@{#1}}%
-          % > \@inpenc@undefined=macro:
-          % ->\@inpenc@undefined@ {latin2}.
-          \expandafter\magyar@sugg@ie@low\@inpenc@undefined....\vfuzz{#1}%
+    % In lualatex, the (unchecked) recommendation is: don't do \usepackage[...]{inputenc}, do \usepackage[...]{luainputenc} only if not utf8.
+    \ifnum0\ifx\luatexversion\@undefined1\fi\ifx\luatexversion\relax1\fi>0
+      \expandafter\expandafter\expandafter\def\expandafter\expandafter\expandafter
+        \reserved@b\expandafter\expandafter\expandafter{%
+        \csname inputencodingname\endcsname}%
+      \magyar@sugg@ie@lowu{%
+        \ifx\reserved@a\reserved@b\else
+          % Dat: don't print warning for missing \usepackage
+          \expandafter\ifx\csname @inpenc@undefined\endcsname\relax
+            \magyar@sugg@ie@lowb{#1}%
+          \else
+            % from inputenc.sty: \edef\@inpenc@undefined{\noexpand\@inpenc@undefined@{#1}}%
+            % > \@inpenc@undefined=macro:
+            % ->\@inpenc@undefined@ {latin2}.
+            \expandafter\magyar@sugg@ie@low\@inpenc@undefined....\vfuzz{#1}%
+          \fi
         \fi
-      \fi
-    }%
+      }%
+    \fi
   }%
   \def\magyar@sugg@af#1{%
     \expandafter\ifx\csname#1Options\endcsname\relax\else
