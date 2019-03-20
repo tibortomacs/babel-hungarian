@@ -9,7 +9,7 @@
 %%
 %% This is a generated file.
 %%
-%% Copyright 1989-2003 Johannes L. Braams and any individual authors
+%% Copyright 1989-2019 Johannes L. Braams and any individual authors
 %% listed elsewhere in this file.  All rights reserved.
 %%
 %% This file is part of the Babel system release 3.7.
@@ -19,20 +19,20 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2019/01/14 v1.5c Magyar support from the babel system]
+%%        [2019/03/20 v1.5d Magyar support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
-%% Copyright (C) 1989 - 2003
+%% Copyright (C) 1989 - 2019
 %%           by Johannes Braams, TeXniek
 %% Magyar Language Definition File
-%% Copyright (C) 1989 - 2003
+%% Copyright (C) 1989 - 2019
 %%           by Johannes Braams, TeXniek
 %%              \'Arp\'ad B\'IR\'O  --1996/12/13
 %%              J\'ozsef B\'ERCES 1997-06-06  (exact date unknown, after 1996-12-13, before 2000-03-15)
-%%              P\'eter SZAB\'O 2000-03-15--2001-03-06--2003-08-10--
+%%              P\'eter SZAB\'O 2000-03-15--2001-03-06--2003-08-10--2019-03-20
 %%
 %
-% magyar.ldf -- LaTeX Language Definition for `magyar' (Hungarian), v1.5c
+% magyar.ldf -- LaTeX Language Definition for `magyar' (Hungarian), v1.5d
 %
 % The newest version of this magyar.ldf is part of MagyarLaTeX, available from
 % http://www.math.bme.hu/latex/ . The web page is in Hungarian language, but
@@ -106,7 +106,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2019/01/14 v1.5c Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2019/03/20 v1.5d Magyar support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -5852,6 +5852,7 @@
 %    \declare@shorthand{\CurrentOption}{;}{\magyar@thinspaced;}
 % !! doc: `- not suitable in .bib files etc.
 % !! \cite{foo,bar} -> `[2, 1]' increasing order preferred
+% !! add fix for soulutf8.sty: \ul{foo`-bar} doesn't work
 % Imp: indent using the maximum footnotemark *** count on the current page
 % Imp: generate ,,harmincháromból'' by \told{\@huordinal{33}}+bol etc.
 %
