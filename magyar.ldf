@@ -1063,10 +1063,10 @@
       \babel@save\@begintheorem
       % Dat: amsart.cls: \def\@begintheorem#1#2[#3]{}%
       \def\@begintheorem#1#2{\trivlist
-	\item[\hskip \labelsep{\bfseries #2.\ #1.}]\itshape}% old: \slshape
+	\item[\MakeLinkTarget{\@currentcounter}\hskip \labelsep{\bfseries #2.\ #1.}]\itshape}% old: \slshape
       \babel@save\@opargbegintheorem
       \def\@opargbegintheorem#1#2#3{\trivlist
-	\item[\hskip \labelsep{\bfseries #2.\ #1\ (#3).}]\itshape}% old: \slshape
+	\item[\MakeLinkTarget{\@currentcounter}\hskip \labelsep{\bfseries #2.\ #1\ (#3).}]\itshape}% old: \slshape
     \else% theorem.sty or ntheorem.sty
       % Nothing -- style already set up in the preamble.
     \fi
@@ -4172,6 +4172,9 @@
 \if0\magyar@opt@@footnote \@@magyar@skiplong\fi
   %** Overrides latex.ltx. Expand old contents of \cl@#2 only once.
   \def\@addtoreset#1#2{%
+    \expandafter\xdef\csname theH#1\endcsname{%
+      \expandafter\noexpand\csname theH#2\endcsname.%
+      \noexpand\the\noexpand\value{#1}}%
     \begingroup
       \edef\reserved@a{\noexpand\@elt{#1}}%
       \expandafter\magyar@fo@consra\csname cl@#2\endcsname\gdef
