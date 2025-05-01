@@ -9,7 +9,7 @@
 %%
 %% This is a generated file.
 %%
-%% Copyright 1989-2019 Johannes L. Braams and any individual authors
+%% Copyright 1989-2026 Johannes L. Braams and any individual authors
 %% listed elsewhere in this file.  All rights reserved.
 %%
 %% This file is part of the Babel system release 3.7.
@@ -19,47 +19,29 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2019/03/20 v1.5d Magyar support from the babel system]
+%%        [2025/05/01 v1.6a Hungarian support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
-%% Copyright (C) 1989 - 2019
+%% Copyright (C) 1989 - 2026
 %%           by Johannes Braams, TeXniek
-%% Magyar Language Definition File
-%% Copyright (C) 1989 - 2019
+%% Hungarian language support for the babel multilingual package
+%% Copyright (C) 1989 - 2026
 %%           by Johannes Braams, TeXniek
 %%              \'Arp\'ad B\'IR\'O  --1996/12/13
 %%              J\'ozsef B\'ERCES 1997-06-06  (exact date unknown, after 1996-12-13, before 2000-03-15)
 %%              P\'eter SZAB\'O 2000-03-15--2001-03-06--2003-08-10--2019-03-20
+%%              Tibor T\'OM\'ACS 2025-05-01--
+%% The current primary maintainer is Tibor T\'OM\'ACS <tomacs.tibor@gmail.com>
+%% The current seconary maintainer is P\'eter SZAB\'O <pts@fazekas.hu>
+%% The official repository is https://github.com/tibortomacs/babel-hungarian
 %%
 %
-% magyar.ldf -- LaTeX Language Definition for `magyar' (Hungarian), v1.5d
-%
-% The newest version of this magyar.ldf is part of MagyarLaTeX, available from
-% http://www.math.bme.hu/latex/ . The web page is in Hungarian language, but
-% it is easy to figure out how to download the newest magyar.ldf. Please
-% bookmark this link as the definitive source of the newest version.
+% The magyar.ldf is part of MagyarLaTeX, available from
+% http://www.math.bme.hu/latex/
 %
 % This program is free software. There is NO WARRANTY. Use at your own risk!
 % You can choose any of these licenses: GNU GPL, LaTeX's license,
 % Babel's license.
-%
-% When will magyar.ldf 1.5 be part of mainstream LaTeX / Babel? I have no
-% idea, ask the maintainer of Babel. magyar.ldf 1.5 has ptebeen converted to
-% magyar.dtx on June 27, 2004. That version has been submitted to the
-% maintainer of the Babel package. No reply from him since then.
-%
-% Should magyar.ldf 1.5 be part of tetex, or should it be available as a
-% supplementary package in TeX distributions? Yes, but this is the task of the
-% creators of those distributions. The Debian package ``magyarlatex'',
-% which supplements the teTeX shipped with Debian Woody, Sarge and Sid,
-% is available from http://www.math.bme.hu/latex/dl
-% (file magyarlatex-latest.deb).
-%
-% The author of magyar.ldf 1.5 has uploaded it to CTAN
-% (http://www.ctan.org), but he doesn't re-upload regularly, because he
-% doesn't have time to maintain it and re-upload it after each bugfix. If
-% you think that magyar.ldf 1.5 should be on CTAN, feel free to upload a
-% snapshot, since it is free software.
 %
 % magyar.ldf 1.5 is based on magyar.ldf 1.4. However, it has been totally
 % rewritten and extended (just compare the file sizes), and it doesn't share
@@ -77,8 +59,7 @@
 %
 %      \def\magyarOptions{defaults=hu-min}
 %      \usepackage[magyar]{babel}
-%      \usepackage{t1enc}% for automatic hyphenation of accented chars
-%      \usepackage[latin2]{inputenc}% for typing chars
+%      \usepackage[T1]{fontenc}% for automatic hyphenation of accented chars
 %
 % This file is quite long, because it implements a lot of parametric features
 % related to typesetting Hungarian text with \LaTeX. Sorry.
@@ -88,9 +69,8 @@
 % of TeX in Hungary'', presented at EuroBachoTeX 2002.
 %
 % Most of the code and comments in this file are written by P\'eter Szab\'o.
-% The newest version is available from http://www.math.bme.hu/latex/
 %
-% The version of this file is 1.5, even when new releases come out. Please see
+% The version of this file is 1.6?, even when new releases come out. Please see
 % the \expandafter\ProvidesLanguage line for the release date.
 %
 
@@ -106,7 +86,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2019/03/20 v1.5d Magyar support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2025/05/01 v1.6a Hungarian support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
