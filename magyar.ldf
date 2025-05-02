@@ -43,7 +43,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2019/01/14 v1.5c Magyar (Hungarian) support for babel]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2025/05/02 v1.5d Hungarian support for babel]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
