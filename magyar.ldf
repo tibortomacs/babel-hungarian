@@ -1725,9 +1725,8 @@
 % --- amsuppercasefix=
 
 % Fix for small \'\i in capitalized title (no fix needed for \'i and í):
-%   \documentlcass{amsart} % amsart.cls
-%   \usepackage{t1enc}
-%   \usepackage[latin2]{inputenc}
+%   \documentlcass{amsart}
+%   \usepackage[T1]{fontenc}
 %   \author{author Anal{\'\i}{\'i}zis}
 %   \title {title  Anal{\'\i}{\'i}zis}
 %   \begin{document} \maketitle a\newpage b\newpage c \end{document}
@@ -2568,8 +2567,7 @@
       \def\reserved@a{T1}%
       \edef\reserved@b{\encodingdefault}% \encodingdefault is \long for t1enc.sty, but not for fontenc.sty
       \ifx\reserved@a\reserved@b\else
-        \@latex@warning@no@line{Please use \string\usepackage{t1enc} with\MessageBreak \string\usepackage[#1]{babel}, to get accented chars hyphenated}%
-        % ^^^ Dat: \usepackage[T1]{fontenc} is equally good, but less effective
+        \@latex@warning@no@line{Please use \string\usepackage[T1]{fontenc} with\MessageBreak \string\usepackage[#1]{babel}, to get accented chars hyphenated}%
       \fi
     \fi
   }
@@ -5803,7 +5801,7 @@
 %    (cjhebrew)
 % !! a4wide.sty doesn't compile
 %    \documentclass[12pt,a4paper]{article}
-%    \usepackage{t1enc}
+%    \usepackage[T1]{fontenc}
 %    \usepackage{times}% Imp: math mode
 %    \usepackage[magyar]{babel}
 %    \usepackage{graphicx}
@@ -5835,7 +5833,6 @@
 %      \glq \grq \glqq \grqq \flq \frq \flqq \frqq
 % Dat: OT1 encoding respects accents=low (\umlauthigh and \umlautlow), but T1
 %      doesn't -- but we need T1 for hyphenation of accented words
-% Dat: \usepackage{t1enc} is faster than \usepackage[T1]{fontenc}
 % Dat: \languageattribute should be specified in the document preamble, and
 %      not changed again
 % Dat: it is possible to have 1 letter, e.g \declare@shorthand{turkish}{=}{...}
@@ -5861,7 +5858,7 @@
 % OK: Első rész
 % OK: smartly disable active chars in preamble
 % OK: \@inpenc@undefined defined and != latin2 => recommend \usepackage[latin2]{inputenc}
-% OK: \encodingdefault != T1 => recommend \usepackage{t1enc}
+% OK: \encodingdefault != T1 => recommend \usepackage[T1]{fontenc}
 % OK: Warning if \l@hungarian vs \l@magyar undefined
 % OK: amsart.cls \listoftables overfull \hbox (\magyar@amslevelfix)
 % OK: dzs-dzs
