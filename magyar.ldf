@@ -1,13 +1,10 @@
-% magyar.ldf -- LaTeX Language Definition for `magyar' (Hungarian), v1.5c
-% written and copyright (C) by P\'eter SZAB\'O <pts@fazekas.hu>
+% magyar.ldf - Hungarian language support for the babel multilingual package
+% written and copyright (C) by Péter Szabó
 % (version 1.5 -- Early October 2003 -- February 2004 --)
 %
-% The Current Maintainers of this work are
-%   P\'eter SZAB\'O <pts@fazekas.hu> and
-%   Tibor T\'OM\'ACS <tomacs.tibor@gmail.com>
-%
-% The magyar.ldf is part of MagyarLaTeX, available from
-% http://www.math.bme.hu/latex/
+% The Current Maintainers:
+%   Péter Szabó
+%   Tibor Tómács <tomacs.tibor@gmail.com>
 %
 % This program is free software. There is NO WARRANTY. Use at your own risk!
 % You can choose any of these licenses: GNU GPL, LaTeX's license,
@@ -21,26 +18,17 @@
 % Earlier versions of file `magyar.dtx' Babel package for LaTeX version 2e
 %   Copyright (C) 1989--2004 by Johannes Braams, TeXniek
 %   Copyright (C) 1989--2004 by
-%   \'Arp\'ad B\'IR\'O
-%   J\'ozsef B\'ERCES (version 1.4c -- 2001; contains a lot of work of him)
+%   Árpád Bíró
+%   József Bérces (version 1.4c -- 2001; contains a lot of work of him)
 %
 % To typeset text in Hungarian, please in the document preamble, use
 %
+%      \usepackage[T1]{fontenc}% width pdflatex compiler
 %      \def\magyarOptions{defaults=hu-min}
 %      \usepackage[magyar]{babel}
-%      \usepackage[T1]{fontenc}% for automatic hyphenation of accented chars
 %
 % This file is quite long, because it implements a lot of parametric features
-% related to typesetting Hungarian text with \LaTeX. Sorry.
-%
-% Motto: ``There is a lot to do in the future'' -- by Gyöngyi Bujdosó and
-% Ferenc Wettl in their conference proceedings article ``On the localization
-% of TeX in Hungary'', presented at EuroBachoTeX 2002.
-%
-% Most of the code and comments in this file are written by P\'eter Szab\'o.
-%
-% The version of this file is 1.5, even when new releases come out. Please see
-% the \expandafter\ProvidesLanguage line for the release date.
+% related to typesetting Hungarian text with LaTeX.
 %
 
 \expandafter\ifx\csname CurrentOption\endcsname\relax
