@@ -36,9 +36,6 @@
 %% The official repository is https://github.com/tibortomacs/babel-hungarian
 %%
 %
-% The magyar.ldf is part of MagyarLaTeX, available from
-% http://www.math.bme.hu/latex/
-%
 % This program is free software. There is NO WARRANTY. Use at your own risk!
 % You can choose any of these licenses: GNU GPL, LaTeX's license,
 % Babel's license.
@@ -48,30 +45,14 @@
 % code from the earlier versions anymore. However, its default configuration
 % tries to be compatible with older versions.
 %
-% To typeset text in Hungarian, please
+% To typeset text in Hungarian, please in the document preamble, use
 %
-% 1. Include `magyar huhyph.tex' in language.dat, re-run initex(1) (initex
-%    'latex.ini \dump') or pdfinitex(1), verify that running latex(1) displays
-%    the word `magyar' in the line containing `hyphenation patterns' in its
-%    console output.
-%
-% 2. In the document preamble, use
-%
+%      \usepackage[T1]{fontenc}% with pdflatex compiler
 %      \def\magyarOptions{defaults=hu-min}
 %      \usepackage[magyar]{babel}
-%      \usepackage[T1]{fontenc}% for automatic hyphenation of accented chars
 %
 % This file is quite long, because it implements a lot of parametric features
-% related to typesetting Hungarian text with \LaTeX. Sorry.
-%
-% Motto: ``There is a lot to do in the future'' -- by Gyöngyi Bujdosó and
-% Ferenc Wettl in their conference proceedings article ``On the localization
-% of TeX in Hungary'', presented at EuroBachoTeX 2002.
-%
-% Most of the code and comments in this file are written by P\'eter Szab\'o.
-%
-% The version of this file is 1.6?, even when new releases come out. Please see
-% the \expandafter\ProvidesLanguage line for the release date.
+% related to typesetting Hungarian text with LaTeX.
 %
 
 \expandafter\ifx\csname CurrentOption\endcsname\relax
