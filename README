@@ -1,14 +1,21 @@
-This is the new version 1.6a for Hungarian in LaTeX.  See more info about
-Hungarian typography in LaTeX in our TUG 2004 article:
+The babel-hungarian bundle
+
+Hungarian language support for the babel multilingual package
+
+Current Maintainers: 
+  Péter Szabó 
+  Tibor Tómács <tomacs.tibor@gmail.com>
+
+Hungarian typography in LaTeX in this TUG 2004 article:
 http://www.math.bme.hu/latex/dl/pts_tug2004_magyarldf2.pdf
+
 There is a longer user manual in Hungarian:
 http://math.bme.hu/latex/magyarldf-doc.pdf
 
-Users are urged to report their experiences with the package to the
-maintainer of Babel as well as to the author of the package. The
-maintainer of Babel is interested in positive feedback about the
-package as well as problems.
-
 Usage:
+
+  \usepackage[hungarian]{babel}
+
+or
 
   \usepackage[magyar]{babel}
