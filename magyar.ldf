@@ -462,7 +462,6 @@
   chapterhead=yes,
   cjhebrewfix=yes,
   classmod=yes,
-  classmod=yes,
   dottedtocline=fix,
   emitdate=weak,
   extras=yes,
