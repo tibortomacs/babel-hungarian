@@ -147,7 +147,7 @@
 %**     amspostsectiondot=no,      % or =unchanged
 %**     appendixdot=yes,           % or =no % !! dokumentálni
 %**     az=weak,                   % or =yes or =no
-%**     babelmarkfix=yes,          % or =unchanged
+%**     babelmarkfix=unchanged,    % or =yes
 %**     captionfix=yes,            % or =unchanged
 %**     captions=hu,               % or =unchanged
 %**     chapterhead=yes,           % or =unchanged(=no)
@@ -211,7 +211,7 @@
   \magyar@opt@amstocnumlang@@all
   \magyar@opt@amstocnumskip{amstocnumskip}{\enskip}% change over 1.4
   \magyar@opt@appendixdot@@yes
-  \magyar@opt@babelmarkfix@@yes
+  \magyar@opt@babelmarkfix@@unchanged
   \magyar@opt@az{az}{weak}%
   \magyar@opt@captionfix@@yes
   \magyar@opt@captions@@hu
@@ -351,7 +351,7 @@
   \magyar@opt@amstocnumskip{amstocnumskip}{}%
   \magyar@opt@appendixdot@@yes
   \magyar@opt@az{az}{no}%
-  \magyar@opt@babelmarkfix@@yes
+  \magyar@opt@babelmarkfix@@unchanged
   \magyar@opt@captionfix@@yes
   \magyar@opt@captions@@unchanged
   \magyar@opt@chapternumber@@unchanged
@@ -419,7 +419,7 @@
   \magyar@opt@amstocnumskip{amstocnumskip}{\enskip}%
   \magyar@opt@appendixdot@@no
   \magyar@opt@az{az}{yes}%
-  \magyar@opt@babelmarkfix@@yes
+  \magyar@opt@babelmarkfix@@unchanged
   \magyar@opt@captionfix@@yes
   \magyar@opt@captions@@hu
   \magyar@opt@chapternumber@@unchanged
