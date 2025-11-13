@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2025/11/12 v1.6a Hungarian support from the babel system]
+%%        [2025/11/13 v1.6a Hungarian support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2026
@@ -67,7 +67,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2025/11/12 v1.6a Hungarian support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2025/11/13 v1.6a Hungarian support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
@@ -5818,7 +5818,7 @@
 % Imp: generate ,,harmincháromból'' by \told{\@huordinal{33}}+bol etc.
 %
 % Dat: \mathcode`\,="013B     % és így a tizedes törtekben matematikai módban sem lesz köz
-% Dat:  \mathchardef\comma="613B  % a vesző (,) ami matematikai módban elválasztó karakterként használható
+% Dat:  \mathchardef\comma="613B  % a vessző (,) ami matematikai módban elválasztó karakterként használható
 % Dat: additive \PassOptionsToPackage{foo=bar}{magyar.ldf}
 % Dat: for book.cls and article.cls: the user has to run \pagestyle{headings} after \selectlanguage{magyar} -- for performance reasons
 % Dat: doc: \let\@@magyar@setup@psheadings\relax maybe needed in the preamble
