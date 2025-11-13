@@ -3649,8 +3649,15 @@
 % --- hutoday=
 
 % Dat: latex.ltx has \edef for \today, but we have \def
-\def\SafeToday{\the\year/\two@digits{\the\month}/\two@digits{\the\day}:%
-  \two@digits{\the\count@}:\two@digits{\the\count2}}
+\def\SafeToday{%
+  \begingroup
+    \@tempcnta\time
+    \@tempcntb\@tempcnta
+    \divide\@tempcnta by 60
+    \advance\@tempcntb by -\numexpr\@tempcnta*60\relax
+    \number\year/\two@digits{\number\month}/\two@digits{\number\day}:%
+    \two@digits{\number\@tempcnta}:\two@digits{\number\@tempcntb}%
+  \endgroup}
 
 \ifnum\magyar@opt@@hutoday=0 \@namedef{date\CurrentOption}{\let\today\SafeToday}\@@magyar@skiplong\fi
 %** Same as what latex.ltx has. Expansion doesn't change it, doesn't contain
