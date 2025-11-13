@@ -1,6 +1,6 @@
 % magyar.ldf - Hungarian language support for the babel multilingual package
 % written and copyright (C) by Péter Szabó
-% (version 1.5 -- Early October 2003 -- February 2004 --)
+% (version 1.5 - October 2003 - February 2004 -)
 %
 % The Current Maintainers:
 %   Péter Szabó
@@ -16,19 +16,16 @@
 % tries to be compatible with older versions.
 %
 % Earlier versions of file `magyar.dtx' Babel package for LaTeX version 2e
-%   Copyright (C) 1989--2004 by Johannes Braams, TeXniek
-%   Copyright (C) 1989--2004 by
+%   Copyright (C) 1989-2004 by Johannes Braams, TeXniek
+%   Copyright (C) 1989-2004 by
 %   Árpád Bíró
-%   József Bérces (version 1.4c -- 2001; contains a lot of work of him)
+%   József Bérces (version 1.4c - 2001; contains a lot of work of him)
 %
 % To typeset text in Hungarian, please in the document preamble, use
 %
 %      \usepackage[T1]{fontenc}% width pdflatex compiler
-%      \def\magyarOptions{defaults=hu-min}
+%      \PassOptionsToPackage{defaults=hu-min}{magyar.ldf}
 %      \usepackage[magyar]{babel}
-%
-% This file is quite long, because it implements a lot of parametric features
-% related to typesetting Hungarian text with LaTeX.
 %
 
 \expandafter\ifx\csname CurrentOption\endcsname\relax
