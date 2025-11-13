@@ -5793,7 +5793,7 @@
 % Imp: generate ,,harmincháromból'' by \told{\@huordinal{33}}+bol etc.
 %
 % Dat: \mathcode`\,="013B     % és így a tizedes törtekben matematikai módban sem lesz köz
-% Dat:  \mathchardef\comma="613B  % a vesző (,) ami matematikai módban elválasztó karakterként használható
+% Dat:  \mathchardef\comma="613B  % a vessző (,) ami matematikai módban elválasztó karakterként használható
 % Dat: additive \PassOptionsToPackage{foo=bar}{magyar.ldf}
 % Dat: for book.cls and article.cls: the user has to run \pagestyle{headings} after \selectlanguage{magyar} -- for performance reasons
 % Dat: doc: \let\@@magyar@setup@psheadings\relax maybe needed in the preamble
