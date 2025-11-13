@@ -48,11 +48,8 @@
 % To typeset text in Hungarian, please in the document preamble, use
 %
 %      \usepackage[T1]{fontenc}% with pdflatex compiler
-%      \def\magyarOptions{defaults=hu-min}
+%      \PassOptionsToPackage{defaults=hu-min}{magyar.ldf}
 %      \usepackage[magyar]{babel}
-%
-% This file is quite long, because it implements a lot of parametric features
-% related to typesetting Hungarian text with LaTeX.
 %
 
 \expandafter\ifx\csname CurrentOption\endcsname\relax
