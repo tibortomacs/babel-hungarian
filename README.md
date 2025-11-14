@@ -12,12 +12,10 @@ There is a longer user manual in Hungarian:
 
 Usage:
 
-    \usepackage[T1]{fontenc}% width pdflatex compiler
+    \usepackage[T1]{fontenc}% when using pdflatex
     \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}
     \usepackage[hungarian]{babel}
-
 or
-
-    \usepackage[T1]{fontenc}% width pdflatex compiler
+    \usepackage[T1]{fontenc}% when using pdflatex
     \PassOptionsToPackage{defaults=hu-min}{magyar.ldf}
     \usepackage[magyar]{babel}
