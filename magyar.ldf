@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2025/11/13 v1.6a Hungarian support from the babel system]
+%%        [2025/11/14 v1.6a Hungarian support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2026
@@ -36,9 +36,15 @@
 %% The official repository is https://github.com/tibortomacs/babel-hungarian
 %%
 %
-% This program is free software. There is NO WARRANTY. Use at your own risk!
-% You can choose any of these licenses: GNU GPL, LaTeX's license,
-% Babel's license.
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
 %
 % magyar.ldf 1.5 is based on magyar.ldf 1.4. However, it has been totally
 % rewritten and extended (just compare the file sizes), and it doesn't share
@@ -47,7 +53,11 @@
 %
 % To typeset text in Hungarian, please in the document preamble, use
 %
-%      \usepackage[T1]{fontenc}% with pdflatex compiler
+%      \usepackage[T1]{fontenc}% when using pdflatex
+%      \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}
+%      \usepackage[hungarian]{babel}
+% or
+%      \usepackage[T1]{fontenc}% when using pdflatex
 %      \PassOptionsToPackage{defaults=hu-min}{magyar.ldf}
 %      \usepackage[magyar]{babel}
 %
@@ -64,7 +74,7 @@
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2025/11/13 v1.6a Hungarian support from the babel system]
+\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2025/11/14 v1.6a Hungarian support from the babel system]
 
 % Possibly do \endinput if .ldf already loaded
 \expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
