@@ -124,7 +124,7 @@
 
 %** These defaults load most of the new functionality, but try not to
 %** introduce visible typographical changes over magyar.ldf v1.4. These
-%** are the ovarall defaults of magyar.ldf v1.5, in case of
+%** are the overall defaults of magyar.ldf v1.5, in case of
 %** \def\magyarOptions{} (or if is missing).
 %**
 %** These are the defaults: (over-1.4)
@@ -147,7 +147,7 @@
 %**     chapternumber=unchanged,   % see partnumber=
 %**     cjhebrewfix=yes,           % or =unchanged or =onlyouter
 %**     classmod=yes,              % or =unchanged(=no) or TeX class name
-%**     %defaults=over-1.4,        % or =compat-1.4 or =safest or =prettiest
+%**     %defaults=over-1.4,        % or =compat-1.4 or =safest or =prettiest or =hu-min
 %**     dottedtocline=fix,         % or =unchanged
 %**     emitdate=weak,             % or =no or =yes
 %**     extras=yes,                % or =no
