@@ -38,15 +38,6 @@
 %      \usepackage[magyar]{babel}
 %
 
-\expandafter\ifx\csname CurrentOption\endcsname\relax
-  \def\CurrentOption{magyar}%
-\fi
-%** So `\input magyar.ldf' will work as well.
-\expandafter\ifx\csname ver@babel.sty\endcsname\relax
-  \csname fi\endcsname
-  \endinput \expandafter\RequirePackage\expandafter[\CurrentOption]{babel}
-\fi
-
 %\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
 %\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
 % vvv for Babel v3.7
