@@ -853,13 +853,6 @@
     \expandafter\let\csname \CurrentOption Options\endcsname\relax
   \fi
 }
-\def\magyar@do@option@low#1#2=#3=,\vfuzz{%
-  \ifx#1\hfuzz\else
-    %%\typeout{(#1#2)=(#3)}%
-    % vvv wastes some heap (\csname), but never mind
-  \fi
-}
-
 
 \magyar@opt@defaults{defaults}{over-1.4}  % defaults=over-1.4 by default
 \def\magyar@opt@@hdrtitleskip{\enskip}% !! option for that
