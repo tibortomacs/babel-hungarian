@@ -141,7 +141,6 @@
 %**     amspostsectiondot=no,      % or =unchanged
 %**     appendixdot=yes,           % or =no % !! dokumentálni
 %**     az=weak,                   % or =yes or =no
-%**     babelmarkfix=unchanged,    % or =yes
 %**     captionfix=yes,            % or =unchanged
 %**     captions=hu,               % or =unchanged
 %**     chapterhead=yes,           % or =unchanged(=no)
@@ -205,7 +204,6 @@
   \magyar@opt@amstocnumlang@@all
   \magyar@opt@amstocnumskip{amstocnumskip}{\enskip}% change over 1.4
   \magyar@opt@appendixdot@@yes
-  \magyar@opt@babelmarkfix@@unchanged
   \magyar@opt@az{az}{weak}%
   \magyar@opt@captionfix@@yes
   \magyar@opt@captions@@hu
@@ -278,7 +276,6 @@
   \magyar@opt@amstocnumlang@@all% OK, irrelevant
   \magyar@opt@amstocnumskip{amstocnumskip}{}% OK
   \magyar@opt@appendixdot@@yes
-  \magyar@opt@babelmarkfix@@unchanged
   \magyar@opt@az{az}{yes}% OK
   \magyar@opt@captionfix@@unchanged
   \magyar@opt@captions@@hu% OK
@@ -345,7 +342,6 @@
   \magyar@opt@amstocnumskip{amstocnumskip}{}%
   \magyar@opt@appendixdot@@yes
   \magyar@opt@az{az}{no}%
-  \magyar@opt@babelmarkfix@@unchanged
   \magyar@opt@captionfix@@yes
   \magyar@opt@captions@@unchanged
   \magyar@opt@chapternumber@@unchanged
@@ -413,7 +409,6 @@
   \magyar@opt@amstocnumskip{amstocnumskip}{\enskip}%
   \magyar@opt@appendixdot@@no
   \magyar@opt@az{az}{yes}%
-  \magyar@opt@babelmarkfix@@unchanged
   \magyar@opt@captionfix@@yes
   \magyar@opt@captions@@hu
   \magyar@opt@chapternumber@@unchanged
@@ -774,9 +769,9 @@
 \let\magyar@opt@captionfix\magyar@enumarg
 \def\magyar@opt@captionfix@@unchanged{\def\magyar@opt@@captionfix{0}}
 \def\magyar@opt@captionfix@@yes      {\def\magyar@opt@@captionfix{1}}
-\let\magyar@opt@babelmarkfix\magyar@enumarg
-\def\magyar@opt@babelmarkfix@@unchanged{\def\magyar@opt@@babelmarkfix{0}}
-\def\magyar@opt@babelmarkfix@@yes      {\def\magyar@opt@@babelmarkfix{1}}
+\let\magyar@opt@babelmarkfix\magyar@enumarg% babelmarkfix removed (babel 3.9+ no longer needs this)
+\def\magyar@opt@babelmarkfix@@unchanged{\PackageWarning{\CurrentOption}{Option `babelmarkfix' is obsolete; ignored}}
+\def\magyar@opt@babelmarkfix@@yes      {\PackageWarning{\CurrentOption}{Option `babelmarkfix' is obsolete; ignored}}
 \let\magyar@opt@showfix\magyar@enumarg
 \def\magyar@opt@showfix@@unchanged{\def\magyar@opt@@showfix{0}}
 \def\magyar@opt@showfix@@yes      {\def\magyar@opt@@showfix{1}}
@@ -1731,77 +1726,6 @@
   % textcase.sty is not available by default (Ubuntu 8.04 TeX Live), and
   % newer amsart.cls doesn't have this bug (\'\i gets capitalized properly)
   \AtEndOfPackage{\IfFileExists{textcase.sty}{\RequirePackage{textcase}}{}}
-  \@gobble
-{^}%
-
-% --- babelmarkfix=
-
-% Fix the language name (\foreignlanguage{\languagename}}) appearing in
-% \@evenhead. Reason: both amsart.cls and babel.def 3.8 redefine \markboth.
-% (There is no problem in Babel 3.7.)
-%   This bug is a general Babel 3.8 + amsart.cls bug, not specific to
-% magyar.ldf.
-%
-% Dat: amsart.cls redefines \markboth defined in latex.ltx
-\ifnum0<0%
-  \magyar@opt@@babelmarkfix\relax
-\space\else\@@magyar@skiplong\fi
-  \begingroup
-  %\def\foreignlanguage{\fffffff} % Dat: not called here
-  % Dat: usually called: \mark{\the\@temptokena}
-  %\def\mark#1{\showthe\@temptokena{\toks@{B#1}\global\edef\@@magyar@@marktest{\the\toks@}}}
-  %\def\mark#1{\global\def\@@magyar@@marktest{#1}}
-  \def\mark#1{\global\edef\@@magyar@@marktest{#1}}
-  \let\if@nobreak\iffalse \@gobble\fi\@gobble\fi % Dat: \@gobble: make skippable
-  \def\@@magyar@@marktest@noexp{{\noexpand\@empty BA}{\noexpand\@empty BB}}
-  \expandafter\org@markboth\@@magyar@@marktest@noexp
-  % ^^^ Dat: since we call \org@markboth, the result doesn't depend on the Babel
-  %     version, i.e. how Babel redefines \markboth
-  % ^^^ Dat: call changes \@@magyar@@marktest
-  %     amsart.cls   -> {\noexpand \@empty BA}{\noexpand \@empty BB}
-  %     article.cls  -> {\@empty BA}{\@empty BB}
-  \ifx\@@magyar@@marktest\@@magyar@@marktest@noexp
-    % OK, now test for \markboth, as defined in Babel 3.8
-    \def\org@markboth#1#2{\global\def\@@magyar@@marktest{#1..#2}}%
-    \markboth{CA}{CB}%
-    % ^^^ Dat: call changes \@@magyar@@marktest
-    %     Babel 3.7 -> \foreignlanguage {magyar}{CA}..\foreignlanguage {magyar}{CB}
-    %     Babel 3.8 -> \noexpand \foreignlanguage {\languagename }{\noexpand \bbl@restore@actives CA}..\noexpand \foreignlanguage {\languagename }{\noexpand \bbl@restore@actives CB}
-    \def\reserved@a#1#2\hfuzz${#1}%
-    \expandafter\expandafter\expandafter\ifx
-      \expandafter\expandafter\expandafter\noexpand
-      \expandafter\reserved@a\@@magyar@@marktest\relax\hfuzz$%
-      % Dat: we reach this if \@@magyar@@marktest starts by \noexpand
-      % Dat: So now we have amsart.cls + \markboth of Babel 3.8.
-      %      The solution is to restore \markboth and \markright of Babel 3.7
-      %\let\reserved@a\@empty \zzzzzz
-      \def\reserved@a{%
-        \let\markright\org@markright
-        \bbl@redefine\markright##1{%
-          \toks@{##1}%
-          \edef\bbl@tempa{%
-            \noexpand\org@markright{%
-              \noexpand\foreignlanguage{\languagename}{\the\toks@}}}%
-          \bbl@tempa
-        }
-        \let\markboth\org@markboth
-        \bbl@redefine\markboth##1##2{%
-          \toks@{##1}\toks8{##2}%
-          \edef\bbl@tempa{%
-            \noexpand\org@markboth{%
-              \noexpand\foreignlanguage{\languagename}{\the\toks@}}{%
-              \noexpand\foreignlanguage{\languagename}{\the\toks8}}}%
-          \bbl@tempa
-        }%
-      }%
-    \else \let\reserved@a\@empty
-    \fi
-  \else \let\reserved@a\empty
-  \fi
-  %\show\reserved@a \let\reserved@a\@empty
-  \global\let\@@magyar@@marktest\@undefined
-  \global\let\@@magyar@@marktest@noexp\@undefined
-  \expandafter\endgroup\reserved@a
   \@gobble
 {^}%
 
