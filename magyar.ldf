@@ -498,24 +498,6 @@
   \expandafter\magyar@doopt\magyar@@humin@options\hfuzz,%
 }
 
-\def\magyarDumpHuMin{%
-  \begingroup
-  \typeout{}
-  \typeout{\expandafter\@gobble\string\% for defaults=hu-min}%
-  \typeout{\string\def\string\magyarOptions\expandafter\@gobble\string\{}%
-  \typeout{ \space defaults=safest,}%
-  \typeout{ \space\expandafter\@gobble\string\%}%
-  \def\magyar@applyopt##1##2{%
-    \def\reserved@a{##1=##2,}%
-    \typeout{ \space\expandafter\strip@prefix\meaning\reserved@a}%
-  }%
-  \expandafter\magyar@doopt\magyar@@humin@options\hfuzz,%
-  \typeout{\expandafter\@gobble\string\}}%
-  \typeout{\string\usepackage[magyar]{babel}}%
-  \typeout{}%
-  \endgroup
-}
-
 \let\magyar@opt@defaults\magyar@enumarg
 \def\magyar@opt@safest@@yes{\magyar@opt@defaults@@safest}
 \def\magyar@opt@safest@@no{}
