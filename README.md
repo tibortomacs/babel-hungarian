@@ -21,3 +21,10 @@ or
     \usepackage[T1]{fontenc}% when using pdflatex
     \PassOptionsToPackage{defaults=hu-min}{magyar.ldf}
     \usepackage[magyar]{babel}
+
+or
+
+    \DocumentMetadata{lang=hu-HU}
+    \usepackage[T1]{fontenc}% when using pdflatex
+    \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}
+    \usepackage{babel}
