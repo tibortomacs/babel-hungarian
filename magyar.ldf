@@ -62,13 +62,9 @@
 %      \usepackage[magyar]{babel}
 %
 
-%\ProvidesFile{magyar.ldf}[1996/12/23 v1.3h Magyar support from the babel system]
-%\ProvidesLanguage{magyar}[2001/03/05 v1.4c Magyar support from the babel system]
-% vvv for Babel v3.7
-\expandafter\ProvidesLanguage\expandafter{\CurrentOption}[2025/11/15 v1.6a Hungarian support from the babel system]
+\ProvidesLanguage{\CurrentOption}[2025/11/15 v1.6a Hungarian support from the babel system]
 
-% Possibly do \endinput if .ldf already loaded
-\expandafter\LdfInit\expandafter{\CurrentOption}{captions\CurrentOption}%
+\LdfInit{\CurrentOption}{captions\CurrentOption}
 
 % Fix \catcodes{} possibly screwed up by other Babel languages.
 % Dat: \string`\string! could have been written as \string`!
