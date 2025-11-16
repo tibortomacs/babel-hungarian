@@ -25,6 +25,6 @@ or
 or
 
     \DocumentMetadata{lang=hu}
-    \usepackage[T1]{fontenc}% when using pdflatex
+    \documentclass{...}
     \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}
     \usepackage{babel}
