@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2025/11/15 v1.6a Hungarian support from the babel system]
+%%        [2025/11/16 v1.6a Hungarian support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2026
@@ -61,12 +61,12 @@
 %      \PassOptionsToPackage{defaults=hu-min}{magyar.ldf}
 %      \usepackage[magyar]{babel}
 % or
-%      \DocumentMetadata{lang=hu-HU}
+%      \DocumentMetadata{lang=hu}
 %      \usepackage[T1]{fontenc}% when using pdflatex
 %      \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}
 %      \usepackage{babel}
 
-\ProvidesLanguage{\CurrentOption}[2025/11/15 v1.6a Hungarian support from the babel system]
+\ProvidesLanguage{\CurrentOption}[2025/11/16 v1.6a Hungarian support from the babel system]
 
 \LdfInit{\CurrentOption}{captions\CurrentOption}
 
