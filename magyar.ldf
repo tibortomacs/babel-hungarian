@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2025/11/16 v1.6a Hungarian support from the babel system]
+%%        [2025/11/20 v1.6a Hungarian support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2026
@@ -66,7 +66,7 @@
 %      \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}
 %      \usepackage{babel}
 
-\ProvidesLanguage{\CurrentOption}[2025/11/16 v1.6a Hungarian support from the babel system]
+\ProvidesLanguage{\CurrentOption}[2025/11/20 v1.6a Hungarian support from the babel system]
 
 \LdfInit{\CurrentOption}{captions\CurrentOption}
 
@@ -123,6 +123,11 @@
     \expandafter\edef\csname magyar@opt@@#1\endcsname{\csname @@magyar@argw@#2\endcsname}%
   \fi
 }
+\def\magyar@paragraphopt#1#2{%
+  \ifx#2\magyar@@unchanged\else
+    \expandafter\def\csname magyar@opt@@#1\endcsname{#2}%
+  \fi
+}
 
 % Declare defaults.
 
@@ -143,7 +148,7 @@
 %**     amstocnumskip=\enskip,     % TeX code or --empty--
 %**     amstocnumlang=all,         % or =hu
 %**     amspostsectiondot=no,      % or =unchanged
-%**     appendixdot=yes,           % or =no % !! dokumentálni
+%**     appendixdot=yes,           % or =no
 %**     az=weak,                   % or =yes or =no
 %**     captionfix=yes,            % or =unchanged
 %**     captions=hu,               % or =unchanged
@@ -196,67 +201,144 @@
 %**     told=weak,                 % or =no or =yes
 %**     varioref=hu,               % or =unchanged
 %**   }\usepackage[magyar]{babel}
-\dMf magyar@opt@defaults@@over-1.4 {%
-  \magyar@opt@accents@@defaulthigh
-  \magyar@opt@active@@safe
-  \magyar@opt@activeprefix{activeprefix}{babelopt2}%
-  \magyar@opt@activespace@@none
-  \magyar@opt@afterindent@@unchanged
-  \magyar@opt@amslevelfix{amslevelfix}{fix-ams}%
-  \magyar@opt@amsuppercasefix{amsuppercasefix}{fix-ams}%
-  \magyar@opt@amspostsectiondot@@no% change over 1.4
-  \magyar@opt@amstocnumlang@@all
-  \magyar@opt@amstocnumskip{amstocnumskip}{\enskip}% change over 1.4
-  \magyar@opt@appendixdot@@yes
-  \magyar@opt@az{az}{weak}%
-  \magyar@opt@captionfix@@yes
-  \magyar@opt@captions@@hu
-  \magyar@opt@chapternumber@@unchanged
-  \magyar@opt@classmod@@yes
-  \magyar@opt@dottedtocline@@fix
-  \magyar@opt@emitdate{emitdate}{weak}%
-  \magyar@opt@extras@@yes
-  \magyar@opt@chapterhead@@yes
-  \magyar@opt@fancyhdr@@hu% change over 1.4
-  \magyar@opt@figurecaptions@@hu
-  \magyar@opt@footnote@@yes
-  \magyar@opt@frenchspacing@@unchanged
-  \magyar@opt@hang{hang}{weak}%
-  \magyar@opt@hunnewlabel@@yes
-  \magyar@opt@hunumbers@@yes
-  \magyar@opt@hutoday@@yes
-  \magyar@opt@hyphenation{hyphenation}{huhyph3-or-any}%
-  \magyar@opt@hyphenmins{hyphenmins}{22}% change over 1.4 Dat: Default LaTeX is {23}
-  \magyar@opt@labelenums@@unchanged
-  \magyar@opt@labelitems@@unchanged
-  \magyar@opt@longcaption@@justified
-  \magyar@opt@mathbrk@@define
-  \magyar@opt@mathfactorial@@define
-  \magyar@opt@mathhucomma@@define
-  \magyar@opt@mathmuskips@@unchanged
-  \magyar@opt@hynumberline@@unchanged
-  \magyar@opt@mathreal{mathreal}{weak}%
-  \magyar@opt@mond{mond}{weak}%
-  \magyar@opt@ntheoremfix@@yes
-  \magyar@opt@openqq@@maybedown
-  \magyar@opt@partnumber@@unchanged
-  \magyar@opt@postdescription{postdescription}{unchanged}%
-  \magyar@opt@postpara{postpara}{unchanged}%
-  \magyar@opt@postsubpara{postsubpara}{unchanged}%
-  \magyar@opt@refstruc{refstruc}{weak}%
-  \magyar@opt@sectiondot@@safe
-  \magyar@opt@shorthandcs{shorthandcs}{\shu}%
-  \magyar@opt@shortrefcmds@@yes
-  \magyar@opt@showfix@@yes
-  \magyar@opt@suggestions@@yes
-  \magyar@opt@tablecaptions@@hu
-  \magyar@opt@textqq{textqq}{weak}%
-  \magyar@opt@theoremtitle@@hu
-  \magyar@opt@titles{}{\enskip}% change over 1.4
-  \magyar@opt@toclang@@good
-  \magyar@opt@told{told}{weak}%
-  \magyar@opt@varioref@@hu
-  \magyar@opt@cjhebrewfix@@yes
+
+\DeclareKeys[babel-magyar]{
+  accents.code           = \magyar@enumarg{accents}{#1},%           defaulthigh,high,low(no effect with T1 fontenc)
+  active.code            = \magyar@enumarg{active}{#1},%            safe,problematic,none,onlycs
+  activeprefix.code      = \magyar@enumarg{activeprefix}{#1},%      babelopt2,none,babelopt3,grave,acute,quotedbl
+  activespace.code       = \magyar@enumarg{activespace}{#1},%       none,safe,problematic
+  afterindent.code       = \magyar@enumarg{afterindent}{#1},%       unchanged,force-no,force-yes
+  amslevelfix.code       = \magyar@enumarg{amslevelfix}{#1},%       fix-ams,unchanged,fix-all
+  amspostsectiondot.code = \magyar@enumarg{amspostsectiondot}{#1},% no,unchanged
+  amstocnumlang.code     = \magyar@enumarg{amstocnumlang}{#1},%     all,hu
+  amsuppercasefix.code   = \magyar@enumarg{amsuppercasefix}{#1},%   fix-ams,unchanged,fix-all
+  appendixdot.code       = \magyar@enumarg{appendixdot}{#1},%       yes,no
+  captions.code          = \magyar@enumarg{captions}{#1},%          hu,unchanged
+  chapterhead.code       = \magyar@enumarg{chapterhead}{#1},%       yes,unchanged(=no)
+  chapternumber.code     = \magyar@enumarg{chapternumber}{#1},%     unchanged,huordinal,Huordinal
+  cjhebrewfix.code       = \magyar@enumarg{cjhebrewfix}{#1},%       yes,unchanged,onlyouter
+  defaults.code          = \magyar@enumarg{defaults}{#1},%          over-1.4(default),compat-1.4,prettiest,safest,hu-min
+  dottedtocline.code     = \magyar@enumarg{dottedtocline}{#1},%     fix,unchanged
+  extras.code            = \magyar@enumarg{extras}{#1},%            yes,no
+  fancyhdr.code          = \magyar@enumarg{fancyhdr}{#1},%          hu,unchanged
+  figurecaptions.code    = \magyar@enumarg{figurecaptions}{#1},%    hu,us,unchanged
+  footnote.code          = \magyar@enumarg{footnote}{#1},%          yes,unchanged,huplain,starplain
+  frenchspacing.code     = \magyar@enumarg{frenchspacing}{#1},%     unchanged,no,yes
+  hunnewlabel.code       = \magyar@enumarg{hunnewlabel}{#1},%       yes,no,only-hu
+  hunumbers.code         = \magyar@enumarg{hunumbers}{#1},%         yes,no
+  hutoday.code           = \magyar@enumarg{hutoday}{#1},%           yes,no
+  hynumberline.code      = \magyar@enumarg{hynumberline}{#1},%      unchanged,hu
+  hyphenation.code       = \magyar@enumarg{hyphenation}{#1},%       huhyph3,none,composite,phonetic,huhyphn,huhyph3-or-any,composite-or-any,any
+  labelenums.code        = \magyar@enumarg{labelenums}{#1},%        unchanged,hu-a,hu-A,hu-d
+  labelitems.code        = \magyar@enumarg{labelitems}{#1},%        unchanged,hu
+  longcaption.code       = \magyar@enumarg{longcaption}{#1},%       justified,centered,centernewline,none(=unchanged)
+  mathbrk.code           = \magyar@enumarg{mathbrk}{#1},%           define,unchanged,fix
+  mathfactorial.code     = \magyar@enumarg{mathfactorial}{#1},%     define,unchanged,fix
+  mathhucomma.code       = \magyar@enumarg{mathhucomma}{#1},%       define,unchanged,fix
+  mathmuskips.code       = \magyar@enumarg{mathmuskips}{#1},%       unchanged,latex,hu
+  ntheoremfix.code       = \magyar@enumarg{ntheoremfix}{#1},%       yes,unchanged
+  openqq.code            = \magyar@enumarg{openqq}{#1},%            maybedown,up,down,unchanged
+  partnumber.code        = \magyar@enumarg{partnumber}{#1},%        unchanged,huordinal,Huordinal
+  safest.code            = \magyar@enumarg{safest}{#1},%            no(no effect),yes(is equivalent to defaults=safest)
+  sectiondot.code        = \magyar@enumarg{sectiondot}{#1},%        safe,none,problematic
+  shortrefcmds.code      = \magyar@enumarg{shortrefcmds}{#1},%      yes,no
+  showfix.code           = \magyar@enumarg{showfix}{#1},%           yes,unchanged
+  suggestions.code       = \magyar@enumarg{suggestions}{#1},%       yes,no
+  tablecaptions.code     = \magyar@enumarg{tablecaptions}{#1},%     hu,us,unchanged
+  theoremtitle.code      = \magyar@enumarg{theoremtitle}{#1},%      hu,unchanged
+  toclang.code           = \magyar@enumarg{toclang}{#1},%           good,badfloat,badall,unchanged
+  varioref.code          = \magyar@enumarg{varioref}{#1},%          hu,unchanged
+  %
+  az.code                = \magyar@yesweaknoarg{az}{#1},%       yes,weak,no
+  emitdate.code          = \magyar@yesweaknoarg{emitdate}{#1},% yes,weak,no
+  hang.code              = \magyar@yesweaknoarg{hang}{#1},%     yes,weak,no
+  mathreal.code          = \magyar@yesweaknoarg{mathreal}{#1},% yes,weak,no
+  mond.code              = \magyar@yesweaknoarg{mond}{#1},%     yes,weak,no
+  refstruc.code          = \magyar@yesweaknoarg{refstruc}{#1},% yes,weak,no
+  textqq.code            = \magyar@yesweaknoarg{textqq}{#1},%   yes,weak,no
+  told.code              = \magyar@yesweaknoarg{told}{#1},%     yes,weak,no
+  %
+  postdescription.code   = \magyar@paragraphopt{postdescription}{#1},% unchanged,bfdot,dot,quad,diamond,enskip,quad,em,empty,...(\magyar@post@...)
+  postpara.code          = \magyar@paragraphopt{postpara}{#1},%        unchanged,bfdot,dot,quad,diamond,enskip,quad,em,empty,...(\magyar@post@...)
+  postsubpara.code       = \magyar@paragraphopt{postsubpara}{#1},%     unchanged,bfdot,dot,quad,diamond,enskip,quad,em,empty,...(\magyar@post@...)
+  %
+  amstocnumskip.code     = \magyar@opt@amstocnumskip{#1},% <command>,<empty>
+  classmod.code          = \magyar@opt@classmod{#1},%      yes,unchanged(=no),<class name>
+  hyphenmins.code        = \magyar@opt@hyphenmins{#1},%    <digit><digit>,unchanged,\lefthyphenmin\righthyphenmin
+  shorthandcs.code       = \magyar@opt@shorthandcs{#1},%   <command>,none
+  titles.code            = \magyar@opt@titles{#1},%        unchanged,<command>
+  %
+  babelmarkfix.code      = \PackageWarningNoLine{\CurrentOption}{The `babelmarkfix' option is deprecated and has no effect},% babel 3.9+ no longer needs this
+  captionfix.code        = \PackageWarningNoLine{\CurrentOption}{The `captionfix' option is deprecated and has no effect},%   caption package no longer needs this
+}
+
+\def\magyar@setkeys#1\relax{\SetKeys[babel-magyar]{#1}}
+
+% \magyar@opt@defaults used to be a defined command for the `defaults=...' option.
+% It shouldn't be now, but the caption package will only switch to the Hungarian label type when it exists.
+\let\magyar@opt@defaults\empty
+
+\dMf magyar@opt@defaults@@over-1.4 {
+  \magyar@enumarg{accents}{defaulthigh}
+  \magyar@enumarg{active}{safe}
+  \magyar@enumarg{activeprefix}{babelopt2}
+  \magyar@enumarg{activespace}{none}
+  \magyar@enumarg{afterindent}{unchanged}
+  \magyar@enumarg{amslevelfix}{fix-ams}
+  \magyar@enumarg{amsuppercasefix}{fix-ams}
+  \magyar@enumarg{amspostsectiondot}{no}
+  \magyar@enumarg{amstocnumlang}{all}
+  \magyar@opt@amstocnumskip{\enskip}
+  \magyar@enumarg{appendixdot}{yes}
+  \magyar@yesweaknoarg{az}{weak}
+  \magyar@enumarg{captionfix}{yes}
+  \magyar@enumarg{captions}{hu}
+  \magyar@enumarg{chapternumber}{unchanged}
+  \magyar@opt@classmod{yes}
+  \magyar@enumarg{dottedtocline}{fix}
+  \magyar@yesweaknoarg{emitdate}{weak}
+  \magyar@enumarg{extras}{yes}
+  \magyar@enumarg{chapterhead}{yes}
+  \magyar@enumarg{fancyhdr}{hu}
+  \magyar@enumarg{figurecaptions}{hu}
+  \magyar@enumarg{footnote}{yes}
+  \magyar@enumarg{frenchspacing}{unchanged}
+  \magyar@yesweaknoarg{hang}{weak}
+  \magyar@enumarg{hunnewlabel}{yes}
+  \magyar@enumarg{hunumbers}{yes}
+  \magyar@enumarg{hutoday}{yes}
+  \magyar@enumarg{hyphenation}{huhyph3-or-any}
+  \magyar@opt@hyphenmins{22}% Default LaTeX is {23}
+  \magyar@enumarg{labelenums}{unchanged}
+  \magyar@enumarg{labelitems}{unchanged}
+  \magyar@enumarg{longcaption}{justified}
+  \magyar@enumarg{mathbrk}{define}
+  \magyar@enumarg{mathfactorial}{define}
+  \magyar@enumarg{mathhucomma}{define}
+  \magyar@enumarg{mathmuskips}{unchanged}
+  \magyar@enumarg{hynumberline}{unchanged}
+  \magyar@yesweaknoarg{mathreal}{weak}
+  \magyar@yesweaknoarg{mond}{weak}
+  \magyar@enumarg{ntheoremfix}{yes}
+  \magyar@enumarg{openqq}{maybedown}
+  \magyar@enumarg{partnumber}{unchanged}
+  \magyar@paragraphopt{postdescription}{unchanged}
+  \magyar@paragraphopt{postpara}{unchanged}
+  \magyar@paragraphopt{postsubpara}{unchanged}
+  \magyar@yesweaknoarg{refstruc}{weak}
+  \magyar@enumarg{sectiondot}{safe}
+  \magyar@opt@shorthandcs{\shu}
+  \magyar@enumarg{shortrefcmds}{yes}
+  \magyar@enumarg{showfix}{yes}
+  \magyar@enumarg{suggestions}{yes}
+  \magyar@enumarg{tablecaptions}{hu}
+  \magyar@yesweaknoarg{textqq}{weak}
+  \magyar@enumarg{theoremtitle}{hu}
+  \magyar@opt@titles{\enskip}
+  \magyar@enumarg{toclang}{good}
+  \magyar@yesweaknoarg{told}{weak}
+  \magyar@enumarg{varioref}{hu}
+  \magyar@enumarg{cjhebrewfix}{yes}
 }
 
 %** These defaults try to be compatible with magyar.ldf v1.4 as much as
@@ -268,199 +350,199 @@
 %** Some very useful fixes are not applied here -- please use
 %** defaults=over-1.4 to have them. Also some very nice features such
 %** as \emitdate and \told are not available here.
-\dMf magyar@opt@defaults@@compat-1.4 {%
-  \magyar@opt@accents@@defaulthigh% OK
-  \magyar@opt@active@@safe% we don't want =problematic
-  \magyar@opt@activeprefix@@grave% OK
-  \magyar@opt@activespace@@none% OK
-  \magyar@opt@afterindent@@unchanged% OK
-  \magyar@opt@amslevelfix@@unchanged% OK
-  \magyar@opt@amsuppercasefix@@unchanged% OK
-  \magyar@opt@amspostsectiondot@@unchanged% OK
-  \magyar@opt@amstocnumlang@@all% OK, irrelevant
-  \magyar@opt@amstocnumskip{amstocnumskip}{}% OK
-  \magyar@opt@appendixdot@@yes
-  \magyar@opt@az{az}{yes}% OK
-  \magyar@opt@captionfix@@unchanged
-  \magyar@opt@captions@@hu% OK
-  \magyar@opt@chapterhead@@yes% OK
-  \magyar@opt@chapternumber@@unchanged% OK
-  \magyar@opt@classmod@@yes% OK
-  \magyar@opt@dottedtocline@@unchanged% OK
-  \magyar@opt@emitdate{emitdate}{no}% OK
-  \magyar@opt@extras@@yes% OK
-  \magyar@opt@fancyhdr@@unchanged% OK
-  \magyar@opt@figurecaptions@@hu% OK
-  \magyar@opt@footnote@@unchanged% OK
-  \magyar@opt@frenchspacing@@unchanged% OK
-  \magyar@opt@hang{hang}{no}% OK
-  \magyar@opt@hunnewlabel@@yes% OK
-  \magyar@opt@hunumbers@@no% OK
-  \magyar@opt@hutoday@@yes% OK
-  \magyar@opt@hyphenation{hyphenation}{huhyph3-or-any}% OK
-  \magyar@opt@hyphenmins{hyphenmins}{unchanged}%
-  \magyar@opt@labelenums@@unchanged% OK
-  \magyar@opt@labelitems@@unchanged% OK
-  \magyar@opt@longcaption@@justified% OK
-  \magyar@opt@mathbrk@@unchanged% OK
-  \magyar@opt@mathhucomma@@unchanged% OK
-  \magyar@opt@mathfactorial@@unchanged% OK
-  \magyar@opt@mathmuskips@@unchanged% OK
-  \magyar@opt@hynumberline@@unchanged% OK
-  \magyar@opt@mathreal{mathreal}{no}%
-  \magyar@opt@mond{mond}{no}% OK
-  \magyar@opt@ntheoremfix@@yes% OK
-  \magyar@opt@openqq@@maybedown% OK
-  \magyar@opt@partnumber@@unchanged% OK
-  \magyar@opt@postdescription{postdescription}{unchanged}% OK
-  \magyar@opt@postpara{postpara}{unchanged}% OK
-  \magyar@opt@postsubpara{postsubpara}{unchanged}% OK
-  \magyar@opt@refstruc{refstruc}{no}% OK
-  \magyar@opt@sectiondot@@safe% we don't want =problematic
-  \magyar@opt@shorthandcs{shorthandcs}{none}% OK
-  \magyar@opt@shortrefcmds@@yes% OK
-  \magyar@opt@showfix@@yes% OK
-  \magyar@opt@suggestions@@no% OK -- user has explicity requested defaults=compat-1.4
-  \magyar@opt@tablecaptions@@hu% OK
-  \magyar@opt@textqq{textqq}{no}% OK
-  \magyar@opt@theoremtitle@@hu% OK
-  \magyar@opt@titles{}{\quad}% OK -- ugly, but compatible
-  \magyar@opt@toclang@@good% we don't want weird errors and mischosen languages (would be =badall)
-  \magyar@opt@told{told}{no}% OK
-  \magyar@opt@varioref@@hu% was =unchanged, but varioref.sty (2000) is buggy
-  \magyar@opt@cjhebrewfix@@yes
+\dMf magyar@opt@defaults@@compat-1.4 {
+  \magyar@enumarg{accents}{defaulthigh}
+  \magyar@enumarg{active}{safe}
+  \magyar@enumarg{activeprefix}{grave}
+  \magyar@enumarg{activespace}{none}
+  \magyar@enumarg{afterindent}{unchanged}
+  \magyar@enumarg{amslevelfix}{unchanged}
+  \magyar@enumarg{amsuppercasefix}{unchanged}
+  \magyar@enumarg{amspostsectiondot}{unchanged}
+  \magyar@enumarg{amstocnumlang}{all}
+  \magyar@opt@amstocnumskip{}
+  \magyar@enumarg{appendixdot}{yes}
+  \magyar@yesweaknoarg{az}{yes}
+  \magyar@enumarg{captionfix}{unchanged}
+  \magyar@enumarg{captions}{hu}
+  \magyar@enumarg{chapterhead}{yes}
+  \magyar@enumarg{chapternumber}{unchanged}
+  \magyar@opt@classmod{yes}
+  \magyar@enumarg{dottedtocline}{unchanged}
+  \magyar@yesweaknoarg{emitdate}{no}
+  \magyar@enumarg{extras}{yes}
+  \magyar@enumarg{fancyhdr}{unchanged}
+  \magyar@enumarg{figurecaptions}{hu}
+  \magyar@enumarg{footnote}{unchanged}
+  \magyar@enumarg{frenchspacing}{unchanged}
+  \magyar@yesweaknoarg{hang}{no}
+  \magyar@enumarg{hunnewlabel}{yes}
+  \magyar@enumarg{hunumbers}{no}
+  \magyar@enumarg{hutoday}{yes}
+  \magyar@enumarg{hyphenation}{huhyph3-or-any}
+  \magyar@opt@hyphenmins{unchanged}
+  \magyar@enumarg{labelenums}{unchanged}
+  \magyar@enumarg{labelitems}{unchanged}
+  \magyar@enumarg{longcaption}{justified}
+  \magyar@enumarg{mathbrk}{unchanged}
+  \magyar@enumarg{mathhucomma}{unchanged}
+  \magyar@enumarg{mathfactorial}{unchanged}
+  \magyar@enumarg{mathmuskips}{unchanged}
+  \magyar@enumarg{hynumberline}{unchanged}
+  \magyar@yesweaknoarg{mathreal}{no}
+  \magyar@yesweaknoarg{mond}{no}
+  \magyar@enumarg{ntheoremfix}{yes}
+  \magyar@enumarg{openqq}{maybedown}
+  \magyar@enumarg{partnumber}{unchanged}
+  \magyar@paragraphopt{postdescription}{unchanged}
+  \magyar@paragraphopt{postpara}{unchanged}
+  \magyar@paragraphopt{postsubpara}{unchanged}
+  \magyar@yesweaknoarg{refstruc}{no}
+  \magyar@enumarg{sectiondot}{safe}
+  \magyar@opt@shorthandcs{none}
+  \magyar@enumarg{shortrefcmds}{yes}
+  \magyar@enumarg{showfix}{yes}
+  \magyar@enumarg{suggestions}{no}
+  \magyar@enumarg{tablecaptions}{hu}
+  \magyar@yesweaknoarg{textqq}{no}
+  \magyar@enumarg{theoremtitle}{hu}
+  \magyar@opt@titles{\quad}
+  \magyar@enumarg{toclang}{good}
+  \magyar@yesweaknoarg{told}{no}
+  \magyar@enumarg{varioref}{hu}
+  \magyar@enumarg{cjhebrewfix}{yes}
 }
 
 %** These defaults turn of most features -- the effect is similar to as if
 %** magyar.ldf hasn't been loaded at all. Useful for debugging purposes.
-\def\magyar@opt@defaults@@safest{%
-  \magyar@opt@accents@@defaulthigh
-  \magyar@opt@active@@none
-  \magyar@opt@activeprefix@@none
-  \magyar@opt@activespace@@none
-  \magyar@opt@afterindent@@unchanged
-  \magyar@opt@amslevelfix@@unchanged
-  \magyar@opt@amsuppercasefix{amsuppercasefix}{fix-ams}%
-  \magyar@opt@amspostsectiondot@@unchanged
-  \magyar@opt@amstocnumlang@@all% OK, irrelevant
-  \magyar@opt@amstocnumskip{amstocnumskip}{}%
-  \magyar@opt@appendixdot@@yes
-  \magyar@opt@az{az}{no}%
-  \magyar@opt@captionfix@@yes
-  \magyar@opt@captions@@unchanged
-  \magyar@opt@chapternumber@@unchanged
-  \magyar@opt@classmod@@unchanged
-  \magyar@opt@dottedtocline@@unchanged
-  \magyar@opt@emitdate{emitdate}{no}%
-  \magyar@opt@extras@@no
-  \magyar@opt@chapterhead@@no
-  \magyar@opt@fancyhdr@@unchanged
-  \magyar@opt@figurecaptions@@unchanged
-  \magyar@opt@footnote@@unchanged
-  \magyar@opt@frenchspacing@@unchanged
-  \magyar@opt@hang{hang}{no}%
-  \magyar@opt@hunnewlabel@@no
-  \magyar@opt@hunumbers@@no
-  \magyar@opt@hutoday@@no
-  \magyar@opt@hyphenation{hyphenation}{huhyph3-or-any}%
-  \magyar@opt@hyphenmins{hyphenmins}{unchanged}%
-  \magyar@opt@labelenums@@unchanged
-  \magyar@opt@labelitems@@unchanged
-  \magyar@opt@longcaption@@unchanged
-  \magyar@opt@mathbrk@@unchanged
-  \magyar@opt@mathhucomma@@unchanged
-  \magyar@opt@mathfactorial@@unchanged
-  \magyar@opt@mathmuskips@@unchanged
-  \magyar@opt@hynumberline@@unchanged
-  \magyar@opt@mathreal{mathreal}{no}%
-  \magyar@opt@mond{mond}{no}%
-  \magyar@opt@ntheoremfix@@unchanged
-  \magyar@opt@openqq@@unchanged
-  \magyar@opt@partnumber@@unchanged
-  \magyar@opt@postdescription{postdescription}{unchanged}%
-  \magyar@opt@postpara{postpara}{unchanged}%
-  \magyar@opt@postsubpara{postsubpara}{unchanged}%
-  \magyar@opt@refstruc{refstruc}{no}%
-  \magyar@opt@sectiondot@@none
-  \magyar@opt@shorthandcs{shorthandcs}{none}%
-  \magyar@opt@shortrefcmds@@no
-  \magyar@opt@showfix@@unchanged
-  \magyar@opt@suggestions@@yes
-  \magyar@opt@tablecaptions@@unchanged
-  \magyar@opt@textqq{textqq}{no}%
-  \magyar@opt@theoremtitle@@unchanged
-  \magyar@opt@titles{}{unchanged}%
-  \magyar@opt@toclang@@unchanged
-  \magyar@opt@told{told}{no}%
-  \magyar@opt@varioref@@unchanged
-  \magyar@opt@cjhebrewfix@@unchanged
+\def\magyar@opt@defaults@@safest{
+  \magyar@enumarg{accents}{defaulthigh}
+  \magyar@enumarg{active}{none}
+  \magyar@enumarg{activeprefix}{none}
+  \magyar@enumarg{activespace}{none}
+  \magyar@enumarg{afterindent}{unchanged}
+  \magyar@enumarg{amslevelfix}{unchanged}
+  \magyar@enumarg{amsuppercasefix}{fix-ams}
+  \magyar@enumarg{amspostsectiondot}{unchanged}
+  \magyar@enumarg{amstocnumlang}{all}
+  \magyar@opt@amstocnumskip{}
+  \magyar@enumarg{appendixdot}{yes}
+  \magyar@yesweaknoarg{az}{no}
+  \magyar@enumarg{captionfix}{yes}
+  \magyar@enumarg{captions}{unchanged}
+  \magyar@enumarg{chapternumber}{unchanged}
+  \magyar@opt@classmod{unchanged}
+  \magyar@enumarg{dottedtocline}{unchanged}
+  \magyar@yesweaknoarg{emitdate}{no}
+  \magyar@enumarg{extras}{no}
+  \magyar@enumarg{chapterhead}{no}
+  \magyar@enumarg{fancyhdr}{unchanged}
+  \magyar@enumarg{figurecaptions}{unchanged}
+  \magyar@enumarg{footnote}{unchanged}
+  \magyar@enumarg{frenchspacing}{unchanged}
+  \magyar@yesweaknoarg{hang}{no}
+  \magyar@enumarg{hunnewlabel}{no}
+  \magyar@enumarg{hunumbers}{no}
+  \magyar@enumarg{hutoday}{no}
+  \magyar@enumarg{hyphenation}{huhyph3-or-any}
+  \magyar@opt@hyphenmins{unchanged}
+  \magyar@enumarg{labelenums}{unchanged}
+  \magyar@enumarg{labelitems}{unchanged}
+  \magyar@enumarg{longcaption}{unchanged}
+  \magyar@enumarg{mathbrk}{unchanged}
+  \magyar@enumarg{mathhucomma}{unchanged}
+  \magyar@enumarg{mathfactorial}{unchanged}
+  \magyar@enumarg{mathmuskips}{unchanged}
+  \magyar@enumarg{hynumberline}{unchanged}
+  \magyar@yesweaknoarg{mathreal}{no}
+  \magyar@yesweaknoarg{mond}{no}
+  \magyar@enumarg{ntheoremfix}{unchanged}
+  \magyar@enumarg{openqq}{unchanged}
+  \magyar@enumarg{partnumber}{unchanged}
+  \magyar@paragraphopt{postdescription}{unchanged}
+  \magyar@paragraphopt{postpara}{unchanged}
+  \magyar@paragraphopt{postsubpara}{unchanged}
+  \magyar@yesweaknoarg{refstruc}{no}
+  \magyar@enumarg{sectiondot}{none}
+  \magyar@opt@shorthandcs{none}
+  \magyar@enumarg{shortrefcmds}{no}
+  \magyar@enumarg{showfix}{unchanged}
+  \magyar@enumarg{suggestions}{yes}
+  \magyar@enumarg{tablecaptions}{unchanged}
+  \magyar@yesweaknoarg{textqq}{no}
+  \magyar@enumarg{theoremtitle}{unchanged}
+  \magyar@opt@titles{unchanged}
+  \magyar@enumarg{toclang}{unchanged}
+  \magyar@yesweaknoarg{told}{no}
+  \magyar@enumarg{varioref}{unchanged}
+  \magyar@enumarg{cjhebrewfix}{unchanged}
 }
 
 %** These defaults load almost all features, and try to do their best to make
 %** the document comply to the Hungarian typography standards. Full compliance
 %** is not achieved yet, and as new features are implemented, they will be
 %** added to these defaults.
-\def\magyar@opt@defaults@@prettiest{%
-  \magyar@opt@accents@@defaulthigh% {low} would have no effect with \usepackage{t1enc}
-  \magyar@opt@active@@safe
-  \magyar@opt@activeprefix{activeprefix}{babelopt2}%
-  \magyar@opt@activespace@@safe
-  \magyar@opt@afterindent@@unchanged% keep =force-no
-  \magyar@opt@amslevelfix{amslevelfix}{fix-ams}%
-  \magyar@opt@amsuppercasefix{amsuppercasefix}{fix-ams}%
-  \magyar@opt@amspostsectiondot@@no
-  \magyar@opt@amstocnumlang@@all
-  \magyar@opt@amstocnumskip{amstocnumskip}{\enskip}%
-  \magyar@opt@appendixdot@@no
-  \magyar@opt@az{az}{yes}%
-  \magyar@opt@captionfix@@yes
-  \magyar@opt@captions@@hu
-  \magyar@opt@chapternumber@@unchanged
-  \magyar@opt@classmod@@yes
-  \magyar@opt@dottedtocline@@fix
-  \magyar@opt@emitdate{emitdate}{yes}%
-  \magyar@opt@extras@@yes
-  \magyar@opt@chapterhead@@yes
-  \magyar@opt@fancyhdr@@hu
-  \magyar@opt@figurecaptions@@hu
-  \magyar@opt@footnote@@yes
-  \magyar@opt@frenchspacing@@yes
-  \magyar@opt@hang{hang}{yes}%
-  \magyar@opt@hunnewlabel@@yes
-  \magyar@opt@hunumbers@@yes
-  \magyar@opt@hutoday@@yes
-  \magyar@opt@hyphenation{hyphenation}{composite-or-any}%
-  \magyar@opt@hyphenmins{hyphenmins}{22}% Dat: Default LaTeX is {23}
-  \magyar@opt@labelenums{labelenums}{hu-a}%
-  \magyar@opt@labelitems@@hu
-  \magyar@opt@longcaption@@centered
-  \magyar@opt@mathbrk@@fix
-  \magyar@opt@mathhucomma@@fix
-  \magyar@opt@mathfactorial@@fix
-  \magyar@opt@mathmuskips@@hu
-  \magyar@opt@hynumberline@@hu
-  \magyar@opt@mathreal{mathreal}{yes}%
-  \magyar@opt@mond{mond}{yes}%
-  \magyar@opt@ntheoremfix@@yes
-  \magyar@opt@openqq@@maybedown
-  \magyar@opt@partnumber@@Huordinal
-  \magyar@opt@postdescription{postdescription}{dot}%
-  \magyar@opt@postpara{postpara}{diamond}%
-  \magyar@opt@postsubpara{postsubpara}{star}%
-  \magyar@opt@refstruc{refstruc}{yes}%
-  \magyar@opt@sectiondot@@safe
-  \magyar@opt@shorthandcs{shorthandcs}{\shu}%
-  \magyar@opt@shortrefcmds@@no
-  \magyar@opt@showfix@@yes
-  \magyar@opt@suggestions@@yes
-  \magyar@opt@tablecaptions@@hu
-  \magyar@opt@textqq{textqq}{yes}%
-  \magyar@opt@theoremtitle@@hu
-  \magyar@opt@titles{}{\enskip}%
-  \magyar@opt@toclang@@good
-  \magyar@opt@told{told}{yes}%
-  \magyar@opt@varioref@@hu
-  \magyar@opt@cjhebrewfix@@yes
+\def\magyar@opt@defaults@@prettiest{
+  \magyar@enumarg{accents}{defaulthigh}
+  \magyar@enumarg{active}{safe}
+  \magyar@enumarg{activeprefix}{babelopt2}
+  \magyar@enumarg{activespace}{safe}
+  \magyar@enumarg{afterindent}{unchanged}
+  \magyar@enumarg{amslevelfix}{fix-ams}
+  \magyar@enumarg{amsuppercasefix}{fix-ams}
+  \magyar@enumarg{amspostsectiondot}{no}
+  \magyar@enumarg{amstocnumlang}{all}
+  \magyar@opt@amstocnumskip{\enskip}
+  \magyar@enumarg{appendixdot}{no}
+  \magyar@yesweaknoarg{az}{yes}
+  \magyar@enumarg{captionfix}{yes}
+  \magyar@enumarg{captions}{hu}
+  \magyar@enumarg{chapternumber}{unchanged}
+  \magyar@opt@classmod{yes}
+  \magyar@enumarg{dottedtocline}{fix}
+  \magyar@yesweaknoarg{emitdate}{yes}
+  \magyar@enumarg{extras}{yes}
+  \magyar@enumarg{chapterhead}{yes}
+  \magyar@enumarg{fancyhdr}{hu}
+  \magyar@enumarg{figurecaptions}{hu}
+  \magyar@enumarg{footnote}{yes}
+  \magyar@enumarg{frenchspacing}{yes}
+  \magyar@yesweaknoarg{hang}{yes}
+  \magyar@enumarg{hunnewlabel}{yes}
+  \magyar@enumarg{hunumbers}{yes}
+  \magyar@enumarg{hutoday}{yes}
+  \magyar@enumarg{hyphenation}{composite-or-any}
+  \magyar@opt@hyphenmins{22}
+  \magyar@enumarg{labelenums}{hu-a}
+  \magyar@enumarg{labelitems}{hu}
+  \magyar@enumarg{longcaption}{centered}
+  \magyar@enumarg{mathbrk}{fix}
+  \magyar@enumarg{mathhucomma}{fix}
+  \magyar@enumarg{mathfactorial}{fix}
+  \magyar@enumarg{mathmuskips}{hu}
+  \magyar@enumarg{hynumberline}{hu}
+  \magyar@yesweaknoarg{mathreal}{yes}
+  \magyar@yesweaknoarg{mond}{yes}
+  \magyar@enumarg{ntheoremfix}{yes}
+  \magyar@enumarg{openqq}{maybedown}
+  \magyar@enumarg{partnumber}{Huordinal}
+  \magyar@paragraphopt{postdescription}{dot}
+  \magyar@paragraphopt{postpara}{diamond}
+  \magyar@paragraphopt{postsubpara}{star}
+  \magyar@yesweaknoarg{refstruc}{yes}
+  \magyar@enumarg{sectiondot}{safe}
+  \magyar@opt@shorthandcs{\shu}
+  \magyar@enumarg{shortrefcmds}{no}
+  \magyar@enumarg{showfix}{yes}
+  \magyar@enumarg{suggestions}{yes}
+  \magyar@enumarg{tablecaptions}{hu}
+  \magyar@yesweaknoarg{textqq}{yes}
+  \magyar@enumarg{theoremtitle}{hu}
+  \magyar@opt@titles{\enskip}
+  \magyar@enumarg{toclang}{good}
+  \magyar@yesweaknoarg{told}{yes}
+  \magyar@enumarg{varioref}{hu}
+  \magyar@enumarg{cjhebrewfix}{yes}
 }
 
 %** Expands to the \magyarOptions changes defaults=hu-min makes over
@@ -501,7 +583,7 @@
   mathreal=weak,
   mond=weak,
   ntheoremfix=yes,
-  openqq=maybedown,  % Not: openqq=unchanged
+  openqq=maybedown,
   postdescription=dot,
   postpara=diamond,
   postsubpara=star,
@@ -519,45 +601,41 @@
   varioref=hu,
 }
 
-%** Matches Hungarian typographic rules most closely -- and most
-%** simplistically (minimally).
+%** Matches Hungarian typographic rules most closely
+%** and most simplistically (minimally).
 \dMf magyar@opt@defaults@@hu-min {%
   \magyar@opt@defaults@@safest
-  \expandafter\magyar@doopt\magyar@@humin@options\hfuzz,%
+  \expandafter\magyar@setkeys\magyar@@humin@options\relax
 }
 
-\let\magyar@opt@defaults\magyar@enumarg
 \def\magyar@opt@safest@@yes{\magyar@opt@defaults@@safest}
 \def\magyar@opt@safest@@no{}
-\let\magyar@opt@safest\magyar@enumarg
 
 % Declare normal options.
 
-\def\magyar@opt@titles#1#2{\def\magyar@opt@@titleskip{#2}}
+\def\magyar@opt@titles#1{\def\magyar@opt@@titleskip{#1}}
 \def\@@magyar@twodigitcheck#1#2#3\hfuzz#4#5{%
   \csname if\ifnum0<0\string#1 \ifnum0<0\string#2 false\else true\fi\else true\fi\endcsname
     \@@magyar@error{Option #4 needs [1-9][1-9], got #1#2}%
   \fi
 }
-\def\magyar@opt@hyphenmins#1#2{%
-  \def\reserved@a{#2}%
+\def\magyar@opt@hyphenmins#1{%
+  \def\reserved@a{#1}%
   \ifx\reserved@a\magyar@@unchanged
     \let\magyar@opt@@hyphenmins\@empty
   \else
-    \@@magyar@twodigitcheck#2..\hfuzz{#1}{#2}%
-    \def\magyar@opt@@hyphenmins{#2}%
+    \@@magyar@twodigitcheck#1..\hfuzz{hyphenmins}{#1}%
+    \def\magyar@opt@@hyphenmins{#1}%
   \fi
 }
 
-\def\magyar@opt@amstocnumskip#1#2{\def\magyar@opt@@amstocnumskip{#2}}
+\def\magyar@opt@amstocnumskip#1{\def\magyar@opt@@amstocnumskip{#1}}
 \def\magyar@opt@amstocnumlang@@all{\def\magyar@opt@@amstocnumlang{2}}
 \def\magyar@opt@amstocnumlang@@hu {\def\magyar@opt@@amstocnumlang{1}}
-\let\magyar@opt@amstocnumlang\magyar@enumarg
 \def\magyar@opt@active@@none{\def\magyar@opt@@active{0}}
 \def\magyar@opt@active@@onlycs{\def\magyar@opt@@active{1}}
 \def\magyar@opt@active@@safe{\def\magyar@opt@@active{2}}
 \def\magyar@opt@active@@problematic{\def\magyar@opt@@active{3}}
-\let\magyar@opt@active\magyar@enumarg
 \def\magyar@opt@activeprefix@@none    {\let\magyar@opt@@activeprefix\relax}
 \def\magyar@opt@activeprefix@@acute   {\def\magyar@opt@@activeprefix{'}}
 \def\magyar@opt@activeprefix@@grave   {\def\magyar@opt@@activeprefix{`}}
@@ -574,15 +652,11 @@
     {\def\magyar@opt@@activeprefix{`}}%
     {\def\magyar@opt@@activeprefix{"}}}%
 }
-\let\magyar@opt@activeprefix\magyar@enumarg
 \def\magyar@opt@activespace@@none{\def\magyar@opt@@activespace{0}}
 \def\magyar@opt@activespace@@safe{\def\magyar@opt@@activespace{2}}
 \def\magyar@opt@activespace@@problematic{\def\magyar@opt@@activespace{3}}
-\let\magyar@opt@activespace\magyar@enumarg
 \def\magyar@opt@amspostsectiondot@@no       {\def\magyar@opt@@amspostsectiondot{1}}
 \def\magyar@opt@amspostsectiondot@@unchanged{\def\magyar@opt@@amspostsectiondot{0}}
-\let\magyar@opt@amspostsectiondot\magyar@enumarg
-\let\magyar@opt@hyphenation\magyar@enumarg
 \def\magyar@opt@hyphenation@@huhyphf  {\magyar@opt@hyphenation@@phonetic}
 \def\magyar@opt@hyphenation@@huhyphc  {\magyar@opt@hyphenation@@composite}
 \expandafter\ifx\csname @OFWO\endcsname\relax
@@ -607,260 +681,150 @@
 \def\magyar@opt@sectiondot@@none{\def\magyar@opt@@sectiondot{0}}
 \def\magyar@opt@sectiondot@@safe{\def\magyar@opt@@sectiondot{1}}
 \def\magyar@opt@sectiondot@@problematic{\def\magyar@opt@@sectiondot{2}}
-\let\magyar@opt@sectiondot\magyar@enumarg
 \def\magyar@opt@captions@@unchanged{\def\magyar@opt@@captions{0}}
 \def\magyar@opt@captions@@hu{\def\magyar@opt@@captions{1}}
-\let\magyar@opt@captions\magyar@enumarg
 \def\magyar@opt@varioref@@unchanged{\def\magyar@opt@@varioref{0}}
 \def\magyar@opt@varioref@@hu{\def\magyar@opt@@varioref{1}}
-\let\magyar@opt@varioref\magyar@enumarg
 \def\magyar@opt@cjhebrewfix@@unchanged{\def\magyar@opt@@cjhebrewfix{0}}
 \def\magyar@opt@cjhebrewfix@@onlyouter{\def\magyar@opt@@cjhebrewfix{1}}
 \def\magyar@opt@cjhebrewfix@@yes{\def\magyar@opt@@cjhebrewfix{2}}
-\let\magyar@opt@cjhebrewfix\magyar@enumarg
 \def\magyar@opt@fancyhdr@@unchanged{\def\magyar@opt@@fancyhdr{0}}
 \def\magyar@opt@fancyhdr@@hu{\def\magyar@opt@@fancyhdr{1}}
-\let\magyar@opt@fancyhdr\magyar@enumarg
 \def\magyar@opt@ntheoremfix@@unchanged{\def\magyar@opt@@ntheoremfix{0}}
 \def\magyar@opt@ntheoremfix@@yes{\def\magyar@opt@@ntheoremfix{1}}
-\let\magyar@opt@ntheoremfix\magyar@enumarg
 \def\magyar@opt@figurecaptions@@unchanged{\def\magyar@opt@@figurecaptions{0}}
 \def\magyar@opt@figurecaptions@@hu{\def\magyar@opt@@figurecaptions{1}}
 \def\magyar@opt@figurecaptions@@us{\def\magyar@opt@@figurecaptions{2}}
-\let\magyar@opt@figurecaptions\magyar@enumarg
 \def\magyar@opt@tablecaptions@@unchanged{\def\magyar@opt@@tablecaptions{0}}
 \def\magyar@opt@tablecaptions@@hu{\def\magyar@opt@@tablecaptions{1}}
 \def\magyar@opt@tablecaptions@@us{\def\magyar@opt@@tablecaptions{2}}
-\let\magyar@opt@tablecaptions\magyar@enumarg
 \def\magyar@opt@toclang@@unchanged{\def\magyar@opt@@toclang{0}}% same as =badall
 \def\magyar@opt@toclang@@badall{\def\magyar@opt@@toclang{0}}
 \def\magyar@opt@toclang@@badfloat{\def\magyar@opt@@toclang{1}}
 \def\magyar@opt@toclang@@good{\def\magyar@opt@@toclang{2}}
-\let\magyar@opt@toclang\magyar@enumarg
 \def\magyar@opt@mathbrk@@unchanged{\def\magyar@opt@@mathbrk{0}}
 \def\magyar@opt@mathbrk@@define{\def\magyar@opt@@mathbrk{1}}
 \def\magyar@opt@mathbrk@@fix{\def\magyar@opt@@mathbrk{2}}
-\let\magyar@opt@mathbrk\magyar@enumarg
 \def\magyar@opt@mathfactorial@@unchanged{\def\magyar@opt@@mathfactorial{0}}
 \def\magyar@opt@mathfactorial@@define{\def\magyar@opt@@mathfactorial{1}}
 \def\magyar@opt@mathfactorial@@fix{\def\magyar@opt@@mathfactorial{2}}
-\let\magyar@opt@mathfactorial\magyar@enumarg
 \def\magyar@opt@mathhucomma@@unchanged{\def\magyar@opt@@mathhucomma{0}}
 \def\magyar@opt@mathhucomma@@define{\def\magyar@opt@@mathhucomma{1}}
 \def\magyar@opt@mathhucomma@@fix{\def\magyar@opt@@mathhucomma{2}}
-\let\magyar@opt@mathhucomma\magyar@enumarg
 \def\magyar@opt@mathmuskips@@unchanged{\def\magyar@opt@@mathmuskips{0}}
 \def\magyar@opt@mathmuskips@@latex{\def\magyar@opt@@mathmuskips{1}}
 \def\magyar@opt@mathmuskips@@hu{\def\magyar@opt@@mathmuskips{2}}
-\let\magyar@opt@mathmuskips\magyar@enumarg
 \def\magyar@opt@hynumberline@@unchanged{\def\magyar@opt@@hynumberline{0}}
 \def\magyar@opt@hynumberline@@latex{\def\magyar@opt@@hynumberline{1}}
 \def\magyar@opt@hynumberline@@hu{\def\magyar@opt@@hynumberline{2}}
-\let\magyar@opt@hynumberline\magyar@enumarg
 \def\magyar@opt@hunnewlabel@@no {\def\magyar@opt@@hunnewlabel{0}}
 \dMf magyar@opt@hunnewlabel@@only-hu {\def\magyar@opt@@hunnewlabel{1}}
 \def\magyar@opt@hunnewlabel@@yes{\def\magyar@opt@@hunnewlabel{2}}
-\let\magyar@opt@hunnewlabel\magyar@enumarg
 \def\magyar@opt@partnumber@@unchanged{\def\magyar@opt@@partnumber{0}}
 \def\magyar@opt@partnumber@@huordinal{\def\magyar@opt@@partnumber{1}}
 \def\magyar@opt@partnumber@@Huordinal{\def\magyar@opt@@partnumber{2}}
-\let\magyar@opt@partnumber\magyar@enumarg
 \def\magyar@opt@chapternumber@@unchanged{\def\magyar@opt@@chapternumber{0}}
 \def\magyar@opt@chapternumber@@huordinal{\def\magyar@opt@@chapternumber{1}}
 \def\magyar@opt@chapternumber@@Huordinal{\def\magyar@opt@@chapternumber{2}}
-\let\magyar@opt@chapternumber\magyar@enumarg
 \def\magyar@opt@accents@@high{\def\magyar@opt@@umlaut{\umlauthigh}}
 \def\magyar@opt@accents@@low{\def\magyar@opt@@umlaut{\umlautlow\umlautelow}}
 \def\magyar@opt@accents@@defaulthigh{\let\magyar@opt@@umlaut\@empty}
-\let\magyar@opt@accents\magyar@enumarg
 \def\magyar@opt@longcaption@@centered{\def\magyar@caption@centering{\centering}\def\magyar@caption@newline{\ }}
 \def\magyar@opt@longcaption@@justified{\def\magyar@caption@centering{\relax}\def\magyar@caption@newline{\ }}
 \def\magyar@opt@longcaption@@centernewline{\def\magyar@caption@centering{\centering}\def\magyar@caption@newline{\\\relax}}
 \def\magyar@opt@longcaption@@none{\let\magyar@caption@centering\@empty}
 \def\magyar@opt@longcaption@@unchanged{\let\magyar@caption@centering\@empty}
-\let\magyar@opt@longcaption\magyar@enumarg
 \def\magyar@opt@suggestions@@no {\def\magyar@opt@@suggestions{0}}
 \def\magyar@opt@suggestions@@yes{\def\magyar@opt@@suggestions{1}}
-\let\magyar@opt@suggestions\magyar@enumarg
 \def\magyar@opt@appendixdot@@no {\def\@@magyar@appendixname{\appendixname}}
 \def\magyar@opt@appendixdot@@yes{\def\@@magyar@appendixname{}}
-\let\magyar@opt@appendixdot\magyar@enumarg
 \def\magyar@opt@extras@@no {\def\magyar@opt@@extras{0}}
 \def\magyar@opt@extras@@yes{\def\magyar@opt@@extras{1}}
-\let\magyar@opt@extras\magyar@enumarg
 \def\magyar@opt@chapterhead@@unchanged{\def\magyar@opt@@chapterhead{0}}
 \def\magyar@opt@chapterhead@@no{\def\magyar@opt@@chapterhead{0}}
 \def\magyar@opt@chapterhead@@yes{\def\magyar@opt@@chapterhead{1}}
-\let\magyar@opt@chapterhead\magyar@enumarg
 \def\magyar@opt@classmod@@no       {\let\magyar@opt@@classmod\relax}
 \def\magyar@opt@classmod@@unchanged{\let\magyar@opt@@classmod\relax}
 \def\magyar@opt@classmod@@yes      {\let\magyar@opt@@classmod\@empty}
-\def\magyar@opt@classmod#1#2{%
-  \expandafter\ifx\csname magyar@opt@#1@@#2\endcsname\relax
-    \@namedef{magyar@opt@@#1}{#2}%
+\def\magyar@opt@classmod#1{%
+  \expandafter\ifx\csname magyar@opt@classmod@@#1\endcsname\relax
+    \def\magyar@opt@@classmod{#1}%
   \else
-    \csname magyar@opt@#1@@#2\endcsname
+    \csname magyar@opt@classmod@@#1\endcsname
   \fi
 }
-\def\magyar@opt@shorthandcs#1#2{%
-  \def\reserved@a{#2}%
+\def\magyar@opt@shorthandcs#1{%
+  \def\reserved@a{#1}%
   \def\reserved@b{none}%
   \ifx\reserved@a\reserved@b
     \def\magyar@opt@@shorthandcs{0}% overridable
   \else
     \def\magyar@opt@@shorthandcs{1}%
-    \ifcat\hfuzz\noexpand#2\relax% #2 is \shu  \shu`tty is `tty
-      \def#2##1{\protect\@@magyar@shorthand}% Dat: ##1 is usually `_12
+    \ifcat\hfuzz\noexpand#1\relax% #1 is \shu  \shu`tty is `tty
+      \def#1##1{\protect\@@magyar@shorthand}% Dat: ##1 is usually `_12
     \else
-      \@namedef{#2}{\protect\@@magyar@shorthand}%
+      \@namedef{#1}{\protect\@@magyar@shorthand}%
     \fi
   \fi
 }
 \def\magyar@opt@hunumbers@@no{\def\magyar@opt@@hunumbers{0}}
 \def\magyar@opt@hunumbers@@yes{\def\magyar@opt@@hunumbers{1}}
-\let\magyar@opt@hunumbers\magyar@enumarg
-\let\magyar@opt@az\magyar@yesweaknoarg
-\let\magyar@opt@told\magyar@yesweaknoarg
-\let\magyar@opt@textqq\magyar@yesweaknoarg
-\let\magyar@opt@emitdate\magyar@yesweaknoarg
-\let\magyar@opt@mathreal\magyar@yesweaknoarg
-\let\magyar@opt@refstruc\magyar@yesweaknoarg
-\let\magyar@opt@mond\magyar@yesweaknoarg
-\let\magyar@opt@hang\magyar@yesweaknoarg
 \def\magyar@opt@theoremtitle@@unchanged{\def\magyar@opt@@theoremtitle{0}}
 \def\magyar@opt@theoremtitle@@hu{\def\magyar@opt@@theoremtitle{1}}
-\let\magyar@opt@theoremtitle\magyar@enumarg
 \def\magyar@opt@footnote@@unchanged{\def\magyar@opt@@footnote{0}}
 \def\magyar@opt@footnote@@yes{\def\magyar@opt@@footnote{1}}
 \def\magyar@opt@footnote@@huplain{\def\magyar@opt@@footnote{2}}
 \def\magyar@opt@footnote@@starplain{\def\magyar@opt@@footnote{3}}
-\let\magyar@opt@footnote\magyar@enumarg
 \def\magyar@opt@hutoday@@no{\def\magyar@opt@@hutoday{0}}
 \def\magyar@opt@hutoday@@yes{\def\magyar@opt@@hutoday{1}}
-\let\magyar@opt@hutoday\magyar@enumarg
 \def\magyar@opt@shortrefcmds@@no{\def\magyar@opt@@shortrefcmds{0}}
 \def\magyar@opt@shortrefcmds@@yes{\def\magyar@opt@@shortrefcmds{1}}
-\let\magyar@opt@shortrefcmds\magyar@enumarg
 \def\magyar@opt@dottedtocline@@fix{\def\magyar@opt@@dottedtocline{1}}
 \def\magyar@opt@dottedtocline@@unchanged{\def\magyar@opt@@dottedtocline{0}}
-\let\magyar@opt@dottedtocline\magyar@enumarg
-\let\magyar@opt@amslevelfix\magyar@enumarg
 \def\magyar@opt@amslevelfix@@unchanged{\def\magyar@opt@@amslevelfix{0}}
 \dMf magyar@opt@amslevelfix@@fix-ams  {\def\magyar@opt@@amslevelfix{1}}
 \dMf magyar@opt@amslevelfix@@fix-all  {\def\magyar@opt@@amslevelfix{2}}
-\let\magyar@opt@amsuppercasefix\magyar@enumarg
 \def\magyar@opt@amsuppercasefix@@unchanged{\def\magyar@opt@@amsuppercasefix{0}}
 \dMf magyar@opt@amsuppercasefix@@fix-ams  {\def\magyar@opt@@amsuppercasefix{1}}
 \dMf magyar@opt@amsuppercasefix@@fix-all  {\def\magyar@opt@@amsuppercasefix{2}}
-\let\magyar@opt@captionfix\magyar@enumarg
 \def\magyar@opt@captionfix@@unchanged{\def\magyar@opt@@captionfix{0}}
 \def\magyar@opt@captionfix@@yes      {\def\magyar@opt@@captionfix{1}}
-\let\magyar@opt@babelmarkfix\magyar@enumarg% babelmarkfix removed (babel 3.9+ no longer needs this)
-\def\magyar@opt@babelmarkfix@@unchanged{\PackageWarning{\CurrentOption}{Option `babelmarkfix' is obsolete; ignored}}
-\def\magyar@opt@babelmarkfix@@yes      {\PackageWarning{\CurrentOption}{Option `babelmarkfix' is obsolete; ignored}}
-\let\magyar@opt@showfix\magyar@enumarg
 \def\magyar@opt@showfix@@unchanged{\def\magyar@opt@@showfix{0}}
 \def\magyar@opt@showfix@@yes      {\def\magyar@opt@@showfix{1}}
 \def\magyar@opt@labelenums@@unchanged{\def\magyar@opt@@labelenums{0}}
 \dMf magyar@opt@labelenums@@hu-a     {\def\magyar@opt@@labelenums{1}}
 \dMf magyar@opt@labelenums@@hu-A     {\def\magyar@opt@@labelenums{2}}
 \dMf magyar@opt@labelenums@@hu-d     {\def\magyar@opt@@labelenums{3}}
-\let\magyar@opt@labelenums\magyar@enumarg
 \def\magyar@opt@labelitems@@unchanged{\def\magyar@opt@@labelitems{0}}
 \def\magyar@opt@labelitems@@hu       {\def\magyar@opt@@labelitems{1}}
-\let\magyar@opt@labelitems\magyar@enumarg
 \def\magyar@opt@openqq@@unchanged{\def\magyar@opt@@openqq{0}}
 \def\magyar@opt@openqq@@up{\def\magyar@opt@@openqq{1}}
 \def\magyar@opt@openqq@@down{\def\magyar@opt@@openqq{2}}
 \def\magyar@opt@openqq@@maybedown{\def\magyar@opt@@openqq{3}}
-\let\magyar@opt@openqq\magyar@enumarg
 \def\magyar@opt@frenchspacing@@unchanged{\def\magyar@opt@@frenchspacing{0}}% same as =no
 \def\magyar@opt@frenchspacing@@no {\def\magyar@opt@@frenchspacing{1}}
 \def\magyar@opt@frenchspacing@@yes{\def\magyar@opt@@frenchspacing{2}}
-\let\magyar@opt@frenchspacing\magyar@enumarg
 \dMf magyar@opt@afterindent@@force-no {\def\magyar@opt@@afterindent{0}}
 \dMf magyar@opt@afterindent@@force-yes {\def\magyar@opt@@afterindent{1}}
 \dMf magyar@opt@afterindent@@unchanged {\def\magyar@opt@@afterindent{9}}
-\let\magyar@opt@afterindent\magyar@enumarg
-\def\magyar@paragraphopt#1#2{%
-  \ifx#2\magyar@@unchanged\else
-    \expandafter\def\csname magyar@opt@@#1\endcsname{#2}%
-  \fi
-}
-\let\magyar@opt@postdescription\magyar@paragraphopt
-\let\magyar@opt@postpara\magyar@paragraphopt
-\let\magyar@opt@postsubpara\magyar@paragraphopt
 
 % --- Option processing code of \magyarOptions
-%
-% Example: \def\magyarOptions{titles=\quad,active=safe} \usepackage[magyar]{babel}
-% Dat: Babel has \languageoptions, but it is quite weak and it's too late
-% Dat: this is a complete rewrite based on examplep.sty
 
-%** @param #1 to gobble a space token
-%** @usage \magyar@doopt foo=bar,foo2=bar2,\hfuzz,%
-\def\magyar@doopt#1,{%
-  \if,\noexpand#1,% ignore multiple commas (#1 is empty)
-    \expandafter\magyar@doopt
-  \else
-    \csname fi\endcsname% don't count as `\fi' when being skipped
-    \magyar@doopt@low#1,=,%
-  \fi
-}
-\@gobble\iftrue% \def\magyar@doopt@low contains `\fi'. Make it skippable.
-\def\magyar@applyopt#1#2{\csname magyar@opt@#1\endcsname{#1}{#2}}%
-%** @param #1 is here for gobbling space tokens
-\def\magyar@doopt@low#1#2=#3,#4\fi{%
-  % Dat: Normal case: #1#2 is key, #3 is value, #4 is `=,'
-  % Dat: MissingArg case: #1#2 is `key,', #3 is empty, #4 is empty
-  % Dat: Terminator case: #1#2 is `\hfuzz,', #3 is empty, #4 is empty
-  % Dat: OnlySpace case: #1 is `,', #2 is empty, #3 is empty, #4 is empty
-  \ifx\relax#4\relax% MissingArg or Terminator
-    \ifx#1\hfuzz% Terminator
-    \else
-      \if,\noexpand#1\else% OnlySpace case
-        \if=\noexpand#1\magyar@doopt@missingkey#2% #2 already contains comma at end
-        \else          \magyar@doopt@missingval#1#2\fi
-      \fi
-      \expandafter\expandafter\expandafter\magyar@doopt
-    \fi
-  \else% Normal
-    \expandafter\ifx\csname magyar@opt@#1#2\endcsname\relax
-      \@@magyar@error{Unknown option: #1#2 (= #3)}%
-    \else
-      \magyar@applyopt{#1#2}{#3}%
-    \fi
-    \expandafter\magyar@doopt
-  \fi
-}
-\def\magyar@doopt@missingkey#1,{%
-  \@@magyar@error{Key missing for value: #1}%
-}
-\def\magyar@doopt@missingval#1,{%
-  \@@magyar@error{Value (=) missing for option: #1}%
-}
-%** Dat: Spaces and newlines at end of #1 are not ignored, so please prefix
-%**      them with a comma, e.g \magyar@doopts{foo=bar, }
-%** @param #1 comma-separated optoinname=value pairs
-%\def\magyar@doopts#1{\magyar@doopt #1,\hfuzz,}%
-
-\def\magyar@dooptions{%
-  \expandafter\ifx\csname opt@\CurrentOption.ldf.sty\endcsname\relax\else
-    % Usage: \PassOptionsToPackage{foo=bar}{magyar.ldf}
-    \expandafter\expandafter\expandafter
-    \magyar@doopt\csname opt@\CurrentOption.ldf.sty\endcsname,\hfuzz,%
-   \expandafter\let\csname opt@\CurrentOption.ldf.sty\endcsname\relax
-  \fi
-  \expandafter\ifx\csname \CurrentOption Options\endcsname\relax\else% \magyarOptions
-    \expandafter\expandafter\expandafter
-    \magyar@doopt\csname\CurrentOption Options\endcsname,\hfuzz,%
-    \expandafter\let\csname \CurrentOption Options\endcsname\relax
-  \fi
-}
-
-\magyar@opt@defaults{defaults}{over-1.4}  % defaults=over-1.4 by default
+\magyar@enumarg{defaults}{over-1.4}  % defaults=over-1.4 by default
 \def\magyar@opt@@hdrtitleskip{\enskip}% !! option for that
-\magyar@dooptions% in \magyarOptions
+
+\expandafter\ifx\csname opt@\CurrentOption.ldf.sty\endcsname\relax\else
+  \expandafter\expandafter\expandafter
+  \magyar@setkeys\csname opt@\CurrentOption.ldf.sty\endcsname\relax
+  \expandafter\let\csname opt@\CurrentOption.ldf.sty\endcsname\relax
+\fi
+
+\expandafter\ifx\csname \CurrentOption Options\endcsname\relax\else
+  \expandafter\expandafter\expandafter
+  \magyar@setkeys\csname \CurrentOption Options\endcsname\relax
+  \expandafter\let\csname \CurrentOption Options\endcsname\relax
+\fi
+
 \ifnum\magyar@opt@@openqq=3 % =maybedown
   \ifnum\magyar@opt@@active=0
     \def\magyar@opt@@openqq{0}% =unchanged
@@ -1759,7 +1723,6 @@
     \fi}
   \@gobble
 {^}%
-
 
 % --- shortrefcmds=
 
