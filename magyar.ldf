@@ -189,7 +189,6 @@
 %**     sectiondot=safe,           % or =none or =problematic
 %**     shorthandcs=\shu,          % or =none or a csname or a \cs, e.g shorthandcs=\shu
 %**     shortrefcmds=yes,          % or =no
-%**     showfix=yes,               % or =unchanged
 %**     suggestions=yes,           % or =no
 %**     tablecaptions=hu,          % or =us or =unchanged
 %**     textqq=weak,               % or =no or =yes
@@ -241,7 +240,6 @@
   safest.code            = \magyar@enumarg{safest}{#1},%            no(no effect),yes(is equivalent to defaults=safest)
   sectiondot.code        = \magyar@enumarg{sectiondot}{#1},%        safe,none,problematic
   shortrefcmds.code      = \magyar@enumarg{shortrefcmds}{#1},%      yes,no
-  showfix.code           = \magyar@enumarg{showfix}{#1},%           yes,unchanged
   suggestions.code       = \magyar@enumarg{suggestions}{#1},%       yes,no
   tablecaptions.code     = \magyar@enumarg{tablecaptions}{#1},%     hu,us,unchanged
   theoremtitle.code      = \magyar@enumarg{theoremtitle}{#1},%      hu,unchanged
@@ -269,6 +267,7 @@
   %
   babelmarkfix.code      = \PackageWarningNoLine{\CurrentOption}{The `babelmarkfix' option is deprecated and has no effect},% babel 3.9+ no longer needs this
   captionfix.code        = \PackageWarningNoLine{\CurrentOption}{The `captionfix' option is deprecated and has no effect},%   caption package no longer needs this
+  showfix.code           = \PackageWarningNoLine{\CurrentOption}{The `showfix' option is deprecated and has no effect},%      ucsencs.def no longer needs this
 }
 
 \def\magyar@setkeys#1\relax{\SetKeys[babel-magyar]{#1}}
@@ -327,7 +326,6 @@
   \magyar@enumarg{sectiondot}{safe}
   \magyar@opt@shorthandcs{\shu}
   \magyar@enumarg{shortrefcmds}{yes}
-  \magyar@enumarg{showfix}{yes}
   \magyar@enumarg{suggestions}{yes}
   \magyar@enumarg{tablecaptions}{hu}
   \magyar@yesweaknoarg{textqq}{weak}
@@ -398,7 +396,6 @@
   \magyar@enumarg{sectiondot}{safe}
   \magyar@opt@shorthandcs{none}
   \magyar@enumarg{shortrefcmds}{yes}
-  \magyar@enumarg{showfix}{yes}
   \magyar@enumarg{suggestions}{no}
   \magyar@enumarg{tablecaptions}{hu}
   \magyar@yesweaknoarg{textqq}{no}
@@ -462,7 +459,6 @@
   \magyar@enumarg{sectiondot}{none}
   \magyar@opt@shorthandcs{none}
   \magyar@enumarg{shortrefcmds}{no}
-  \magyar@enumarg{showfix}{unchanged}
   \magyar@enumarg{suggestions}{yes}
   \magyar@enumarg{tablecaptions}{unchanged}
   \magyar@yesweaknoarg{textqq}{no}
@@ -528,7 +524,6 @@
   \magyar@enumarg{sectiondot}{safe}
   \magyar@opt@shorthandcs{\shu}
   \magyar@enumarg{shortrefcmds}{no}
-  \magyar@enumarg{showfix}{yes}
   \magyar@enumarg{suggestions}{yes}
   \magyar@enumarg{tablecaptions}{hu}
   \magyar@yesweaknoarg{textqq}{yes}
@@ -586,7 +581,6 @@
   sectiondot=safe,
   shorthandcs=\shu,
   shortrefcmds=yes,
-  showfix=yes,
   tablecaptions=hu,
   textqq=weak,
   theoremtitle=hu,
@@ -782,8 +776,6 @@
 \def\magyar@opt@amsuppercasefix@@unchanged{\def\magyar@opt@@amsuppercasefix{0}}
 \dMf magyar@opt@amsuppercasefix@@fix-ams  {\def\magyar@opt@@amsuppercasefix{1}}
 \dMf magyar@opt@amsuppercasefix@@fix-all  {\def\magyar@opt@@amsuppercasefix{2}}
-\def\magyar@opt@showfix@@unchanged{\def\magyar@opt@@showfix{0}}
-\def\magyar@opt@showfix@@yes      {\def\magyar@opt@@showfix{1}}
 \def\magyar@opt@labelenums@@unchanged{\def\magyar@opt@@labelenums{0}}
 \dMf magyar@opt@labelenums@@hu-a     {\def\magyar@opt@@labelenums{1}}
 \dMf magyar@opt@labelenums@@hu-A     {\def\magyar@opt@@labelenums{2}}
@@ -1662,32 +1654,6 @@
   % textcase.sty is not available by default (Ubuntu 8.04 TeX Live), and
   % newer amsart.cls doesn't have this bug (\'\i gets capitalized properly)
   \AtEndOfPackage{\IfFileExists{textcase.sty}{\RequirePackage{textcase}}{}}
-  \@gobble
-{^}%
-
-% --- showfix=
-%
-% Fix stupid \def\show{...} in AtBeginDocument in ucsencs.def by restoring the original
-% definition.
-
-\ifnum0<0%
-  \magyar@opt@@showfix\relax
-\space\else\@@magyar@skiplong\fi
-  \def\magyar@stripcolon#1:#2\vfuzz{#2}%
-  \def\magyar@show@begin@fix{%
-    \edef\reserved@a{\expandafter\magyar@stripcolon\meaning\show:\vfuzz}%
-    \ifx\reserved@a\@empty\else % \show is a macro
-      \let\show\@@magyar@orig@show
-    \fi
-  }
-  \edef\reserved@a{\expandafter\magyar@stripcolon\meaning\show:\vfuzz}%
-  \ifx\reserved@a\@empty % \show is not a macro
-    \let\@@magyar@orig@show\show
-    \expandafter\gdef\expandafter\@preamblecmds\expandafter{%
-      \expandafter\magyar@show@begin@fix\@preamblecmds}%
-    %\show\@begindocumenthook
-    %\AtBeginDocument{\magyar@show@begin@fix}%
-  \fi
   \@gobble
 {^}%
 
