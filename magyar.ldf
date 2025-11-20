@@ -126,7 +126,6 @@
 %**     amspostsectiondot=no,      % or =unchanged
 %**     appendixdot=yes,           % or =no
 %**     az=weak,                   % or =yes or =no
-%**     captionfix=yes,            % or =unchanged
 %**     captions=hu,               % or =unchanged
 %**     chapterhead=yes,           % or =unchanged(=no)
 %**     chapternumber=unchanged,   % see partnumber=
@@ -267,7 +266,6 @@
   \magyar@opt@amstocnumskip{\enskip}
   \magyar@enumarg{appendixdot}{yes}
   \magyar@yesweaknoarg{az}{weak}
-  \magyar@enumarg{captionfix}{yes}
   \magyar@enumarg{captions}{hu}
   \magyar@enumarg{chapternumber}{unchanged}
   \magyar@opt@classmod{yes}
@@ -339,7 +337,6 @@
   \magyar@opt@amstocnumskip{}
   \magyar@enumarg{appendixdot}{yes}
   \magyar@yesweaknoarg{az}{yes}
-  \magyar@enumarg{captionfix}{unchanged}
   \magyar@enumarg{captions}{hu}
   \magyar@enumarg{chapterhead}{yes}
   \magyar@enumarg{chapternumber}{unchanged}
@@ -404,7 +401,6 @@
   \magyar@opt@amstocnumskip{}
   \magyar@enumarg{appendixdot}{yes}
   \magyar@yesweaknoarg{az}{no}
-  \magyar@enumarg{captionfix}{yes}
   \magyar@enumarg{captions}{unchanged}
   \magyar@enumarg{chapternumber}{unchanged}
   \magyar@opt@classmod{unchanged}
@@ -471,7 +467,6 @@
   \magyar@opt@amstocnumskip{\enskip}
   \magyar@enumarg{appendixdot}{no}
   \magyar@yesweaknoarg{az}{yes}
-  \magyar@enumarg{captionfix}{yes}
   \magyar@enumarg{captions}{hu}
   \magyar@enumarg{chapternumber}{unchanged}
   \magyar@opt@classmod{yes}
@@ -763,8 +758,6 @@
 \def\magyar@opt@amsuppercasefix@@unchanged{\def\magyar@opt@@amsuppercasefix{0}}
 \dMf magyar@opt@amsuppercasefix@@fix-ams  {\def\magyar@opt@@amsuppercasefix{1}}
 \dMf magyar@opt@amsuppercasefix@@fix-all  {\def\magyar@opt@@amsuppercasefix{2}}
-\def\magyar@opt@captionfix@@unchanged{\def\magyar@opt@@captionfix{0}}
-\def\magyar@opt@captionfix@@yes      {\def\magyar@opt@@captionfix{1}}
 \def\magyar@opt@showfix@@unchanged{\def\magyar@opt@@showfix{0}}
 \def\magyar@opt@showfix@@yes      {\def\magyar@opt@@showfix{1}}
 \def\magyar@opt@labelenums@@unchanged{\def\magyar@opt@@labelenums{0}}
@@ -1671,32 +1664,6 @@
     %\show\@begindocumenthook
     %\AtBeginDocument{\magyar@show@begin@fix}%
   \fi
-  \@gobble
-{^}%
-
-% --- captionfix=
-%
-% Fix ``1. ábra'' order in \caption defined by caption.sty 2004/07/16 v3.0c.
-%
-% The manual fix would be:
-%
-%  \DeclareCaptionLabelFormat{simpleMagyar}{#2.\bothIfSecond{\nobreakspace}{#1}}
-%  \let\caption@lfmt\caption@lfmt@simpleMagyar
-%
-
-\if0\magyar@opt@@captionfix\@@magyar@skiplong\fi
-  \def\@@magyar@captionfix{\@ifundefined{caption@lfmt}{}{%
-    % Dat: only in preamble:  \DeclareCaptionLabelFormat{simpleMagyar}{#2.\bothIfSecond{\nobreakspace}{#1}}
-    \def\caption@lfmt@simpleMagyar##1##2{##2.\bothIfSecond{\nobreakspace}{##1}}%
-  }}
-  \AtBeginDocument{\@@magyar@captionfix}
-  \expandafter\addto\csname extras\CurrentOption\endcsname{%
-    \ifx\caption@lfmt\caption@lfmt@default % Imp: not if both undefined
-      \ifx\caption@lfmt@simpleMagyar\@undefined\else
-	\babel@save\caption@lfmt
-	\let\caption@lfmt\caption@lfmt@simpleMagyar
-      \fi
-    \fi}
   \@gobble
 {^}%
 
