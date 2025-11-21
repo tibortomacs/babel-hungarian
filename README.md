@@ -10,7 +10,7 @@ Hungarian typography in LaTeX in this TUG 2004 article:
 There is a longer user manual in Hungarian:
 [http://math.bme.hu/latex/magyarldf-doc.pdf](http://math.bme.hu/latex/magyarldf-doc.pdf)
 
-Usage:
+To typeset text in Hungarian, please in the preamble, use
 
     \usepackage[T1]{fontenc}% only needed for latex/pdflatex
     \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}

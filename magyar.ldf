@@ -27,7 +27,7 @@
 %   Árpád Bíró
 %   József Bérces (version 1.4c - 2001; contains a lot of work of him)
 %
-% To typeset text in Hungarian, please in the document preamble, use
+% To typeset text in Hungarian, please in the preamble, use
 %
 %      \usepackage[T1]{fontenc}% only needed for latex/pdflatex
 %      \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}
