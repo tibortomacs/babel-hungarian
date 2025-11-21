@@ -129,6 +129,12 @@
   \fi
 }
 
+% \magyar@deprecatedopt{foo}                   --> in log: The 'foo' option is deprecated and has no effect
+% \magyar@deprecatedopt{foo}[Do not use 'foo'] --> in log: Do not use 'foo'
+\def\magyar@deprecatedopt@@#1[#2]{\PackageWarningNoLine{\CurrentOption}{#2}}
+\def\magyar@deprecatedopt@#1{\PackageWarningNoLine{\CurrentOption}{The '#1' option is deprecated and has no effect}}
+\def\magyar@deprecatedopt#1{\@ifnextchar[{\magyar@deprecatedopt@@{#1}}{\magyar@deprecatedopt@{#1}}}
+
 % Declare defaults.
 
 %** These defaults load most of the new functionality, but try not to
@@ -265,9 +271,9 @@
   shorthandcs.code       = \magyar@opt@shorthandcs{#1},%   <command>,none
   titles.code            = \magyar@opt@titles{#1},%        unchanged,<command>
   %
-  babelmarkfix.code      = \PackageWarningNoLine{\CurrentOption}{The `babelmarkfix' option is deprecated and has no effect},% babel 3.9+ no longer needs this
-  captionfix.code        = \PackageWarningNoLine{\CurrentOption}{The `captionfix' option is deprecated and has no effect},%   caption package no longer needs this
-  showfix.code           = \PackageWarningNoLine{\CurrentOption}{The `showfix' option is deprecated and has no effect},%      ucsencs.def no longer needs this
+  babelmarkfix.code      = \magyar@deprecatedopt{babelmarkfix},% babel 3.9+ no longer needs this
+  captionfix.code        = \magyar@deprecatedopt{captionfix},%   caption package no longer needs this
+  showfix.code           = \magyar@deprecatedopt{showfix},%      ucsencs.def no longer needs this
 }
 
 \def\magyar@setkeys#1\relax{\SetKeys[babel-magyar]{#1}}
