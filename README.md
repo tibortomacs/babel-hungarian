@@ -13,18 +13,19 @@ There is a longer user manual in Hungarian:
 Usage:
 
     \usepackage[T1]{fontenc}% when using pdflatex
-    \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}
+    \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}
     \usepackage[hungarian]{babel}
 
 or
 
     \usepackage[T1]{fontenc}% when using pdflatex
-    \PassOptionsToPackage{defaults=hu-min}{magyar.ldf}
+    \PassOptionsToPackage{defaults=hu-min}{magyar.ldf}% or \def\magyarOptions{defaults=hu-min}
     \usepackage[magyar]{babel}
 
 or
 
     \DocumentMetadata{lang=hu}
     \documentclass{...}
-    \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}
+    \usepackage[T1]{fontenc}% when using pdflatex
+    \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}
     \usepackage{babel}

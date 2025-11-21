@@ -54,16 +54,17 @@
 % To typeset text in Hungarian, please in the document preamble, use
 %
 %      \usepackage[T1]{fontenc}% when using pdflatex
-%      \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}
+%      \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}
 %      \usepackage[hungarian]{babel}
 % or
 %      \usepackage[T1]{fontenc}% when using pdflatex
-%      \PassOptionsToPackage{defaults=hu-min}{magyar.ldf}
+%      \PassOptionsToPackage{defaults=hu-min}{magyar.ldf}% or \def\magyarOptions{defaults=hu-min}
 %      \usepackage[magyar]{babel}
 % or
 %      \DocumentMetadata{lang=hu}
 %      \documentclass{...}
-%      \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}
+%      \usepackage[T1]{fontenc}% when using pdflatex 
+%      \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}
 %      \usepackage{babel}
 
 \ProvidesLanguage{\CurrentOption}[2025/11/21 v1.6a Hungarian support from the babel system]
