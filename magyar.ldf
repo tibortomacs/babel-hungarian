@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2025/11/20 v1.6a Hungarian support from the babel system]
+%%        [2025/11/21 v1.6a Hungarian support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2026
@@ -66,7 +66,7 @@
 %      \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}
 %      \usepackage{babel}
 
-\ProvidesLanguage{\CurrentOption}[2025/11/20 v1.6a Hungarian support from the babel system]
+\ProvidesLanguage{\CurrentOption}[2025/11/21 v1.6a Hungarian support from the babel system]
 
 \LdfInit{\CurrentOption}{captions\CurrentOption}
 
@@ -537,7 +537,7 @@
 
 %** Expands to the \magyarOptions changes defaults=hu-min makes over
 %** defaults=safest.
-\def\magyar@@humin@options{%
+\def\magyar@@humin@options{
   active=safe,
   activeprefix=babelopt2,
   activespace=safe,
@@ -587,7 +587,7 @@
   titles=\enskip,
   toclang=good,
   told=weak,
-  varioref=hu,
+  varioref=hu% There should be no commas or spaces at the end of the line because of the \magyarDumpHuMin
 }
 
 %** Matches Hungarian typographic rules most closely
@@ -595,6 +595,19 @@
 \dMf magyar@opt@defaults@@hu-min {%
   \magyar@opt@defaults@@safest
   \expandafter\magyar@setkeys\magyar@@humin@options\relax
+}
+
+% \magyarDumpHuMin writes a code to the log file that you can use to test the 'defaults=hu-min' option.
+\def\magyarDumpHuMin{%
+  \begingroup%
+  \typeout{^^J\expandafter\@gobble\string\% for testing the 'defaults=hu-min' option}%
+  \typeout{\string\def\string\magyarOptions\expandafter\@gobble\string\{}%
+  \typeout{\space\space\space defaults=safest,}%
+  \@for\reserved@a:=\magyar@@humin@options%
+    \do{\typeout{\space\space\expandafter\strip@prefix\meaning\reserved@a,}}%
+  \typeout{\expandafter\@gobble\string\}}%
+  \typeout{\string\usepackage[magyar]{babel}^^J}%
+  \endgroup%
 }
 
 \def\magyar@opt@safest@@yes{\magyar@opt@defaults@@safest}
