@@ -51,7 +51,7 @@
 % code from the earlier versions anymore. However, its default configuration
 % tries to be compatible with older versions.
 %
-% To typeset text in Hungarian, please in the document preamble, use
+% To typeset text in Hungarian, please in the preamble, use
 %
 %      \usepackage[T1]{fontenc}% only needed for latex/pdflatex
 %      \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}
