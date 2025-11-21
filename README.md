@@ -37,22 +37,22 @@ or
 
 ### v1.5e (unreleased)
 
-- Remove support for `\input magyar.ldf`. This is a bad practice, it is better if the compilation fails.
-- `\ProvidesLanguage` and `\LdfInit` without unnecessary `\expandafters`.
+- Remove support for `\input magyar.ldf`. This is poor practice; it is better if the compilation fails.
+- Remove the unnecessary `\expandafter` from `\ProvidesLanguage` and `\LdfInit`.
 - Delete `\magyar@do@option@low`.
-- Fix: The `defaults=safest` option generates bad `\today` command.
-- Fix: `babelmarkfix=yes` option generates test characters in the header of empty pages with newer babel versions. It lost its original function with newer babel versions anyway, so the option has been removed, with a warning about it.
-- Fix: `\DocumentMetadata{lang=hu}` crashed with `\@@magyar@mathbins@tabularfix` in some cases.
+- Fix: the `defaults=safest` option generates bad `\today` command.
+- Fix: the `babelmarkfix=yes` option generates test characters in the header of empty pages with newer babel versions. This option has been removed with a warning as it lost its original function with newer babel versions anyway.
+- Fix: `\DocumentMetadata{lang=hu}` crashed in some cases with `\@@magyar@mathbins@tabularfix`.
 - Remove the deprecated `captionfix` and `showfix` options, with a warning about them.
 - New option handling using `\DeclareKeys`.
-- Redefining `\hungarianDumpHuMin` due to new option handling.
-- Using `\magyar@deprecatedopt` for deprecated option group.
+- Redefine `\hungarianDumpHuMin` due to the new option handling.
+- Using `\magyar@deprecatedopt` for the deprecated option group.
 
 ### v1.5d (2025/05/02)
 
-- Fix: `magyar.ldf` interferes with the anchors `hyperref` creates for theorem-like environments, so cross-references jump to the wrong location. When `amsthm` is also loaded, the interaction produces duplicate PDF destination names.
+- Fix: `magyar.ldf` interferes with the anchors created by `hyperref` for theorem-like environments, causing cross-references to jump to the wrong location. When the `amsthm` package is also loaded, duplicate PDF destination names are produced.
 - Instead of `t1enc`, we recommend the `fontenc` package with the `T1` option.
-- Remove recommendation for `latin2` input encoding.
+- Remove the recommendation for the `latin2` input encoding.
 
 ---
 
