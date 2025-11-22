@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2025/11/21 v1.6a Hungarian support from the babel system]
+%%        [2025/11/22 v1.6a Hungarian support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2026
@@ -46,28 +46,11 @@
 %
 % This work has the LPPL maintenance status `maintained'.
 %
-% magyar.ldf 1.5 is based on magyar.ldf 1.4. However, it has been totally
-% rewritten and extended (just compare the file sizes), and it doesn't share
-% code from the earlier versions anymore. However, its default configuration
-% tries to be compatible with older versions.
-%
-% To typeset text in Hungarian, please in the preamble, use
-%
-%      \usepackage[T1]{fontenc}% only needed for latex/pdflatex
-%      \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}
-%      \usepackage[hungarian]{babel}
-% or
-%      \usepackage[T1]{fontenc}% only needed for latex/pdflatex
-%      \PassOptionsToPackage{defaults=hu-min}{magyar.ldf}% or \def\magyarOptions{defaults=hu-min}
-%      \usepackage[magyar]{babel}
-% or
-%      \DocumentMetadata{lang=hu}
-%      \documentclass{...}
-%      \usepackage[T1]{fontenc}% only needed for latex/pdflatex 
-%      \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}
-%      \usepackage{babel}
+% Please report errors to: Tibor Tómács
+%                     via: https://github.com/tibortomacs/babel-hungarian
+%                   email: tomacs.tibor@gmail.com
 
-\ProvidesLanguage{\CurrentOption}[2025/11/21 v1.6a Hungarian support from the babel system]
+\ProvidesLanguage{\CurrentOption}[2025/11/22 v1.6a Hungarian support from the babel system]
 
 \LdfInit{\CurrentOption}{captions\CurrentOption}
 
