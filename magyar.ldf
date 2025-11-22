@@ -55,7 +55,6 @@
 \LdfInit{\CurrentOption}{captions\CurrentOption}
 
 % Fix \catcodes{} possibly screwed up by other Babel languages.
-% Dat: \string`\string! could have been written as \string`!
 \edef\@@magyar@restcats{%
   \catcode\string`\string`\the\catcode\string``\space\space
   \catcode\string`\string!\the\catcode\string`!\space\space
@@ -78,7 +77,7 @@
 
 \edef\@@magyar@error#1{\noexpand\PackageError{\CurrentOption.ldf}{#1}\noexpand\@ehc}
 
-%** \dMf foo-bar {...} is equivalent to \@namedef{foo-bar}{...}
+% \dMf foo-bar {...} is equivalent to \@namedef{foo-bar}{...}
 \def\dMf#1 {\expandafter\def\csname#1\endcsname}
 
 % \magyar@opt@defaults used to be a defined command for the 'defaults=...' option.
@@ -584,8 +583,6 @@
 \def\magyar@opt@safest@@yes{\magyar@opt@defaults@@safest}
 \def\magyar@opt@safest@@no{}
 
-% Declare normal options.
-
 \def\magyar@opt@titles#1{\def\magyar@opt@@titleskip{#1}}
 \def\@@magyar@twodigitcheck#1#2#3\hfuzz#4#5{%
   \csname if\ifnum0<0\string#1 \ifnum0<0\string#2 false\else true\fi\else true\fi\endcsname
@@ -816,8 +813,11 @@
     \magyar@opt@@active2 % active=safe
   \fi
 \fi
-% Imp: undef \magyar\@opt@* to save memory
 
+% Helper macro to skip long code sections more robustly than a plain
+% \if...\fi: it retunes catcodes so TeX ignores everything up to a marker
+% line without fully tokenizing it, saving hash memory and avoiding issues
+% with stray conditionals or special characters in the skipped part.
 \@gobble\iftrue
 %** Usage: `\if...\else\@@magyar@skiplong\fi ... \@gobble{^}', where {^} is in
 %** its own line
@@ -834,6 +834,8 @@
 }
 \@gobble\fi
 
+% Initialize the per-language extras hook for \CurrentOption so that
+% later \addto\csname extras\CurrentOption\endcsname calls have a base to extend.
 \@namedef{extras\CurrentOption}{}%
 
 % --- hyphenation=
@@ -1050,9 +1052,6 @@
 % --- Definite articles (\az, \pageref -> \apageref etc.)
 
 \if0\magyar@opt@@az \@@magyar@skiplong\fi
-
-\makeatletter
-
 %** modified by pts at Fri Oct  3 22:19:13 CEST 2003
 %** @param #1 tokens, will be \edef\vfuzz'ed
 \def\@@magyar@az@vfuzzedef#1{%
@@ -5572,6 +5571,6 @@
 % No: \@makecaption in frenchb.ldf -> magyar.ldf
 
 \@@magyar@restcats
-\endinput% of magyar.ldf
+\endinput
 %%
 %% End of file `magyar.ldf'.
