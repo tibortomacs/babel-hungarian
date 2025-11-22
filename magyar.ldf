@@ -534,7 +534,7 @@
   titles=\enskip,
   toclang=good,
   told=weak,
-  varioref=hu% There should be no commas or spaces at the end of the line because of the \magyarDumpHuMin
+  varioref=hu,
 }
 
 %** Matches Hungarian typographic rules most closely
@@ -551,7 +551,7 @@
   \typeout{\string\def\string\magyarOptions\expandafter\@gobble\string\{}%
   \typeout{\space\space\space defaults=safest,}%
   \@for\reserved@a:=\magyar@@humin@options%
-    \do{\typeout{\space\space\expandafter\strip@prefix\meaning\reserved@a,}}%
+    \do{\ifx\reserved@a\space\else\typeout{\space\space\expandafter\strip@prefix\meaning\reserved@a,}\fi}%
   \typeout{\expandafter\@gobble\string\}}%
   \typeout{\string\usepackage[magyar]{babel}^^J}%
   \endgroup%
