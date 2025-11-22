@@ -119,7 +119,6 @@
 %**     captions=hu,               % or =unchanged
 %**     chapterhead=yes,           % or =unchanged(=no)
 %**     chapternumber=unchanged,   % see partnumber=
-%**     cjhebrewfix=yes,           % or =unchanged or =onlyouter
 %**     classmod=yes,              % or =unchanged(=no) or TeX class name
 %**     %defaults=over-1.4,        % or =compat-1.4 or =safest or =prettiest or =hu-min
 %**     dottedtocline=fix,         % or =unchanged
@@ -180,7 +179,6 @@
   captions.code          = \magyar@enumarg{captions}{#1},%          hu,unchanged
   chapterhead.code       = \magyar@enumarg{chapterhead}{#1},%       yes,unchanged(=no)
   chapternumber.code     = \magyar@enumarg{chapternumber}{#1},%     unchanged,huordinal,Huordinal
-  cjhebrewfix.code       = \magyar@enumarg{cjhebrewfix}{#1},%       yes,unchanged,onlyouter
   defaults.code          = \magyar@enumarg{defaults}{#1},%          over-1.4(default),compat-1.4,prettiest,safest,hu-min
   dottedtocline.code     = \magyar@enumarg{dottedtocline}{#1},%     fix,unchanged
   extras.code            = \magyar@enumarg{extras}{#1},%            yes,no
@@ -233,6 +231,7 @@
   %
   babelmarkfix.code      = \magyar@deprecatedopt{babelmarkfix},% babel 3.9+ no longer needs this
   captionfix.code        = \magyar@deprecatedopt{captionfix},%   caption package no longer needs this
+  cjhebrewfix.code       = \magyar@deprecatedopt{cjhebrewfix}[{The 'cjhebrewfix' option has been deprecated. Use the 'active=onlycs' option instead}],
   showfix.code           = \magyar@deprecatedopt{showfix},%      ucsencs.def no longer needs this
 }
 
@@ -300,7 +299,6 @@
   \magyar@enumarg{toclang}{good}
   \magyar@yesweaknoarg{told}{weak}
   \magyar@enumarg{varioref}{hu}
-  \magyar@enumarg{cjhebrewfix}{yes}
 }
 
 %** These defaults try to be compatible with magyar.ldf v1.4 as much as
@@ -370,7 +368,6 @@
   \magyar@enumarg{toclang}{good}
   \magyar@yesweaknoarg{told}{no}
   \magyar@enumarg{varioref}{hu}
-  \magyar@enumarg{cjhebrewfix}{yes}
 }
 
 %** These defaults turn of most features -- the effect is similar to as if
@@ -433,7 +430,6 @@
   \magyar@enumarg{toclang}{unchanged}
   \magyar@yesweaknoarg{told}{no}
   \magyar@enumarg{varioref}{unchanged}
-  \magyar@enumarg{cjhebrewfix}{unchanged}
 }
 
 %** These defaults load almost all features, and try to do their best to make
@@ -498,7 +494,6 @@
   \magyar@enumarg{toclang}{good}
   \magyar@yesweaknoarg{told}{yes}
   \magyar@enumarg{varioref}{hu}
-  \magyar@enumarg{cjhebrewfix}{yes}
 }
 
 %** Expands to the \magyarOptions changes defaults=hu-min makes over
@@ -515,7 +510,6 @@
   az=weak,
   captions=hu,
   chapterhead=yes,
-  cjhebrewfix=yes,
   classmod=yes,
   dottedtocline=fix,
   emitdate=weak,
@@ -653,9 +647,6 @@
 \def\magyar@opt@captions@@hu{\def\magyar@opt@@captions{1}}
 \def\magyar@opt@varioref@@unchanged{\def\magyar@opt@@varioref{0}}
 \def\magyar@opt@varioref@@hu{\def\magyar@opt@@varioref{1}}
-\def\magyar@opt@cjhebrewfix@@unchanged{\def\magyar@opt@@cjhebrewfix{0}}
-\def\magyar@opt@cjhebrewfix@@onlyouter{\def\magyar@opt@@cjhebrewfix{1}}
-\def\magyar@opt@cjhebrewfix@@yes{\def\magyar@opt@@cjhebrewfix{2}}
 \def\magyar@opt@fancyhdr@@unchanged{\def\magyar@opt@@fancyhdr{0}}
 \def\magyar@opt@fancyhdr@@hu{\def\magyar@opt@@fancyhdr{1}}
 \def\magyar@opt@ntheoremfix@@unchanged{\def\magyar@opt@@ntheoremfix{0}}
@@ -5291,84 +5282,6 @@
   \edef\reserved@a{\noexpand\@namedef{\CurrentOption hyphenmins}{\magyar@opt@@hyphenmins}}
   \reserved@a
 \fi
-
-% !!
-
-%\def\skipfoo #1foo {%
-%  \ifx#1\hfuzz\else
-%    (#1)%
-%    \expandafter\skipfoo
-%  \fi
-%}
-
-
-% vvv cjhebrewfix= % by pts@fazekas.hu at Tue Apr 19 18:26:54 CEST 2005
-%     thanks to Zoltán Hamar for reporting the problem
-% Dat: the ultimate solution is active=onlycs, but it limits other
-%      functionality
-% Dat: use \def\h{\cjRL} in the preamble to abbreviate \cjRL
-%      wrong: \let\h\cjRL
-%      wrong: \newcommand{\h}[1]{\cjRL{#1}}
-% Dat: cjhebrew uses the following strings for typesetting Hebrew letters:
-%      ' b g d h w z .h .t y k K l m M n N s ` p P .s .S q r ,s +s t * a a:
-%      /a e i o O u U E E: A A: | * : ; --
-% Dat: headings in `\pagestyle{headings} \section{(\cjRL{`l})}' doesn't work
-%      as expected, because \MakeUppercase capitalizes the L, too.
-%      Solution #1:
-%        \DeclareRobustCommand\mycjcommand{\cjRL{`l}}
-%        \section{(\mycjcommand)}
-%      Solution #2: (won't convert any heading to uppercase)
-%        % change the definition of \ps@headings, remove \MakeUppercase
-%        \makeatletter \def\ps@headings{%
-%          \let\@oddfoot\@empty \let\@mkboth\markboth
-%          \def\@oddhead{{\slshape\rightmark}\hfil\thepage}%
-%          \def\sectionmark##1{\markright {\iffalse\MakeUppercase\fi{%
-%            \ifnum \c@secnumdepth >\m@ne \thesection\quad \fi##1}}}}
-\if0\magyar@opt@@cjhebrewfix \@@magyar@skiplong\fi
-% Dat: \cjRL{`l} in cjhebrew.sty should typeset two letters, but typesets
-%      only one if ` is \active. Use this code to fix it.
-% Imp: also fix in command arguments etc. Change catcode later.
-\if1\magyar@opt@@cjhebrewfix % =onlyouter
-% Dat: this doesn't work in the argument of \section etc., but it allows
-%      LaTeX commands (\) in the arg of \cjRL
-\def\@@magyar@cjhebrewfix{%
-  \let\@@magyar@orig@cjRL\cjRL
-  \def\cjRL{\begingroup\catcode\string``=12 \@@magyar@cjRL@low}%
-  \def\@@magyar@cjRL@low##1{\@@magyar@orig@cjRL{##1}\endgroup}}
-\else % =yes
-% Dat: this works in the argument of \section etc., but it doesn't allow
-%      LaTeX commands (\) in the arg of \cjRL
-\def\reserved@b{\protect}
-\edef\reserved@b{\expandafter\strip@prefix\meaning\reserved@b}
-%\show\reserved@b
-\edef\reserved@a{%
-  \noexpand\def\noexpand\@@magyar@cjhebrew@skipa##1\reserved@b{%
-  \noexpand\ifx##1\noexpand\hfuzz\noexpand\@empty\noexpand\else
-    ##1%(##1)%
-    \noexpand\expandafter\noexpand\@@magyar@cjhebrew@skipa
-  \noexpand\fi}%
-  \noexpand\def\noexpand\@@magyar@cjhebrew@skipb##1\noexpand\hfuzz{% Dat: this removes all `\protect '
-    \noexpand\@@magyar@cjhebrew@skipa##1\reserved@b\noexpand\hfuzz\reserved@b}}
-\reserved@a
-\def\@@magyar@cjhebrewfix{%
-  \let\@@magyar@orig@cjRL\cjRL
-  %\let\@@magyar@orig@cjRL\bf
-  \DeclareRobustCommand\cjRL[1]{\begingroup
-    \toks@{##1}%
-    %\showthe\toks@
-    \edef\reserved@a{\the\toks@}%
-    \edef\reserved@a{\expandafter\strip@prefix\meaning\reserved@a}%
-    % Dat: we're almost complete here, but 1st we want to remove all
-    %      instances of `\protect ' (catcodes 12 and 10), which were inserted
-    %      into \firstmark, i.e. with \section{A\cjRL{`l}B}, \firstmark
-    %      becomes: `{}{\protect \csname foreignlanguage \endcsname {magyar}{\protect \MakeUppercase {1\hskip 1em\relax A\protect \cjRL  {\protect `l}B}}}'
-    \edef\reserved@a{\expandafter\@@magyar@cjhebrew@skipb\reserved@a\hfuzz}%
-    %\show\reserved@a
-    \expandafter\@@magyar@orig@cjRL\expandafter{\reserved@a}\endgroup}}
-\fi
-\AtBeginDocument{\ifx\cjRL\@undefined\else\@@magyar@cjhebrewfix\fi}
-\@gobble
-{^}%
 
 % vvv varioref=
 
