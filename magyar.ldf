@@ -91,8 +91,8 @@
 
 % \magyar@deprecatedopt{foo}                   --> in log: The 'foo' option is deprecated and has no effect
 % \magyar@deprecatedopt{foo}[Do not use 'foo'] --> in log: Do not use 'foo'
-\def\magyar@deprecatedopt@@#1[#2]{\PackageWarningNoLine{\CurrentOption}{#2}}
-\def\magyar@deprecatedopt@#1{\PackageWarningNoLine{\CurrentOption}{The '#1' option is deprecated and has no effect}}
+\def\magyar@deprecatedopt@@#1[#2]{\PackageWarningNoLine{\CurrentOption.ldf}{#2}}
+\def\magyar@deprecatedopt@#1{\PackageWarningNoLine{\CurrentOption.ldf}{The '#1' option is deprecated and has no effect}}
 \def\magyar@deprecatedopt#1{\@ifnextchar[{\magyar@deprecatedopt@@{#1}}{\magyar@deprecatedopt@{#1}}}
 
 % Declare defaults.
