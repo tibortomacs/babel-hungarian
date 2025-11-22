@@ -14,7 +14,11 @@ This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainers of this work are
   Péter Szabó
-  Tibor Tómács <tomacs.tibor@gmail.com>
+  Tibor Tómács (from 2025-05-02)
+
+Please report errors to: Tibor Tómács
+                    via: https://github.com/tibortomacs/babel-hungarian
+                  email: tomacs.tibor@gmail.com
 
 Hungarian typography in LaTeX in this TUG 2004 article:
 http://www.math.bme.hu/latex/dl/pts_tug2004_magyarldf2.pdf
