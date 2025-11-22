@@ -128,7 +128,6 @@
 %**
 %** These are the defaults: (over-1.4)
 %**   \def\magyarOptions{
-%**     accents=defaulthigh,       % or =high or =low
 %**     active=safe,               % or =problematic or =none or =onlycs
 %**     activeprefix=babelopt2,    % or =none or =babelopt3 or =grave or =acute or =quotedbl
 %**     activespace=none,          % or =safe or =problematic
@@ -190,7 +189,6 @@
 %**   }\usepackage[magyar]{babel}
 
 \DeclareKeys[babel-magyar]{
-  accents.code           = \magyar@enumarg{accents}{#1},%           defaulthigh,high,low(no effect with T1 fontenc)
   active.code            = \magyar@enumarg{active}{#1},%            safe,problematic,none,onlycs
   activeprefix.code      = \magyar@enumarg{activeprefix}{#1},%      babelopt2,none,babelopt3,grave,acute,quotedbl
   activespace.code       = \magyar@enumarg{activespace}{#1},%       none,safe,problematic
@@ -253,6 +251,7 @@
   shorthandcs.code       = \magyar@opt@shorthandcs{#1},%   <command>,none
   titles.code            = \magyar@opt@titles{#1},%        unchanged,<command>
   %
+  accents.code           = \magyar@deprecatedopt{accents}[The 'accents' option has been deprecated. Never use OT1 font encoding with magyar.ldf],
   babelmarkfix.code      = \magyar@deprecatedopt{babelmarkfix},% babel 3.9+ no longer needs this
   captionfix.code        = \magyar@deprecatedopt{captionfix},%   caption package no longer needs this
   cjhebrewfix.code       = \magyar@deprecatedopt{cjhebrewfix}[{The 'cjhebrewfix' option has been deprecated. Use the 'active=onlycs' option instead}],
@@ -266,7 +265,6 @@
 \let\magyar@opt@defaults\empty
 
 \dMf magyar@opt@defaults@@over-1.4 {
-  \magyar@enumarg{accents}{defaulthigh}
   \magyar@enumarg{active}{safe}
   \magyar@enumarg{activeprefix}{babelopt2}
   \magyar@enumarg{activespace}{none}
@@ -335,7 +333,6 @@
 %** defaults=over-1.4 to have them. Also some very nice features such
 %** as \emitdate and \told are not available here.
 \dMf magyar@opt@defaults@@compat-1.4 {
-  \magyar@enumarg{accents}{defaulthigh}
   \magyar@enumarg{active}{safe}
   \magyar@enumarg{activeprefix}{grave}
   \magyar@enumarg{activespace}{none}
@@ -397,7 +394,6 @@
 %** These defaults turn of most features -- the effect is similar to as if
 %** magyar.ldf hasn't been loaded at all. Useful for debugging purposes.
 \def\magyar@opt@defaults@@safest{
-  \magyar@enumarg{accents}{defaulthigh}
   \magyar@enumarg{active}{none}
   \magyar@enumarg{activeprefix}{none}
   \magyar@enumarg{activespace}{none}
@@ -461,7 +457,6 @@
 %** is not achieved yet, and as new features are implemented, they will be
 %** added to these defaults.
 \def\magyar@opt@defaults@@prettiest{
-  \magyar@enumarg{accents}{defaulthigh}
   \magyar@enumarg{active}{safe}
   \magyar@enumarg{activeprefix}{babelopt2}
   \magyar@enumarg{activespace}{safe}
@@ -709,9 +704,6 @@
 \def\magyar@opt@chapternumber@@unchanged{\def\magyar@opt@@chapternumber{0}}
 \def\magyar@opt@chapternumber@@huordinal{\def\magyar@opt@@chapternumber{1}}
 \def\magyar@opt@chapternumber@@Huordinal{\def\magyar@opt@@chapternumber{2}}
-\def\magyar@opt@accents@@high{\def\magyar@opt@@umlaut{\umlauthigh}}
-\def\magyar@opt@accents@@low{\def\magyar@opt@@umlaut{\umlautlow\umlautelow}}
-\def\magyar@opt@accents@@defaulthigh{\let\magyar@opt@@umlaut\@empty}
 \def\magyar@opt@longcaption@@centered{\def\magyar@caption@centering{\centering}\def\magyar@caption@newline{\ }}
 \def\magyar@opt@longcaption@@justified{\def\magyar@caption@centering{\relax}\def\magyar@caption@newline{\ }}
 \def\magyar@opt@longcaption@@centernewline{\def\magyar@caption@centering{\centering}\def\magyar@caption@newline{\\\relax}}
@@ -919,14 +911,6 @@
 \let\@@magyar@suggpa@req@def\@undefined
 \@gobble
 {^}
-
-% --- accents=
-
-\ifx\magyar@opt@@umlaut\@empty\else% !! test this
-  % Dat: this only affects \"
-  \expandafter\addto\csname extras\CurrentOption\endcsname{%
-    \babel@save\"\umlautlow \magyar@opt@@umlaut}
-\fi
 
 % --- theorem title number ordering and the dot; theoremtitle=
 %
@@ -5480,7 +5464,6 @@
 % !! \addto\shorthandsspanish...
 % !! spanish.ldf \es@activate, \if@safe@actives\then
 % !! esperanto.ldf why? \declare@shorthand{system}{^}{\csname normal@char\string^\endcsname}
-% !! add other low accents for umlaut=low: \. (i) and \'
 % !! full amsart.cls compatibility??
 % !! huhyph.tex wrong \showhyphens{azthehe}% az-t-hehe
 % !! huhyph.tex wrong zs-hehe
@@ -5546,8 +5529,6 @@
 %      \dj \DJ \SS
 % Dat: babel.def defines the following robust commands in math and text modes:
 %      \glq \grq \glqq \grqq \flq \frq \flqq \frqq
-% Dat: OT1 encoding respects accents=low (\umlauthigh and \umlautlow), but T1
-%      doesn't -- but we need T1 for hyphenation of accented words
 % Dat: \languageattribute should be specified in the document preamble, and
 %      not changed again
 % Dat: it is possible to have 1 letter, e.g \declare@shorthand{turkish}{=}{...}
