@@ -52,117 +52,21 @@
 \catcode`=12 \catcode`|12 \catcode`;12 \catcode`:12 \catcode`'12 \catcode`"12
 \catcode`?12 \catcode`/12
 
-%** Expand \CurrentOption early.
 \edef\@@magyar@error#1{\noexpand\PackageError{\CurrentOption.ldf}{#1}\noexpand\@ehc}
 
-% --- Declare options.
-%
-% Dat: \languageattribute{magyar}{...} and \bbl@declare@ttribute{magyar}{foo}{...}
-% isn't enough for us, because it is processed
-% after \usepackage[magyar]{babel}, but we need the options information
-% earlier. And also it cannot contain `='.
-%
-
-%** `\dMf foo-bar {...}' is `\def\foo-bar{...}' where `-' is a letter
+%** \dMf foo-bar {...} is equivalent to \@namedef{foo-bar}{...}
 \def\dMf#1 {\expandafter\def\csname#1\endcsname}
-\def\magyar@@unchanged{unchanged}
-\def\magyar@enumarg#1#2{%
-  \expandafter\ifx\csname magyar@opt@#1@@#2\endcsname\relax
-    \@@magyar@error{Invalid arg for option: #1 = #2}%
-  \else
-    \csname magyar@opt@#1@@#2\endcsname
-  \fi
-}
-\def\@@magyar@argw@no  {0}%
-\def\@@magyar@argw@weak{1}%
-\def\@@magyar@argw@yes {2}%
-\def\magyar@yesweaknoarg#1#2{%
-  \expandafter\ifx\csname @@magyar@argw@#2\endcsname\relax
-    \@@magyar@error{Invalid arg for option: #1 = #2\MessageBreak Must be =no, =yes or =weak}%
-  \else
-    \expandafter\edef\csname magyar@opt@@#1\endcsname{\csname @@magyar@argw@#2\endcsname}%
-  \fi
-}
-\def\magyar@paragraphopt#1#2{%
-  \ifx#2\magyar@@unchanged\else
-    \expandafter\def\csname magyar@opt@@#1\endcsname{#2}%
-  \fi
-}
 
-% \magyar@deprecatedopt{foo}                   --> in log: The 'foo' option is deprecated and has no effect
-% \magyar@deprecatedopt{foo}[Do not use 'foo'] --> in log: Do not use 'foo'
-\def\magyar@deprecatedopt@@#1[#2]{\PackageWarningNoLine{\CurrentOption.ldf}{#2}}
-\def\magyar@deprecatedopt@#1{\PackageWarningNoLine{\CurrentOption.ldf}{The '#1' option is deprecated and has no effect}}
-\def\magyar@deprecatedopt#1{\@ifnextchar[{\magyar@deprecatedopt@@{#1}}{\magyar@deprecatedopt@{#1}}}
+% \magyar@opt@defaults used to be a defined command for the 'defaults=...' option.
+% It shouldn't be now, but the caption package will only switch to the Hungarian label type when it exists.
+\let\magyar@opt@defaults\empty
 
-% Declare defaults.
+% --- Declare options.
 
-%** These defaults load most of the new functionality, but try not to
-%** introduce visible typographical changes over magyar.ldf v1.4. These
-%** are the overall defaults of magyar.ldf v1.5, in case of
-%** \def\magyarOptions{} (or if is missing).
-%**
-%** These are the defaults: (over-1.4)
-%**   \def\magyarOptions{
-%**     active=safe,               % or =problematic or =none or =onlycs
-%**     activeprefix=babelopt2,    % or =none or =babelopt3 or =grave or =acute or =quotedbl
-%**     activespace=none,          % or =safe or =problematic
-%**     afterindent=unchanged,     % or =force-no or =force-yes
-%**     amslevelfix=fix-ams,       % or =unchanged or =fix-all
-%**     amsuppercasefix=fix-ams,   % or =unchanged or =fix-all
-%**     amstocnumskip=\enskip,     % TeX code or --empty--
-%**     amstocnumlang=all,         % or =hu
-%**     amspostsectiondot=no,      % or =unchanged
-%**     appendixdot=yes,           % or =no
-%**     az=weak,                   % or =yes or =no
-%**     captions=hu,               % or =unchanged
-%**     chapterhead=yes,           % or =unchanged(=no)
-%**     chapternumber=unchanged,   % see partnumber=
-%**     classmod=yes,              % or =unchanged(=no) or TeX class name
-%**     %defaults=over-1.4,        % or =compat-1.4 or =safest or =prettiest or =hu-min
-%**     dottedtocline=fix,         % or =unchanged
-%**     emitdate=weak,             % or =no or =yes
-%**     extras=yes,                % or =no
-%**     fancyhdr=hu,               % or =unchanged
-%**     figurecaptions=hu,         % or =us or =unchanged
-%**     frenchspacing=unchanged,   % or =no or =yes
-%**     hang=weak,                 % or =no or =yes
-%**     hunnewlabel=yes,           % or =no or =only-hu
-%**     hunumbers=yes,             % or =no
-%**     hutoday=yes,               % or =no
-%**     hyphenmins=22,             % or =unchanged or two chars: \lefthyphenmin\righthyphenmin
-%**     hyphenation=huhyph3,       % or =none or =composite or =phonetic or =huhyphn
-%**     hynumberline=unchanged,    % or =hu
-%**     labelenums=unchanged,      % or =hu-a or =hu-A or =hu-d
-%**     labelitems=unchanged,      % or =hu
-%**     longcaption=justified,     % or =centered or =centernewline or =none (=unchanged)
-%**     mathbrk=define,            % or =unchanged or =fix
-%**     mathhucomma=define,        % or =unchanged or =fix
-%**     mathfactorial=define,      % or =unchanged or =fix
-%**     mathmuskips=unchanged,     % or =latex or =hu
-%**     mathreal=weak,             % or =no or =yes
-%**     mond=weak,                 % or =no or =yes
-%**     ntheoremfix=yes,           % or =unchanged
-%**     openqq=maybedown,          % or =up or =down or =unchanged
-%**     partnumber=unchanged,      % or =huordinal or =Huordinal
-%**     postdescription=unchanged, % see postpara=
-%**     postpara=unchanged,        % or =bfdot or =dot or =quad or =diamond or =enskip or =quad or =em or =empty ... (\magyar@post@...)
-%**     postsubpara=unchanged,     % see postpara=
-%**     refstruc=weak,             % or =no or =yes
-%**     %safest=no,                % or =yes (safest=no has no effect, safest=yes is equivalent to defaults=safest)
-%**     sectiondot=safe,           % or =none or =problematic
-%**     shorthandcs=\shu,          % or =none or a csname or a \cs, e.g shorthandcs=\shu
-%**     shortrefcmds=yes,          % or =no
-%**     suggestions=yes,           % or =no
-%**     tablecaptions=hu,          % or =us or =unchanged
-%**     textqq=weak,               % or =no or =yes
-%**     theoremtitle=hu,           % or =unchanged
-%**     footnote=yes,              % or =unchanged or =huplain or =starplain
-%**     titles=\enskip,            % TeX code: =unchanged, =\quad or other
-%**     toclang=good,              % or =badfloat or =badall or =unchanged
-%**     told=weak,                 % or =no or =yes
-%**     varioref=hu,               % or =unchanged
-%**   }\usepackage[magyar]{babel}
+% Dat: \languageattribute{magyar}{...} and \bbl@declare@ttribute{magyar}{foo}{...}
+% isn't enough for us, because it is processed after
+% \usepackage[magyar]{babel}, but we need the options information earlier.
+% And also it cannot contain <key>=<value>.
 
 \DeclareKeys[babel-magyar]{
   active.code            = \magyar@enumarg{active}{#1},%            safe,problematic,none,onlycs
@@ -236,9 +140,99 @@
 
 \def\magyar@setkeys#1\relax{\SetKeys[babel-magyar]{#1}}
 
-% \magyar@opt@defaults used to be a defined command for the `defaults=...' option.
-% It shouldn't be now, but the caption package will only switch to the Hungarian label type when it exists.
-\let\magyar@opt@defaults\empty
+\def\magyar@@unchanged{unchanged}
+\def\magyar@enumarg#1#2{%
+  \expandafter\ifx\csname magyar@opt@#1@@#2\endcsname\relax
+    \@@magyar@error{Invalid arg for option: #1 = #2}%
+  \else
+    \csname magyar@opt@#1@@#2\endcsname
+  \fi
+}
+\def\@@magyar@argw@no  {0}%
+\def\@@magyar@argw@weak{1}%
+\def\@@magyar@argw@yes {2}%
+\def\magyar@yesweaknoarg#1#2{%
+  \expandafter\ifx\csname @@magyar@argw@#2\endcsname\relax
+    \@@magyar@error{Invalid arg for option: #1 = #2\MessageBreak Must be =no, =yes or =weak}%
+  \else
+    \expandafter\edef\csname magyar@opt@@#1\endcsname{\csname @@magyar@argw@#2\endcsname}%
+  \fi
+}
+\def\magyar@paragraphopt#1#2{%
+  \ifx#2\magyar@@unchanged\else
+    \expandafter\def\csname magyar@opt@@#1\endcsname{#2}%
+  \fi
+}
+\def\magyar@deprecatedopt@@#1[#2]{\PackageWarningNoLine{\CurrentOption.ldf}{#2}}
+\def\magyar@deprecatedopt@#1{\PackageWarningNoLine{\CurrentOption.ldf}{The '#1' option is deprecated and has no effect}}
+\def\magyar@deprecatedopt#1{\@ifnextchar[{\magyar@deprecatedopt@@{#1}}{\magyar@deprecatedopt@{#1}}}
+
+%** These defaults load most of the new functionality, but try not to
+%** introduce visible typographical changes over magyar.ldf v1.4.
+%** These are the overall defaults of magyar.ldf v1.5, in case of
+%** \def\magyarOptions{} (or if is missing).
+%**
+%** These are the defaults: (over-1.4)
+%**   \def\magyarOptions{
+%**     active=safe,               % or =problematic or =none or =onlycs
+%**     activeprefix=babelopt2,    % or =none or =babelopt3 or =grave or =acute or =quotedbl
+%**     activespace=none,          % or =safe or =problematic
+%**     afterindent=unchanged,     % or =force-no or =force-yes
+%**     amslevelfix=fix-ams,       % or =unchanged or =fix-all
+%**     amsuppercasefix=fix-ams,   % or =unchanged or =fix-all
+%**     amstocnumskip=\enskip,     % TeX code or --empty--
+%**     amstocnumlang=all,         % or =hu
+%**     amspostsectiondot=no,      % or =unchanged
+%**     appendixdot=yes,           % or =no
+%**     az=weak,                   % or =yes or =no
+%**     captions=hu,               % or =unchanged
+%**     chapterhead=yes,           % or =unchanged(=no)
+%**     chapternumber=unchanged,   % see partnumber=
+%**     classmod=yes,              % or =unchanged(=no) or TeX class name
+%**     %defaults=over-1.4,        % or =compat-1.4 or =safest or =prettiest or =hu-min
+%**     dottedtocline=fix,         % or =unchanged
+%**     emitdate=weak,             % or =no or =yes
+%**     extras=yes,                % or =no
+%**     fancyhdr=hu,               % or =unchanged
+%**     figurecaptions=hu,         % or =us or =unchanged
+%**     frenchspacing=unchanged,   % or =no or =yes
+%**     hang=weak,                 % or =no or =yes
+%**     hunnewlabel=yes,           % or =no or =only-hu
+%**     hunumbers=yes,             % or =no
+%**     hutoday=yes,               % or =no
+%**     hyphenmins=22,             % or =unchanged or two chars: \lefthyphenmin\righthyphenmin
+%**     hyphenation=huhyph3,       % or =none or =composite or =phonetic or =huhyphn
+%**     hynumberline=unchanged,    % or =hu
+%**     labelenums=unchanged,      % or =hu-a or =hu-A or =hu-d
+%**     labelitems=unchanged,      % or =hu
+%**     longcaption=justified,     % or =centered or =centernewline or =none (=unchanged)
+%**     mathbrk=define,            % or =unchanged or =fix
+%**     mathhucomma=define,        % or =unchanged or =fix
+%**     mathfactorial=define,      % or =unchanged or =fix
+%**     mathmuskips=unchanged,     % or =latex or =hu
+%**     mathreal=weak,             % or =no or =yes
+%**     mond=weak,                 % or =no or =yes
+%**     ntheoremfix=yes,           % or =unchanged
+%**     openqq=maybedown,          % or =up or =down or =unchanged
+%**     partnumber=unchanged,      % or =huordinal or =Huordinal
+%**     postdescription=unchanged, % see postpara=
+%**     postpara=unchanged,        % or =bfdot or =dot or =quad or =diamond or =enskip or =quad or =em or =empty ... (\magyar@post@...)
+%**     postsubpara=unchanged,     % see postpara=
+%**     refstruc=weak,             % or =no or =yes
+%**     %safest=no,                % or =yes (safest=no has no effect, safest=yes is equivalent to defaults=safest)
+%**     sectiondot=safe,           % or =none or =problematic
+%**     shorthandcs=\shu,          % or =none or a csname or a \cs, e.g shorthandcs=\shu
+%**     shortrefcmds=yes,          % or =no
+%**     suggestions=yes,           % or =no
+%**     tablecaptions=hu,          % or =us or =unchanged
+%**     textqq=weak,               % or =no or =yes
+%**     theoremtitle=hu,           % or =unchanged
+%**     footnote=yes,              % or =unchanged or =huplain or =starplain
+%**     titles=\enskip,            % TeX code: =unchanged, =\quad or other
+%**     toclang=good,              % or =badfloat or =badall or =unchanged
+%**     told=weak,                 % or =no or =yes
+%**     varioref=hu,               % or =unchanged
+%**   }\usepackage[magyar]{babel}
 
 \dMf magyar@opt@defaults@@over-1.4 {
   \magyar@enumarg{active}{safe}
@@ -300,14 +294,12 @@
 }
 
 %** These defaults try to be compatible with magyar.ldf v1.4 as much as
-%** possible -- but avoids stupid, problematic, dangerous implementation
+%** possible, but avoids stupid, problematic, dangerous implementation
 %** mistakes that would make magyar.ldf incompatible with many LaTeX
 %** packages. The purpose of compat-1.4 is to make the document compilable:
 %** if a fix would produce better results, but documents are compilable
 %** without the fix, the fix will not be applied in compat-1.4.
-%** Some very useful fixes are not applied here -- please use
-%** defaults=over-1.4 to have them. Also some very nice features such
-%** as \emitdate and \told are not available here.
+%** Some very useful fixes are not applied here.
 \dMf magyar@opt@defaults@@compat-1.4 {
   \magyar@enumarg{active}{safe}
   \magyar@enumarg{activeprefix}{grave}
@@ -367,7 +359,7 @@
   \magyar@enumarg{varioref}{hu}
 }
 
-%** These defaults turn of most features -- the effect is similar to as if
+%** These defaults turn of most features. The effect is similar to as if
 %** magyar.ldf hasn't been loaded at all. Useful for debugging purposes.
 \def\magyar@opt@defaults@@safest{
   \magyar@enumarg{active}{none}
