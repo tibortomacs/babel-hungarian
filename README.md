@@ -34,7 +34,7 @@ or
 
 ## Changelog
 
-### v1.5e (unreleased)
+### v1.6a (unreleased)
 
 - Remove support for `\input magyar.ldf`. This is poor practice; it is better if the compilation fails.
 - Fix: the `defaults=safest` option generates bad `\today` command.
