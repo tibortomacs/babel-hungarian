@@ -52,6 +52,7 @@ This option has been removed with a warning as it lost its original function wit
 
 - Fix: `magyar.ldf` interferes with the anchors created by `hyperref` for theorem-like environments, causing cross-references to jump to the wrong location.
 When the `amsthm` package is also loaded, duplicate PDF destination names are produced.
+[f115d8a](https://github.com/tibortomacs/babel-hungarian/commit/f115d8a)
 - Instead of `t1enc`, we recommend the `fontenc` package with the `T1` option.
 - Remove the recommendation for the `latin2` input encoding.
 
