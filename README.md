@@ -38,14 +38,20 @@ or
 
 - Remove support for `\input magyar.ldf`. This is poor practice; it is better if the compilation fails.
 - Fix: the `defaults=safest` option generates bad `\today` command.
-- Fix: the `babelmarkfix=yes` option generates test characters in the header of empty pages with newer babel versions. This option has been removed with a warning as it lost its original function with newer babel versions anyway.
+[116d69b](https://github.com/tibortomacs/babel-hungarian/commit/116d69b)
+- Fix: the `babelmarkfix=yes` option generates test characters in the header of empty pages with newer babel versions.
+This option has been removed with a warning as it lost its original function with newer babel versions anyway.
+[071d93b](https://github.com/tibortomacs/babel-hungarian/commit/071d93b)
+[8849eb8](https://github.com/tibortomacs/babel-hungarian/commit/8849eb8)
 - Fix: `\DocumentMetadata{lang=hu}` crashed in some cases with `\@@magyar@mathbins@tabularfix`.
+[8ff175f](https://github.com/tibortomacs/babel-hungarian/commit/8ff175f)
 - Remove the deprecated `accents`, `captionfix`, `cjhebrewfix`, and `showfix` options, with a warning about them.
 - New option handling using `\DeclareKeys`.
 
 ### v1.5d (2025-05-02)
 
-- Fix: `magyar.ldf` interferes with the anchors created by `hyperref` for theorem-like environments, causing cross-references to jump to the wrong location. When the `amsthm` package is also loaded, duplicate PDF destination names are produced.
+- Fix: `magyar.ldf` interferes with the anchors created by `hyperref` for theorem-like environments, causing cross-references to jump to the wrong location.
+When the `amsthm` package is also loaded, duplicate PDF destination names are produced.
 - Instead of `t1enc`, we recommend the `fontenc` package with the `T1` option.
 - Remove the recommendation for the `latin2` input encoding.
 
