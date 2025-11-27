@@ -176,8 +176,7 @@
 
 %** These defaults load most of the new functionality, but try not to
 %** introduce visible typographical changes over magyar.ldf v1.4.
-%** These are the overall defaults of magyar.ldf v1.5, in case of
-%** \def\magyarOptions{} (or if is missing).
+%** These are the overall defaults, in case of \def\magyarOptions{} (or if is missing).
 %**
 %** These are the defaults: (over-1.4)
 %**   \def\magyarOptions{
