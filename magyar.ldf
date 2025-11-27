@@ -34,7 +34,7 @@
 \expandafter\ifx\csname l@\CurrentOption\endcsname\relax
   \ifx\l@hungarian\relax
   \else
-    \expandafter\let\csname l@\CurrentOption\endcsname\l@hungarian
+    \expandafter\chardef\csname l@\CurrentOption\endcsname\l@hungarian
   \fi
 \fi
 
