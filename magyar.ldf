@@ -80,7 +80,6 @@
   activeprefix.code      = \magyar@enumarg{activeprefix}{#1},%      babelopt2,none,babelopt3,grave,acute,quotedbl
   activespace.code       = \magyar@enumarg{activespace}{#1},%       none,safe,problematic
   afterindent.code       = \magyar@enumarg{afterindent}{#1},%       unchanged,force-no,force-yes
-  amslevelfix.code       = \magyar@enumarg{amslevelfix}{#1},%       fix-ams,unchanged,fix-all
   amspostsectiondot.code = \magyar@enumarg{amspostsectiondot}{#1},% no,unchanged
   amstocnumlang.code     = \magyar@enumarg{amstocnumlang}{#1},%     all,hu
   amsuppercasefix.code   = \magyar@enumarg{amsuppercasefix}{#1},%   fix-ams,unchanged,fix-all
@@ -138,6 +137,7 @@
   titles.code            = \magyar@opt@titles{#1},%        unchanged,<command>
   %
   accents.code           = \magyar@deprecatedopt{accents}[The 'accents' option has been deprecated. Never use OT1 font encoding with magyar.ldf],
+  amslevelfix.code       = \magyar@deprecatedopt{amslevelfix},
   babelmarkfix.code      = \magyar@deprecatedopt{babelmarkfix},% babel 3.9+ no longer needs this
   captionfix.code        = \magyar@deprecatedopt{captionfix},%   caption package no longer needs this
   cjhebrewfix.code       = \magyar@deprecatedopt{cjhebrewfix}[{The 'cjhebrewfix' option has been deprecated. Use the 'active=onlycs' option instead}],
@@ -184,7 +184,6 @@
 %**     activeprefix=babelopt2,    % or =none or =babelopt3 or =grave or =acute or =quotedbl
 %**     activespace=none,          % or =safe or =problematic
 %**     afterindent=unchanged,     % or =force-no or =force-yes
-%**     amslevelfix=fix-ams,       % or =unchanged or =fix-all
 %**     amsuppercasefix=fix-ams,   % or =unchanged or =fix-all
 %**     amstocnumskip=\enskip,     % TeX code or --empty--
 %**     amstocnumlang=all,         % or =hu
@@ -244,7 +243,6 @@
   \magyar@enumarg{activeprefix}{babelopt2}
   \magyar@enumarg{activespace}{none}
   \magyar@enumarg{afterindent}{unchanged}
-  \magyar@enumarg{amslevelfix}{fix-ams}
   \magyar@enumarg{amsuppercasefix}{fix-ams}
   \magyar@enumarg{amspostsectiondot}{no}
   \magyar@enumarg{amstocnumlang}{all}
@@ -309,7 +307,6 @@
   \magyar@enumarg{activeprefix}{grave}
   \magyar@enumarg{activespace}{none}
   \magyar@enumarg{afterindent}{unchanged}
-  \magyar@enumarg{amslevelfix}{unchanged}
   \magyar@enumarg{amsuppercasefix}{unchanged}
   \magyar@enumarg{amspostsectiondot}{unchanged}
   \magyar@enumarg{amstocnumlang}{all}
@@ -369,7 +366,6 @@
   \magyar@enumarg{activeprefix}{none}
   \magyar@enumarg{activespace}{none}
   \magyar@enumarg{afterindent}{unchanged}
-  \magyar@enumarg{amslevelfix}{unchanged}
   \magyar@enumarg{amsuppercasefix}{fix-ams}
   \magyar@enumarg{amspostsectiondot}{unchanged}
   \magyar@enumarg{amstocnumlang}{all}
@@ -431,7 +427,6 @@
   \magyar@enumarg{activeprefix}{babelopt2}
   \magyar@enumarg{activespace}{safe}
   \magyar@enumarg{afterindent}{unchanged}
-  \magyar@enumarg{amslevelfix}{fix-ams}
   \magyar@enumarg{amsuppercasefix}{fix-ams}
   \magyar@enumarg{amspostsectiondot}{no}
   \magyar@enumarg{amstocnumlang}{all}
@@ -490,7 +485,6 @@
   active=safe,
   activeprefix=babelopt2,
   activespace=safe,
-  amslevelfix=fix-ams,
   amspostsectiondot=no,
   amstocnumlang=all,
   amstocnumskip=\enskip,
@@ -702,9 +696,6 @@
 \def\magyar@opt@shortrefcmds@@yes{\def\magyar@opt@@shortrefcmds{1}}
 \def\magyar@opt@dottedtocline@@fix{\def\magyar@opt@@dottedtocline{1}}
 \def\magyar@opt@dottedtocline@@unchanged{\def\magyar@opt@@dottedtocline{0}}
-\def\magyar@opt@amslevelfix@@unchanged{\def\magyar@opt@@amslevelfix{0}}
-\dMf magyar@opt@amslevelfix@@fix-ams  {\def\magyar@opt@@amslevelfix{1}}
-\dMf magyar@opt@amslevelfix@@fix-all  {\def\magyar@opt@@amslevelfix{2}}
 \def\magyar@opt@amsuppercasefix@@unchanged{\def\magyar@opt@@amsuppercasefix{0}}
 \dMf magyar@opt@amsuppercasefix@@fix-ams  {\def\magyar@opt@@amsuppercasefix{1}}
 \dMf magyar@opt@amsuppercasefix@@fix-all  {\def\magyar@opt@@amsuppercasefix{2}}
@@ -1472,27 +1463,6 @@
        \box\@tempboxa
        \par}%
     \fi}
-  \@gobble
-{^}%
-
-% --- amslevelfix=
-
-% detect ams{ldoc,dtx,art,book,proc}.sty
-\ifnum1<0%
-  \magyar@opt@@amslevelfix
-  \expandafter\ifx\csname setTrue\endcsname\relax\else 1\fi
-  \expandafter\ifx\csname allowttyhyphens\endcsname\relax\else 1\fi
-\space\else\@@magyar@skiplong\fi
-  % Fix amsart.cls etc. so no Overfull \hbox occurs in the \listoffigures.
-  % Changes \@tocline{0}{3pt plus2pt}{0pt}{}{} to \@tocline{0}{3pt plus2pt}{0pt}{\parindent}{}
-  \def\magyar@amslevelfix#1#2#3#4#5#6#7\vfuzz{%
-    \def\reserved@a{#6}%
-    \ifx\@tocline#2\ifx\reserved@a\@empty%
-      \def#1{\@tocline{#3}{#4}{#5}{\parindent}{}}%
-    \fi\fi
-  }
-  \expandafter\magyar@amslevelfix\expandafter\l@table \l@table ,,,,,,,\vfuzz
-  \expandafter\magyar@amslevelfix\expandafter\l@figure\l@figure,,,,,,,\vfuzz
   \@gobble
 {^}%
 
