@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2025/11/22 v1.6a Hungarian support from the babel system]
+%%        [2025/11/27 v1.6a Hungarian support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2026
@@ -50,9 +50,17 @@
 %                     via: https://github.com/tibortomacs/babel-hungarian
 %                   email: tomacs.tibor@gmail.com
 
-\ProvidesLanguage{\CurrentOption}[2025/11/22 v1.6a Hungarian support from the babel system]
+\ProvidesLanguage{\CurrentOption}[2025/11/27 v1.6a Hungarian support from the babel system]
 
 \LdfInit{\CurrentOption}{captions\CurrentOption}
+
+% Hyphenation
+\expandafter\ifx\csname l@\CurrentOption\endcsname\relax
+  \ifx\l@hungarian\relax
+  \else
+    \expandafter\let\csname l@\CurrentOption\endcsname\l@hungarian
+  \fi
+\fi
 
 % Fix \catcodes{} possibly screwed up by other Babel languages.
 \edef\@@magyar@restcats{%
@@ -115,7 +123,6 @@
   hunumbers.code         = \magyar@enumarg{hunumbers}{#1},%         yes,no
   hutoday.code           = \magyar@enumarg{hutoday}{#1},%           yes,no
   hynumberline.code      = \magyar@enumarg{hynumberline}{#1},%      unchanged,hu
-  hyphenation.code       = \magyar@enumarg{hyphenation}{#1},%       huhyph3,none,composite,phonetic,huhyphn,huhyph3-or-any,composite-or-any,any
   labelenums.code        = \magyar@enumarg{labelenums}{#1},%        unchanged,hu-a,hu-A,hu-d
   labelitems.code        = \magyar@enumarg{labelitems}{#1},%        unchanged,hu
   longcaption.code       = \magyar@enumarg{longcaption}{#1},%       justified,centered,centernewline,none(=unchanged)
@@ -158,6 +165,7 @@
   babelmarkfix.code      = \magyar@deprecatedopt{babelmarkfix},% babel 3.9+ no longer needs this
   captionfix.code        = \magyar@deprecatedopt{captionfix},%   caption package no longer needs this
   cjhebrewfix.code       = \magyar@deprecatedopt{cjhebrewfix}[{The 'cjhebrewfix' option has been deprecated. Use the 'active=onlycs' option instead}],
+  hyphenation.code       = \magyar@deprecatedopt{hyphenation},
   showfix.code           = \magyar@deprecatedopt{showfix},%      ucsencs.def no longer needs this
 }
 
@@ -224,7 +232,6 @@
 %**     hunumbers=yes,             % or =no
 %**     hutoday=yes,               % or =no
 %**     hyphenmins=22,             % or =unchanged or two chars: \lefthyphenmin\righthyphenmin
-%**     hyphenation=huhyph3,       % or =none or =composite or =phonetic or =huhyphn
 %**     hynumberline=unchanged,    % or =hu
 %**     labelenums=unchanged,      % or =hu-a or =hu-A or =hu-d
 %**     labelitems=unchanged,      % or =hu
@@ -284,7 +291,6 @@
   \magyar@enumarg{hunnewlabel}{yes}
   \magyar@enumarg{hunumbers}{yes}
   \magyar@enumarg{hutoday}{yes}
-  \magyar@enumarg{hyphenation}{huhyph3-or-any}
   \magyar@opt@hyphenmins{22}% Default LaTeX is {23}
   \magyar@enumarg{labelenums}{unchanged}
   \magyar@enumarg{labelitems}{unchanged}
@@ -350,7 +356,6 @@
   \magyar@enumarg{hunnewlabel}{yes}
   \magyar@enumarg{hunumbers}{no}
   \magyar@enumarg{hutoday}{yes}
-  \magyar@enumarg{hyphenation}{huhyph3-or-any}
   \magyar@opt@hyphenmins{unchanged}
   \magyar@enumarg{labelenums}{unchanged}
   \magyar@enumarg{labelitems}{unchanged}
@@ -411,7 +416,6 @@
   \magyar@enumarg{hunnewlabel}{no}
   \magyar@enumarg{hunumbers}{no}
   \magyar@enumarg{hutoday}{no}
-  \magyar@enumarg{hyphenation}{huhyph3-or-any}
   \magyar@opt@hyphenmins{unchanged}
   \magyar@enumarg{labelenums}{unchanged}
   \magyar@enumarg{labelitems}{unchanged}
@@ -474,7 +478,6 @@
   \magyar@enumarg{hunnewlabel}{yes}
   \magyar@enumarg{hunumbers}{yes}
   \magyar@enumarg{hutoday}{yes}
-  \magyar@enumarg{hyphenation}{composite-or-any}
   \magyar@opt@hyphenmins{22}
   \magyar@enumarg{labelenums}{hu-a}
   \magyar@enumarg{labelitems}{hu}
@@ -627,27 +630,6 @@
 \def\magyar@opt@activespace@@problematic{\def\magyar@opt@@activespace{3}}
 \def\magyar@opt@amspostsectiondot@@no       {\def\magyar@opt@@amspostsectiondot{1}}
 \def\magyar@opt@amspostsectiondot@@unchanged{\def\magyar@opt@@amspostsectiondot{0}}
-\def\magyar@opt@hyphenation@@huhyphf  {\magyar@opt@hyphenation@@phonetic}
-\def\magyar@opt@hyphenation@@huhyphc  {\magyar@opt@hyphenation@@composite}
-\expandafter\ifx\csname @OFWO\endcsname\relax
-% Imp: fix --:hyphenation= reporting above
-\def\magyar@opt@hyphenation@@none              {\def\magyar@opt@@hyphenation{}}
-\dMf magyar@opt@hyphenation@@huhyph3           {\def\magyar@opt@@hyphenation{3rN}}
-\dMf magyar@opt@hyphenation@@huhyph3-or-any    {\def\magyar@opt@@hyphenation{3CmhwN}}
-\def\magyar@opt@hyphenation@@huhyphn           {\def\magyar@opt@@hyphenation{nrN}}
-\def\magyar@opt@hyphenation@@composite         {\def\magyar@opt@@hyphenation{crN}}
-\dMf magyar@opt@hyphenation@@composite-or-any  {\def\magyar@opt@@hyphenation{cCmhwN}}
-\def\magyar@opt@hyphenation@@any               {\def\magyar@opt@@hyphenation{CmhwN}}
-\def\magyar@opt@hyphenation@@phonetic          {\def\magyar@opt@@hyphenation{frN}}
-\else% report to lafmtgen.pl
-  \typeout{--:hyphenation-=\CurrentOption}
-  \def\magyar@opt@@hyphenation{}%
-  \def\magyar@opt@hyphenation@@none     {\def\magyar@opt@@hypr{}}
-  \dMf magyar@opt@hyphenation@@huhyph3  {\def\magyar@opt@@hypr{\typeout{--:hyphenation=magyar3}\typeout{--:hyphenation=magyar}}} % install both for safety
-  \def\magyar@opt@hyphenation@@huhyphn  {\def\magyar@opt@@hypr{\typeout{--:hyphenation=magyarn}\typeout{--:hyphenation=magyar}}}
-  \def\magyar@opt@hyphenation@@composite{\def\magyar@opt@@hypr{\typeout{--:hyphenation=magyarc}\typeout{--:hyphenation=magyar}}}
-  \def\magyar@opt@hyphenation@@phonetic {\def\magyar@opt@@hypr{\typeout{--:hyphenation=magyarf}}}
-\fi
 \def\magyar@opt@sectiondot@@none{\def\magyar@opt@@sectiondot{0}}
 \def\magyar@opt@sectiondot@@safe{\def\magyar@opt@@sectiondot{1}}
 \def\magyar@opt@sectiondot@@problematic{\def\magyar@opt@@sectiondot{2}}
@@ -837,74 +819,6 @@
 % Initialize the per-language extras hook for \CurrentOption so that
 % later \addto\csname extras\CurrentOption\endcsname calls have a base to extend.
 \@namedef{extras\CurrentOption}{}%
-
-% --- hyphenation=
-
-\csname magyar@opt@@hypr\endcsname
-\let\magyar@sugg@pa\@gobble
-%\show\magyar@opt@@hyphenation
-\ifx\magyar@opt@@hyphenation\@empty
-  % Hungarian words won't be hyphenated automatically
-  \expandafter\chardef\csname l@\CurrentOption\endcsname255
-  \@@magyar@skiplong\fi
-% Define a warning, will be printed later.
-\def\@@magyar@suggpa@req@def{%
-  \def\magyar@sugg@pa##1{%
-  \PackageWarningNoLine{##1.ldf}{%
-    Requested Hungarian hyphenation= patterns missing.\MessageBreak
-    To make LaTeX hyphenate Hungarian words, please\MessageBreak
-    modify language.dat and rerun initex or texconfig}}}%
-% Define a warning, will be printed later.
-\def\@@magyar@suggpa@all@def{%
-  \def\magyar@sugg@pa##1{%
-  \PackageWarningNoLine{##1.ldf}{%
-    All Hungarian hyphenation= patterns missing.\MessageBreak
-    To make LaTeX hyphenate Hungarian words, please\MessageBreak
-    modify language.dat and rerun initex or texconfig}}}%
-\def\@@magyar@hyphenation@last#1\@@magyar@hyphenation@next#2\hfuzz{#1}%
-\def\@@magyar@hyphenation@defcs#1#2{\ifx#1#2\else\chardef#1#2\fi}% Dat: \chardef\foo\foo doesn't work
-\def\@@magyar@hyphenation@def#1{%
-  \expandafter\ifx\csname l@#1\endcsname\relax\else
-    \expandafter\expandafter\expandafter\@@magyar@hyphenation@defcs
-      \expandafter\expandafter\csname l@\CurrentOption\endcsname
-      \csname l@#1\endcsname
-    \@@magyar@hyphenation@last\fi}%
-\def\@@magyar@hyphenation@next#1{%
-  \ifx#1\hfuzz
-  \else\if#1N% none
-    % Turn of hyphenation.
-    \expandafter\chardef\csname l@\CurrentOption\endcsname255
-    \@@magyar@hyphenation@last
-  \else\if#1C% use l@\CurrentOption if defined
-    \expandafter\ifx\csname l@\CurrentOption\endcsname\relax\else
-      \@@magyar@hyphenation@last
-    \fi
-  \else\if#1w% print the all-missing-warning
-    \@@magyar@suggpa@all@def
-  \else\if#1r% print the req-missing-warning
-    \@@magyar@suggpa@req@def
-  \else\if#1h\@@magyar@hyphenation@def{hungarian}%
-  \else\if#1m\@@magyar@hyphenation@def{magyar}%
-  \else\if#13\@@magyar@hyphenation@def{magyar3}%
-  \else\if#1c\@@magyar@hyphenation@def{magyarc}%
-  \else\if#1f\@@magyar@hyphenation@def{magyarf}%
-  \else\if#1n\@@magyar@hyphenation@def{magyarn}%
-  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\@@magyar@hyphenation@next
-  % Dat: no \adddialect\l@magyar... - it's only a chardef
-}%
-
-%\tracingmacros1 \show\magyar@opt@@hyphenation
-\expandafter\@@magyar@hyphenation@next\magyar@opt@@hyphenation\hfuzz
-%\show\l@magyar
-%\tracingmacros0
-\expandafter\ifx\csname l@\CurrentOption\endcsname\relax
-  \expandafter\newcount\csname l@\CurrentOption\endcsname
-  % ^^^ BUGFIX at Tue Oct 12 14:13:54 CEST 2004
-\fi
-\let\@@magyar@suggpa@all@def\@undefined
-\let\@@magyar@suggpa@req@def\@undefined
-\@gobble
-{^}
 
 % --- theorem title number ordering and the dot; theoremtitle=
 %
@@ -2399,7 +2313,6 @@
     \fi
   }%
   \edef\reserved@a{\noexpand\AtBeginDocument{%
-    \noexpand\magyar@sugg@pa{\CurrentOption}%
     \noexpand\magyar@sugg@af{\CurrentOption}%
     \noexpand\magyar@sugg@ap{\CurrentOption}%
     \noexpand\magyar@sugg@to{\CurrentOption}%
