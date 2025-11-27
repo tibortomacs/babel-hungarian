@@ -82,7 +82,6 @@
   afterindent.code       = \magyar@enumarg{afterindent}{#1},%       unchanged,force-no,force-yes
   amspostsectiondot.code = \magyar@enumarg{amspostsectiondot}{#1},% no,unchanged
   amstocnumlang.code     = \magyar@enumarg{amstocnumlang}{#1},%     all,hu
-  amsuppercasefix.code   = \magyar@enumarg{amsuppercasefix}{#1},%   fix-ams,unchanged,fix-all
   appendixdot.code       = \magyar@enumarg{appendixdot}{#1},%       yes,no
   captions.code          = \magyar@enumarg{captions}{#1},%          hu,unchanged
   chapterhead.code       = \magyar@enumarg{chapterhead}{#1},%       yes,unchanged(=no)
@@ -138,6 +137,7 @@
   %
   accents.code           = \magyar@deprecatedopt{accents}[The 'accents' option has been deprecated. Never use OT1 font encoding with magyar.ldf],
   amslevelfix.code       = \magyar@deprecatedopt{amslevelfix},
+  amsuppercasefix.code   = \magyar@deprecatedopt{amsuppercasefix},
   babelmarkfix.code      = \magyar@deprecatedopt{babelmarkfix},% babel 3.9+ no longer needs this
   captionfix.code        = \magyar@deprecatedopt{captionfix},%   caption package no longer needs this
   cjhebrewfix.code       = \magyar@deprecatedopt{cjhebrewfix}[{The 'cjhebrewfix' option has been deprecated. Use the 'active=onlycs' option instead}],
@@ -184,7 +184,6 @@
 %**     activeprefix=babelopt2,    % or =none or =babelopt3 or =grave or =acute or =quotedbl
 %**     activespace=none,          % or =safe or =problematic
 %**     afterindent=unchanged,     % or =force-no or =force-yes
-%**     amsuppercasefix=fix-ams,   % or =unchanged or =fix-all
 %**     amstocnumskip=\enskip,     % TeX code or --empty--
 %**     amstocnumlang=all,         % or =hu
 %**     amspostsectiondot=no,      % or =unchanged
@@ -243,7 +242,6 @@
   \magyar@enumarg{activeprefix}{babelopt2}
   \magyar@enumarg{activespace}{none}
   \magyar@enumarg{afterindent}{unchanged}
-  \magyar@enumarg{amsuppercasefix}{fix-ams}
   \magyar@enumarg{amspostsectiondot}{no}
   \magyar@enumarg{amstocnumlang}{all}
   \magyar@opt@amstocnumskip{\enskip}
@@ -307,7 +305,6 @@
   \magyar@enumarg{activeprefix}{grave}
   \magyar@enumarg{activespace}{none}
   \magyar@enumarg{afterindent}{unchanged}
-  \magyar@enumarg{amsuppercasefix}{unchanged}
   \magyar@enumarg{amspostsectiondot}{unchanged}
   \magyar@enumarg{amstocnumlang}{all}
   \magyar@opt@amstocnumskip{}
@@ -366,7 +363,6 @@
   \magyar@enumarg{activeprefix}{none}
   \magyar@enumarg{activespace}{none}
   \magyar@enumarg{afterindent}{unchanged}
-  \magyar@enumarg{amsuppercasefix}{fix-ams}
   \magyar@enumarg{amspostsectiondot}{unchanged}
   \magyar@enumarg{amstocnumlang}{all}
   \magyar@opt@amstocnumskip{}
@@ -427,7 +423,6 @@
   \magyar@enumarg{activeprefix}{babelopt2}
   \magyar@enumarg{activespace}{safe}
   \magyar@enumarg{afterindent}{unchanged}
-  \magyar@enumarg{amsuppercasefix}{fix-ams}
   \magyar@enumarg{amspostsectiondot}{no}
   \magyar@enumarg{amstocnumlang}{all}
   \magyar@opt@amstocnumskip{\enskip}
@@ -696,9 +691,6 @@
 \def\magyar@opt@shortrefcmds@@yes{\def\magyar@opt@@shortrefcmds{1}}
 \def\magyar@opt@dottedtocline@@fix{\def\magyar@opt@@dottedtocline{1}}
 \def\magyar@opt@dottedtocline@@unchanged{\def\magyar@opt@@dottedtocline{0}}
-\def\magyar@opt@amsuppercasefix@@unchanged{\def\magyar@opt@@amsuppercasefix{0}}
-\dMf magyar@opt@amsuppercasefix@@fix-ams  {\def\magyar@opt@@amsuppercasefix{1}}
-\dMf magyar@opt@amsuppercasefix@@fix-all  {\def\magyar@opt@@amsuppercasefix{2}}
 \def\magyar@opt@labelenums@@unchanged{\def\magyar@opt@@labelenums{0}}
 \dMf magyar@opt@labelenums@@hu-a     {\def\magyar@opt@@labelenums{1}}
 \dMf magyar@opt@labelenums@@hu-A     {\def\magyar@opt@@labelenums{2}}
@@ -1463,25 +1455,6 @@
        \box\@tempboxa
        \par}%
     \fi}
-  \@gobble
-{^}%
-
-% --- amsuppercasefix=
-
-% Fix for small \'\i in capitalized title (no fix needed for \'i and í):
-%   \documentlcass{amsart}
-%   \usepackage[T1]{fontenc}
-%   \author{author Anal{\'\i}{\'i}zis}
-%   \title {title  Anal{\'\i}{\'i}zis}
-%   \begin{document} \maketitle a\newpage b\newpage c \end{document}
-% This bug is a general amsart.cls bug, not specific to magyar.ldf.
-\ifnum1<0%
-  \magyar@opt@@amsuppercasefix
-  \expandafter\ifx\csname altucnm\endcsname\relax\else 1\fi
-\space\else\@@magyar@skiplong\fi
-  % textcase.sty is not available by default (Ubuntu 8.04 TeX Live), and
-  % newer amsart.cls doesn't have this bug (\'\i gets capitalized properly)
-  \AtEndOfPackage{\IfFileExists{textcase.sty}{\RequirePackage{textcase}}{}}
   \@gobble
 {^}%
 
