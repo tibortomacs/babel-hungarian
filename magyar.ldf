@@ -4635,7 +4635,7 @@
           \edef\reserved@a{\languagename}%
           \edef\reserved@a{\expandafter\strip@prefix\meaning\reserved@a}%
           \edef\reserved@b{#1}%
-          \edef\reserved@b{\expandafter\strip@prefix\meaning\reserved@a}%
+          \edef\reserved@b{\expandafter\strip@prefix\meaning\reserved@b}%
           \ifx\reserved@a\reserved@b
             % Localize the current \pagestyle to Hungarian `headings'.
             \@@magyar@overridden@psheadings
