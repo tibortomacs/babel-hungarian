@@ -37,7 +37,7 @@ or
 ### v1.6a (unreleased)
 
 - Remove support for `\input magyar.ldf`. This is poor practice; it is better if the compilation fails.
-- Fix: the `defaults=safest` option generates bad `\today` command.
+- Fix: \SafeToday
 [116d69b](https://github.com/tibortomacs/babel-hungarian/commit/116d69b)
 - Fix: the `babelmarkfix=yes` option generates test characters in the header of empty pages with newer babel versions.
 This option has been removed with a warning as it lost its original function with newer babel versions anyway.
