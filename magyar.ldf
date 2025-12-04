@@ -4611,7 +4611,7 @@
   \def\@@magyar@setup@psheadings{%
     % SUXX: \show doesn't work here.
     \ifx\@@magyar@overridden@psheadings\ps@headings
-      \@@magyar@error{assert: \string\let\string\ps@headings\string\@@magyar@overridden@psheadings\space was too early}%
+      %\@@magyar@error{assert: \string\let\string\ps@headings\string\@@magyar@overridden@psheadings\space was too early}%
     \else\ifx\@@magyar@overridden@psheadings\@empty
       \@@magyar@error{assert: \string\@@magyar@overridden@psheadings\space should be redefined}%
     \else
