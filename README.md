@@ -36,6 +36,8 @@ or
 
 ### v1.6a (unreleased)
 
+- New option handling using `\DeclareKeys`.
+This allows spaces before/after the `=` sign.
 - Remove support for `\input magyar.ldf`. This is poor practice; it is better if the compilation fails.
 - Fix: \SafeToday
 [116d69b](https://github.com/tibortomacs/babel-hungarian/commit/116d69b)
@@ -45,9 +47,8 @@ This option has been removed with a warning as it lost its original function wit
 [8849eb8](https://github.com/tibortomacs/babel-hungarian/commit/8849eb8)
 - Fix: `\DocumentMetadata{lang=hu}` crashed in some cases with `\@@magyar@mathbins@tabularfix`.
 [8ff175f](https://github.com/tibortomacs/babel-hungarian/commit/8ff175f)
+- Fix: [issue #1](https://github.com/tibortomacs/babel-hungarian/issues/1)
 - Remove deprecated options, with a warning about them: `accents`, `amslevelfix`, `amsuppercasefix`, `captionfix`, `cjhebrewfix`, `hyphenation`, and `showfix`.
-- New option handling using `\DeclareKeys`.
-This allows spaces before/after the `=` sign.
 
 ### v1.5d (2025-05-02)
 
