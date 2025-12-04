@@ -48,6 +48,7 @@ This option has been removed with a warning as it lost its original function wit
 - Fix: `\DocumentMetadata{lang=hu}` crashed in some cases with `\@@magyar@mathbins@tabularfix`.
 [8ff175f](https://github.com/tibortomacs/babel-hungarian/commit/8ff175f)
 - Fix: [issue #1](https://github.com/tibortomacs/babel-hungarian/issues/1)
+- Fix: [issue #2](https://github.com/tibortomacs/babel-hungarian/issues/2)
 - Remove deprecated options, with a warning about them: `accents`, `amslevelfix`, `amsuppercasefix`, `captionfix`, `cjhebrewfix`, `hyphenation`, and `showfix`.
 
 ### v1.5d (2025-05-02)
