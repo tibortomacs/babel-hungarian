@@ -47,6 +47,7 @@ This option has been removed with a warning as it lost its original function wit
 [8ff175f](https://github.com/tibortomacs/babel-hungarian/commit/8ff175f)
 - Remove deprecated options, with a warning about them: `accents`, `amslevelfix`, `amsuppercasefix`, `captionfix`, `cjhebrewfix`, `hyphenation`, and `showfix`.
 - New option handling using `\DeclareKeys`.
+This allows spaces before/after the `=` sign.
 
 ### v1.5d (2025-05-02)
 
