@@ -2158,10 +2158,9 @@
        \def\reftextlabelrange23456\AtBeginDocument78\hbox${#1}%$
   }
   \def\magyar@sugg@to#1{%
-    % In lualatex, the (unchecked) recommendation is: don't do \usepackage{t1enc}.
-    \ifnum0\ifx\luatexversion\@undefined1\fi\ifx\luatexversion\relax1\fi>0
+    \ifnum0\ifdefined\pdfoutput1\fi>0
       \def\reserved@a{T1}%
-      \edef\reserved@b{\encodingdefault}% \encodingdefault is \long for t1enc.sty, but not for fontenc.sty
+      \edef\reserved@b{\encodingdefault}%
       \ifx\reserved@a\reserved@b\else
         \@latex@warning@no@line{Please use \string\usepackage[T1]{fontenc} with\MessageBreak \string\usepackage[#1]{babel}, to get accented chars hyphenated}%
       \fi
@@ -2203,7 +2202,7 @@
         \ifx\reserved@a\reserved@b\else
           % Dat: don't print warning for missing \usepackage
           \expandafter\ifx\csname @inpenc@undefined\endcsname\relax
-            \magyar@sugg@ie@lowb{#1}%
+            % \magyar@sugg@ie@lowb{#1}%
           \else
             % from inputenc.sty: \edef\@inpenc@undefined{\noexpand\@inpenc@undefined@{#1}}%
             % > \@inpenc@undefined=macro:
