@@ -4135,6 +4135,43 @@
 % --- mathbrk=
 
 \if0\magyar@opt@@mathbrk \@@magyar@skiplong\fi  % mathbrk=define and mathbrk=fix
+  % -- Unicode-math friendly helper for mathbrk:
+  %    * In LuaTeX, \Umathchar needs 3 values (class+fam+slot), but \Umathcodenum/\the\Umathcode gives a packed integer.
+  %      So we must use \Umathcharnum with the packed integer.
+  %    * In XeTeX, \the\Umathcode is readable by \Umathchar, so we can use \Umathchar.
+  %    * \@@magyar@mathcodenum{<char>} yields a numeric mathcode safely even if
+  %      unicode-math assigns an extended value (e.g. '-' -> U+2212).
+  %    * \@@magyar@mathchar{<char>} typesets the underlying math symbol of a
+  %      character token even if that character becomes active (\mathcode"8000).
+
+  \ifx\XeTeXmathcodenum\undefined
+    \ifx\Umathcodenum\undefined
+      \def\@@magyar@mathcodenum#1{\the\mathcode`#1}%
+    \else
+      \def\@@magyar@mathcodenum#1{\number\Umathcodenum`#1}%
+    \fi
+  \else
+    \def\@@magyar@mathcodenum#1{\number\XeTeXmathcodenum`#1}%
+  \fi
+
+  \begingroup
+    \mathcode`\~="8000\relax
+    \xdef\@@magyar@mathcode@active{\@@magyar@mathcodenum{~}}%
+  \endgroup
+  \ifx\XeTeXmathcharnum\undefined
+    \ifx\Umathcharnum\undefined
+      \ifx\Umathchar\undefined
+        \def\@@magyar@mathchar#1{\mathchar\the\mathcode`#1\relax}%
+      \else
+        \def\@@magyar@mathchar#1{\Umathchar\the\Umathcode`#1\relax}%
+      \fi
+    \else
+      \def\@@magyar@mathchar#1{\Umathcharnum\number\Umathcodenum`#1\relax}%
+    \fi
+  \else
+    \def\@@magyar@mathchar#1{\XeTeXmathcharnum\number\XeTeXmathcodenum`#1\relax}%
+  \fi
+
   %** Similar to \@@magyar@fixmathcmd@low, but inserts symbol immediately.
   %** @param #1 `\mathchar', all catcodes
   %** @param #2 hex code
@@ -4154,18 +4191,18 @@
   %** @param #1 a \cs or char of a MathBin or MathRel, e.g `\prec' or `+'
   \DeclareRobustCommand\MathBrkAll[1]{%
     \ifcat\noexpand#1\relax
-      \expandafter\@@magyar@breakmathcmd@low\meaning#1""\hfuzz#1%
+      #1%
+      \nobreak\discretionary{}{\hbox{\(#1\)}}{}%
     \else
-      \ifnum\mathcode`#1="8000
+      \ifnum\@@magyar@mathcodenum{#1}=\@@magyar@mathcode@active
         \expandafter\expandafter\expandafter#1% keep original meaning
       \else
-	\mathchar\the\mathcode`#1\relax% disable \active meaning
-	\ifnum\mathcode`#1<"8000 % redundant sanity check
-	  \nobreak\discretionary{}{\hbox{\(\mathchar\the\mathcode`#1\relax\)}}{}%
-	\fi
+	\@@magyar@mathchar{#1}% disable \active meaning
+        \nobreak\discretionary{}{\hbox{\(\@@magyar@mathchar{#1}\)}}{}%
       \fi
     \fi
   }
+
   \let\MathBrk\relax
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
     \babel@save\MathBrk
@@ -4176,21 +4213,28 @@
 
 \if2\magyar@opt@@mathbrk\else \@@magyar@skiplong\fi  % mathbrk=fix
   \def\@@magyar@resetmathchars{%
-    \mathcode`+"202B \catcode`+12
-    \mathcode`-"2200 \catcode`-12
-    \mathcode`*"2203 \catcode`*12
-    \mathcode`/"013D \catcode`/12
-    \mathcode`>"313E \catcode`>12
-    \mathcode`<"313C \catcode`<12
-    \mathcode`="303D \catcode`=12
-    % vvv Dat: leave these chars intact, for compatibility (with nath.sty and others)
-    %\mathcode`:"303A \catcode`:12
-    %\mathcode`;"603B \catcode`;12
-    %\mathcode`,"613B \catcode`,12
-    %\mathcode`!"5021 \catcode`!12
-    %\mathcode`?"503F \catcode`?12
-    %\mathcode`|"026A \catcode`|12
-    %\mathcode`."013A \catcode`.12
+    % Keep unicode-math's own \Umathcode setup (minus, plus, relations etc.).
+    % The classic \mathcode resets below are for 8-bit TeX math only.
+    \expandafter\ifx\csname ver@unicode-math.sty\endcsname\relax
+      \mathcode`+"202B \catcode`+12
+      \mathcode`-"2200 \catcode`-12
+      \mathcode`*"2203 \catcode`*12
+      \mathcode`/"013D \catcode`/12
+      \mathcode`>"313E \catcode`>12
+      \mathcode`<"313C \catcode`<12
+      \mathcode`="303D \catcode`=12
+      % vvv Dat: leave these chars intact, for compatibility (with nath.sty and others)
+      %\mathcode`:"303A \catcode`:12
+      %\mathcode`;"603B \catcode`;12
+      %\mathcode`,"613B \catcode`,12
+      %\mathcode`!"5021 \catcode`!12
+      %\mathcode`?"503F \catcode`?12
+      %\mathcode`|"026A \catcode`|12
+      %\mathcode`."013A \catcode`.12
+    \else
+      \catcode`+12 \catcode`-12 \catcode`*12 \catcode`/12
+      \catcode`>12 \catcode`<12 \catcode`=12
+    \fi
   }
   %** Dat: don't do `/', because slash is unbreakable
   \def\@@magyar@domathbins{%
@@ -4198,13 +4242,13 @@
     \do+\do*\do>\do<\do=}%
   %** @param #1 a char token with \mathcode != "8000, like +
   \def\@@magyar@fixmathbinchar#1{%
-    \ifnum\mathcode`#1="8000 \else
+    \ifnum\@@magyar@mathcodenum{#1}=\@@magyar@mathcode@active \else
       % Dat: \(...\) is safer than `$...$', because \( has a fixed \catcode
       %      that works with and w/o nath.sty
       \begingroup\lccode\string`~\string`#1\lowercase{\endgroup\edef~}{%
-	\mathchar\the\mathcode`#1\relax% Dat: would need \space\space
+	\@@magyar@mathchar{#1}% Dat: would need \space\space
         \noexpand\ifx\noexpand\MathBrk\noexpand\MathBrkAll% Hungarian language is active
-          \nobreak\discretionary{}{\hbox{\noexpand\(\mathchar\the\mathcode`#1 \noexpand\)}}{}%
+          \nobreak\discretionary{}{\hbox{\noexpand\(\@@magyar@mathchar{#1}\noexpand\)}}{}%
         \noexpand\fi}%
       \mathcode`#1"8000
     \fi
@@ -4255,6 +4299,26 @@
   \def\@@magyar@fixmathcmd#1{%
     \expandafter\@@magyar@fixmathcmd@low\meaning#1""\hfuzz#1%
   }
+  % unicode-math defines many relation/operator commands as character tokens
+  % ("the character …") or via \Umathchar, so the \meaning-parsing approach
+  % in \@@magyar@fixmathcmd cannot detect them.  For unicode-math, wrap the
+  % original command and repeat it after a line break.
+  \def\@@magyar@fixmathcmd@unicode#1{%
+    \ifx#1\@undefined\else
+      \expandafter\ifx\csname @@magyar@orig@\expandafter\@gobble\string#1\endcsname\relax
+        \expandafter\let\csname @@magyar@orig@\expandafter\@gobble\string#1\endcsname=#1%
+        \edef#1{\noexpand\protect\expandafter\noexpand\csname
+          \expandafter\@gobble\string#1 \endcsname}%
+        \expandafter\edef\csname\expandafter\@gobble\string#1 \endcsname{%
+          \expandafter\noexpand\csname @@magyar@orig@\expandafter\@gobble\string#1\endcsname
+          \noexpand\ifx\noexpand\MathBrk\noexpand\MathBrkAll
+            \noexpand\nobreak\noexpand\discretionary{}%
+              {\noexpand\hbox{\noexpand\(%
+                \expandafter\noexpand\csname @@magyar@orig@\expandafter\@gobble\string#1\endcsname
+              \noexpand\)}}{}%
+          \noexpand\fi}%
+      \fi
+    \fi}%
 
   \let\@@magyar@domathbins@prefix\@empty
   \def\@@magyar@onmathstart{%
@@ -4287,7 +4351,11 @@
     \expandafter\@@magyar@mathbins@tabularfix\@tabular}
 
   \def\@@magyar@fixmathcmds{%
-    \let\do\@@magyar@fixmathcmd
+    \expandafter\ifx\csname ver@unicode-math.sty\endcsname\relax
+      \let\do\@@magyar@fixmathcmd
+    \else
+      \let\do\@@magyar@fixmathcmd@unicode
+    \fi
     % vvv Binary relations listed in Table 3.4 in lshort.dvi
     \do\leq\do\le\do\ll\do\prec\do\preceq\do\subset\do\subseteq\do\sqsubset
     \do\sqsubseteq\do\in\do\vdash\do\mid\do\smile\do\geq\do\ge\do\gg\do\succ
