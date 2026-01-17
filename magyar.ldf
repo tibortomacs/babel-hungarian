@@ -3903,9 +3903,13 @@
     % Dat: superscript is emitted by \@makefnmark
     % Dat: \parindent doesn't apply for the 1st par of the footnote
     \magyar@@fo@indent@dimensetup
-    \ifvmode\noindent\hb@xt@\z@\fi%\else\hbox\fi
+    \ifvmode
+      \noindent\hb@xt@\z@{\hss\@textsuperscript{\normalfont\@thefnmark\,}}%
+    \else
     % ^^^ \usepackage[para]{footmisc} emits footnotes in horizontal mode
-      {\hss\@textsuperscript{\normalfont\@thefnmark\,}}#1%
+      \hbox{\@textsuperscript{\normalfont\@thefnmark\,}}%
+    \fi
+    #1%
   }
 
   %** Limit the size of the footnote mark (in main text) to \normalsize.
