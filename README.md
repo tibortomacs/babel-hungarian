@@ -50,7 +50,8 @@ This option has been removed with a warning as it lost its original function wit
 - Fix: [issue #1](https://github.com/tibortomacs/babel-hungarian/issues/1),
 [issue #2](https://github.com/tibortomacs/babel-hungarian/issues/2),
 [issue #3](https://github.com/tibortomacs/babel-hungarian/issues/3),
-[issue #4](https://github.com/tibortomacs/babel-hungarian/issues/4)
+[issue #4](https://github.com/tibortomacs/babel-hungarian/issues/4),
+[issue #5](https://github.com/tibortomacs/babel-hungarian/issues/5)
 - Remove deprecated options, with a warning about them: `accents`, `amslevelfix`, `amsuppercasefix`, `captionfix`, `cjhebrewfix`, `hyphenation`, and `showfix`.
 
 ### v1.5d (2025-05-02)
