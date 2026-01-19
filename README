@@ -10,11 +10,13 @@ The latest version of this license is in
 and version 1.3 or later is part of all distributions of LaTeX
 version 2005/12/01 or later.
 
+Copyright (C) 2004 Péter Szabó
+
 This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainers of this work are
   Péter Szabó
-  Tibor Tómács (from 2025-05-02)
+  Tibor Tómács
 
 Please report errors to: Tibor Tómács
                     via: https://github.com/tibortomacs/babel-hungarian
