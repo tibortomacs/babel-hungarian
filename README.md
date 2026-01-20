@@ -14,23 +14,24 @@ There is a longer user manual in Hungarian:
 ## Usage
 
 To typeset text in Hungarian, please in the preamble, use
-
-    \usepackage[T1]{fontenc}% only needed for latex/pdflatex
-    \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}
-    \usepackage[hungarian]{babel}
-
+```
+\usepackage[T1]{fontenc}% only needed for latex/pdflatex
+\PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}
+\usepackage[hungarian]{babel}
+```
 or
-
-    \usepackage[T1]{fontenc}% only needed for latex/pdflatex
-    \PassOptionsToPackage{defaults=hu-min}{magyar.ldf}% or \def\magyarOptions{defaults=hu-min}
-    \usepackage[magyar]{babel}
-
+```
+\usepackage[T1]{fontenc}% only needed for latex/pdflatex
+\PassOptionsToPackage{defaults=hu-min}{magyar.ldf}% or \def\magyarOptions{defaults=hu-min}
+\usepackage[magyar]{babel}
+```
 or
-
-    \DocumentMetadata{lang=hu}
-    \documentclass{...}
-    \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}
-    \usepackage{babel}
+```
+\DocumentMetadata{lang=hu}
+\documentclass{...}
+\PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}
+\usepackage{babel}
+```
 
 ## Changelog
 
