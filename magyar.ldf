@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2026/01/17 v1.6a Hungarian support from the babel system]
+%%        [2026/01/21 v1.6a Hungarian support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2026
@@ -53,7 +53,7 @@
 \NeedsTeXFormat{LaTeX2e}[2022-06-01]
 
 \ProvidesLanguage{\CurrentOption}
-  [2026/01/17 v1.6a Hungarian support from the babel system]
+  [2026/01/21 v1.6a Hungarian support from the babel system]
 
 \LdfInit{\CurrentOption}{captions\CurrentOption}
 
@@ -5227,6 +5227,18 @@
     --\pageref{##2}.~ol\-da\-la\-kon}%
   \def\reftextlabelrange##1##2{{}\csname @@magyar@told\endcsname\ref{##1}+tol{}
     \ref{##2}-ig}% Dat: `{}' is here for anti-\capitalize
+  \let\vrefformat\vrefdefaultformat%
+  \let\Vrefformat\Vrefdefaultformat%
+  \let\fullrefformat\fullrefdefaultformat%
+  \let\vrefrangeformat\magyar@vrefrangeformat%
+}
+
+\def\magyar@vrefrangeformat#1#2#3{%
+  \begingroup%
+  \def\@@magyar@ccheck##1##2\vfuzz##3{%
+     \if\noexpand##1c\relax\else\def\reserved@a{c0}\fi}%
+  \reftextlabelrange{#2}{#3} \vpagerefrange[{#1}]{#2}{#3}%
+  \endgroup%
 }
 \@gobble
 {^}%
