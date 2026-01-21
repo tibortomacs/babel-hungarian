@@ -2294,6 +2294,7 @@
    \xdef\@begindocumenthook{\the\toks@}}% Dat: \@begindocumenthook has #1 #2 etc.
   \def\@@magyar@protect@backtick{%
     \if@filesw\immediate\write\@auxout{\catcode\noexpand\string``=12}\fi}
+  \AtEndDocument{\catcode96=12\relax}
   %
   %** @param #1 a non-active char token
   %** @param #2 activation type: 0, 1, 2 or 3
