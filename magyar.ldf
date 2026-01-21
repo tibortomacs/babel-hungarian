@@ -2179,7 +2179,7 @@
   \def\magyar@sugg@vr#1{%
     \expandafter\expandafter\expandafter\@@magyar@grep@reftextcurrent
        \csname extras#1\endcsname\hbox${#1}\@@magyar@ignorehbox@pree%$
-       \def\reftextlabelrange23456\AtBeginDocument78\hbox${#1}%$
+       \def\reftextlabelrange23456\AtBeginDocument7\relax\hbox${#1}%$
   }
   \def\magyar@sugg@to#1{%
     \ifnum0\ifdefined\pdfoutput1\fi>0
