@@ -5203,6 +5203,18 @@
     --\pageref{##2}.~ol\-da\-la\-kon}%
   \def\reftextlabelrange##1##2{{}\csname @@magyar@told\endcsname\ref{##1}+tol{}
     \ref{##2}-ig}% Dat: `{}' is here for anti-\capitalize
+  \let\vrefformat\vrefdefaultformat%
+  \let\Vrefformat\Vrefdefaultformat%
+  \let\fullrefformat\fullrefdefaultformat%
+  \let\vrefrangeformat\magyar@vrefrangeformat%
+}
+
+\def\magyar@vrefrangeformat#1#2#3{%
+  \begingroup%
+  \def\@@magyar@ccheck##1##2\vfuzz##3{%
+     \if\noexpand##1c\relax\else\def\reserved@a{c0}\fi}%
+  \reftextlabelrange{#2}{#3} \vpagerefrange[{#1}]{#2}{#3}%
+  \endgroup%
 }
 \@gobble
 {^}%
