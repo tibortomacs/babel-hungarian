@@ -11,6 +11,9 @@ Hungarian typography in LaTeX in this TUG 2004 article:
 There is a longer user manual in Hungarian:
 [http://math.bme.hu/latex/magyarldf-doc.pdf](http://math.bme.hu/latex/magyarldf-doc.pdf)
 
+Detailed instructions and learning materials on how to use LaTeX for Hungarian language documents can be found at the following link:
+[https://tibortomacs.github.io/latex-tutorial-hu](https://tibortomacs.github.io/latex-tutorial-hu)
+
 ## Usage
 
 To typeset text in Hungarian, please in the preamble, use
