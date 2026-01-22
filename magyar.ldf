@@ -987,8 +987,6 @@
 \def\@@magyar@az@lowt{\@ifstar{\@@magyar@az@lowy}{\@ifnextchar+\@@magyar@az@lowz\@@magyar@az@lowx}}
 %** #1 is +.
 \def\@@magyar@az@lowz#1#2#3{\@@magyar@az@lowy{#2{#3}}~#2{#3}}
-%** Used by new varioref.sty
-\def\@@magyar@az@lowxu{\unskip\@@magyar@az@lowx}%
 \def\@@magyar@az@lowx#1{\@@magyar@az@lowy{#1}~\ignorespaces#1}
 \def\@@magyar@az@lowy#1{%
   \begingroup
@@ -2115,48 +2113,6 @@
 % --- suggestions=
 
 \ifnum\magyar@opt@@suggestions=0 \@@magyar@skiplong\fi
-  % Dat: buggy varioref.sty adds this to extrasmagyar (\AtBeginDocument is
-  %      buggy, can be used only in the preamble.
-  %     \def\reftextfaceafter {a k\"o\-vet\-kez\H{o} ol\-da\-lon}%
-  %     \def\reftextfacebefore{az el\H{o}\-z\H{o} ol\-da\-lon}%
-  %     \def\reftextafter     {a k\"o\-vet\-kez\H{o} ol\-da\-lon}%
-  %     \def\reftextbefore    {az el\H{o}\-z\H{o} ol\-da\-lon}%
-  %     \def\reftextcurrent   {ezen az ol\-da\-lon}%
-  %     \def\reftextfaraway#1{\aza{\pageref{#1}} \pageref{#1}.~ol\-da\-lon}%
-  %     \def\reftextpagerange#1#2{\vref@stringwarning\reftextpagerange
-  %                               on pages~\pageref{#1}--\pageref{#2}}%
-  %     \def\reftextlabelrange#1#2{\vref@stringwarning\reflabelpagerange
-  %                                \ref{#1} to~\ref{#2}}%
-  %     \AtBeginDocument{\providecommand\aza[1]{a/az%
-  %        \PackageError{varioref}{%
-  %          Proper definition for command \noexpand\aza missing}%
-  %         {You need to (re)define the command \noexpand\aza that
-  %          takes one argument (a number or a \noexpand\pageref command)
-  %          and produces the string `a' or `az' depending on the argument
-  %          value. It should also accept an optional argument (default `l')
-  %          to denote whether or not the string should be lowercase or
-  %          uppercase.}}}%
-  \def\@@magyar@ignorehbox@pree#1\hbox$#2{}%$
-  %\def\@@magyar@grep@reftextcurrent#1\def\reftextcurrent#2\hbox$
-  \def\@@magyar@grep@reftextbegin#1\def\reftextfaceafter#2\hfuzz\hfuzz\hfuzz#3\hbox$#4{%$
-    \toks@={#1#3}% Dat: # -> ## conversion for \def
-    \expandafter\global\expandafter\edef\csname extras#4\endcsname
-      {\the\toks@}%
-  }
-  \def\@@magyar@grep@reftextcurrent#1\def\reftextlabelrange#2#3#4#5#6%
-    \AtBeginDocument#7#8\hbox$#9{%$ Dat: no need for \long\def
-    % ^^^ Dat: Don't use `#21', because then #2 would match multiple tokens
-    \ifx#31% found real data, not sentinel
-      \PackageWarningNoLine{#9.ldf}{Do not load buggy \string\usepackage[magyar]{varioref},\MessageBreak load simply \string\usepackage{varioref}}%
-      % vvv remove code inserted by varioref.sty
-      \@@magyar@grep@reftextbegin#1\hfuzz\hfuzz\hfuzz#8\hbox${#9}%$
-    \fi
-  }
-  \def\magyar@sugg@vr#1{%
-    \expandafter\expandafter\expandafter\@@magyar@grep@reftextcurrent
-       \csname extras#1\endcsname\hbox${#1}\@@magyar@ignorehbox@pree%$
-       \def\reftextlabelrange23456\AtBeginDocument7\relax\hbox${#1}%$
-  }
   \def\magyar@sugg@to#1{%
     \ifnum0\ifdefined\pdfoutput1\fi>0
       \def\reserved@a{T1}%
@@ -2237,7 +2193,6 @@
     \noexpand\magyar@sugg@ap{\CurrentOption}%
     \noexpand\magyar@sugg@to{\CurrentOption}%
     \noexpand\magyar@sugg@ie{\CurrentOption}%
-    \noexpand\magyar@sugg@vr{\CurrentOption}%
     \noexpand\magyar@sugg@fh{\CurrentOption}%
   }}\reserved@a
   \@gobble
@@ -5188,28 +5143,24 @@
 % vvv varioref=
 
 \if0\magyar@opt@@varioref \@@magyar@skiplong\fi
-\expandafter\addto\csname extras\CurrentOption\endcsname{%
-  \@@magyar@setup@varioref} % Dat: we are we late enough so we override varioref.sty
-% vvv Don't apply changes if varioref.sty wasn't loaded.
-\AtBeginDocument{\expandafter\ifx\csname vpagerefrange\endcsname\relax
-  \let\@@magyar@setup@varioref\@empty\fi}
-\def\@@magyar@setup@varioref{% Dat: must be a separate macro for suggestions= not to find our \reftextfaceafter etc.
-  \def\reftextfaceafter {\reftextvario{a t\'ul\-ol\-da\-lon}{a k\"o\-vet\-kez\H{o} ol\-da\-lon}}%
-  \def\reftextfacebefore{\reftextvario{a t\'ul\-ol\-da\-lon}{az el\H{o}\-z\H{o} ol\-da\-lon}}%
-  \def\reftextafter     {a k\"o\-vet\-kez\H{o} ol\-da\-lon}%
-  \def\reftextbefore    {az el\H{o}\-z\H{o} ol\-da\-lon}%
-  \def\reftextcurrent   {ezen az ol\-da\-lon}%
-  \def\reftextfaraway##1{a~\csname @@magyar@az@lowxu\endcsname{\pageref{##1}}.~ol\-da\-lon}%
-  \def\reftextpagerange##1##2{a~\csname @@magyar@az@lowxu\endcsname{\pageref{##1}}%
-    --\pageref{##2}.~ol\-da\-la\-kon}%
-  \def\reftextlabelrange##1##2{{}\csname @@magyar@told\endcsname\ref{##1}+tol{}
-    \ref{##2}-ig}% Dat: `{}' is here for anti-\capitalize
+\AddToHook{package/varioref/before}{\DeclareOption{hungarian}{\relax}}
+\AddBabelHook[\CurrentOption]{set-hu-varioref}{afterextras}{\IfPackageLoadedT{varioref}{\@@magyar@setup@varioref}}
+\def\@@magyar@setup@varioref{%
+  \def\reftextfaceafter {\reftextvario{a t\'uloldalon}{a k\"ovetkez\H{o} oldalon}}%
+  \def\reftextfacebefore{\reftextvario{a t\'uloldalon}{az el\H{o}z\H{o} oldalon}}%
+  \def\reftextafter     {a k\"ovetkez\H{o} oldalon}%
+  \def\reftextbefore    {az el\H{o}z\H{o} oldalon}%
+  \def\reftextcurrent   {ezen az oldalon}%
+  \def\reftextfaraway##1{\az{\pageref{##1}}.~oldalon}%
+  \def\reftextpagerange##1##2{\az{\pageref{##1}}%
+    --\pageref{##2}.~oldalakon}%
+  \def\reftextlabelrange##1##2{\told\ref{##1}+tol{}
+    \ref{##2}-ig}%
   \let\vrefformat\vrefdefaultformat%
   \let\Vrefformat\Vrefdefaultformat%
   \let\fullrefformat\fullrefdefaultformat%
   \let\vrefrangeformat\magyar@vrefrangeformat%
 }
-
 \def\magyar@vrefrangeformat#1#2#3{%
   \begingroup%
   \def\@@magyar@ccheck##1##2\vfuzz##3{%
