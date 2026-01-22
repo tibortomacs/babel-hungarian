@@ -40,7 +40,7 @@ or
 - New option handling using `\DeclareKeys`.
 This allows spaces before/after the `=` sign.
 - Remove support for `\input magyar.ldf`. This is poor practice; it is better if the compilation fails.
-- Fix: \SafeToday
+- Fix: `\SafeToday`
 [116d69b](https://github.com/tibortomacs/babel-hungarian/commit/116d69b)
 - Fix: the `babelmarkfix=yes` option generates test characters in the header of empty pages with newer babel versions.
 This option has been removed with a warning as it lost its original function with newer babel versions anyway.
@@ -56,6 +56,7 @@ This option has been removed with a warning as it lost its original function wit
 [issue #6](https://github.com/tibortomacs/babel-hungarian/issues/6),
 [issue #7](https://github.com/tibortomacs/babel-hungarian/issues/7),
 [issue #8](https://github.com/tibortomacs/babel-hungarian/issues/8)
+- Solved: [issue #9](https://github.com/tibortomacs/babel-hungarian/issues/9)
 - Remove deprecated options, with a warning about them: `accents`, `amslevelfix`, `amsuppercasefix`, `captionfix`, `cjhebrewfix`, `hyphenation`, and `showfix`.
 
 ### v1.5d (2025-05-02)
