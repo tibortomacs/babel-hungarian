@@ -19,7 +19,7 @@
 %% License, as described in lppl.txt in the base LaTeX distribution.
 %% Either version 1.2 or, at your option, any later version.
 %%\ProvidesLanguage{magyar}
-%%        [2026/01/22 v1.6a Hungarian support from the babel system]
+%%        [2026/01/26 v1.6a Hungarian support from the babel system]
 %% File `magyar.dtx'
 %% Babel package for LaTeX version 2e
 %% Copyright (C) 1989 - 2026
@@ -53,7 +53,7 @@
 \NeedsTeXFormat{LaTeX2e}[2022-06-01]
 
 \ProvidesLanguage{\CurrentOption}
-  [2026/01/22 v1.6a Hungarian support from the babel system]
+  [2026/01/26 v1.6a Hungarian support from the babel system]
 
 \LdfInit{\CurrentOption}{captions\CurrentOption}
 
@@ -2199,13 +2199,6 @@
       please move it before \string\usepackage[#1]{babel}}%
     \fi
   }%
-  \def\@@magyar@@ps@fancy{\relax}%\@fancyplainfalse\ps@@fancy}%
-  \def\magyar@sugg@fh#1{%
-    \ifx\ps@fancy\@@magyar@@ps@fancy
-      \PackageWarningNoLine{#1.ldf}{No effect on fancyhdr.sty,\MessageBreak
-      please load it before \string\usepackage[#1]{babel}}%
-    \fi
-  }%
   \def\magyar@sugg@ap#1{%
     \expandafter\ifx\csname opt@#1.ldf.sty\endcsname\relax\else
       \PackageWarningNoLine{#1.ldf}{No effect of \@backslashchar PassOptionsToPackage{?}{#1.ldf}\MessageBreak
@@ -2217,7 +2210,6 @@
     \noexpand\magyar@sugg@ap{\CurrentOption}%
     \noexpand\magyar@sugg@to{\CurrentOption}%
     \noexpand\magyar@sugg@ie{\CurrentOption}%
-    \noexpand\magyar@sugg@fh{\CurrentOption}%
   }}\reserved@a
   \@gobble
 {^}%
@@ -4677,8 +4669,24 @@
         % !! add support for \thispagestyle in the preamble.
         % !! don't add this if extras gets cleared.
         \expandafter\addto\csname extras#1\endcsname{%
-          \babel@save\ps@headings
-          \let\ps@headings\@@magyar@overridden@psheadings
+          \babel@save\ps@headings%
+          \babel@save\@oddhead%
+          \babel@save\@evenhead%
+          \babel@save\@oddfoot%
+          \babel@save\@evenfoot%
+          \babel@save\@mkboth%
+          \babel@save\partmark%
+          \babel@save\chaptermark%
+          \babel@save\sectionmark%
+          \babel@save\subsectionmark%
+          \babel@save\paragraphmark%
+          \babel@save\subparagraphmark%
+          \magyar@if@currentpagestyle{\ps@headings}{%
+            \let\ps@headings\@@magyar@overridden@psheadings%
+            \ps@headings%
+          }{%
+            \let\ps@headings\@@magyar@overridden@psheadings%
+          }%
         }%
         \magyar@if@currentpagestyle{\ps@headings}{%
           % The current \pagestyle has been selected by the current
@@ -5196,46 +5204,37 @@
 {^}%
 
 % vvv fancyhdr=
-%
-% Dat: magyar.ldf has to be loaded first, otherwise it cannot fix
-%      `\usepackage{fancyhdr} \pagestyle{fancy}'
 
 \if0\magyar@opt@@fancyhdr \@@magyar@skiplong\fi
-\expandafter\ifx\csname ps@fancy\endcsname\relax
-  % Emit a warning if \pagestyle{fancy} is used after this.
-  % The original definition: \def\ps@fancy{\@fancyplainfalse\ps@@fancy}
-  \def\@@magyar@@ps@fancy{\@fancyplainfalse\ps@@fancy}%
-\else
-  \addto\ps@fancy{% works for article.cls, report.cls and book.cls
-    \@ifundefined{chapter}{%
-      % article:
-      % > \sectionmark=macro:
-      %#1->\markboth {\MakeUppercase {\ifnum \c@secnumdepth >\z@
-      %\thesection \hskip 1em\relax \fi #1}}{}.
-      \def\sectionmark#1{\markboth{\MakeUppercase{\ifnum \c@secnumdepth>\z@
-        \thesection.\magyar@opt@@hdrtitleskip \fi #1}}{}}%
-      % vvv Imp: do we need \if@twoside to set \subsectionmark here?
-      % #1->\markright {\ifnum \c@secnumdepth >\@ne \thesubsection
-      % \hskip 1em\relax \fi #1}.
-      \def\subsectionmark#1{\markright {\ifnum \c@secnumdepth >\@ne
-        \thesubsection.\magyar@opt@@hdrtitleskip \fi #1}}%
-    }{\def\chaptermark#1{
-        \markboth{\MakeUppercase{\ifnum \c@secnumdepth>\m@ne
-        % report.cls doesn't have \if@mainmatter, so we replace it with \iftrue
-        \@gobble\iftrue  % balance for quick skipping
-        \@@magyar@ifmainmatter  % must be macro if quick skipping
-        \magyar@huordinal@chapterheaddot
-        \@chapapp.\magyar@opt@@hdrtitleskip
-        \fi  % for \if@mainmatter
-        \fi#1}}{}}%
-      \def\sectionmark#1{\markright{\MakeUppercase{\ifnum \c@secnumdepth>\z@
-        \thesection.\magyar@opt@@hdrtitleskip \fi#1}}}}}%
-  \def\@@magyar@@ps@fancy{\relax}% must be done after suggestions=
-\fi
-% This definition must be outside \iffalse.
 \def\@@magyar@ifmainmatter{%
-  \csname \ifx\if@mainmatter\@undefined iftrue\else if@mainmatter\fi
+  \csname \ifx\if@mainmatter\@undefined iftrue\else if@mainmatter\fi%
   \endcsname}
+\def\@@magyar@setmarks@hu{%
+  \@ifundefined{chapter}{%
+    \def\sectionmark##1{\markboth{\MakeUppercase{\ifnum \c@secnumdepth>\z@%
+      \thesection.\magyar@opt@@hdrtitleskip \fi ##1}}{}}%
+    \def\subsectionmark##1{\markright{\ifnum \c@secnumdepth>\@ne%
+      \thesubsection.\magyar@opt@@hdrtitleskip \fi ##1}}%
+  }{%
+    \def\chaptermark##1{%
+      \markboth{\MakeUppercase{\ifnum \c@secnumdepth>\m@ne%
+        \@@magyar@ifmainmatter%
+          \magyar@huordinal@chapterheaddot%
+          \@chapapp.\magyar@opt@@hdrtitleskip%
+        \fi%
+      \fi ##1}}{}}%
+    \def\sectionmark##1{\markright{\MakeUppercase{\ifnum \c@secnumdepth>\z@%
+      \thesection.\magyar@opt@@hdrtitleskip \fi ##1}}}%
+  }%
+}
+\expandafter\addto\csname extras\CurrentOption\endcsname{%
+  \IfPackageLoadedT{fancyhdr}{%
+    \babel@save\chaptermark%
+    \babel@save\sectionmark%
+    \babel@save\subsectionmark%
+    \@@magyar@setmarks@hu%
+  }%
+}
 \@gobble
 {^}%
 
