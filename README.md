@@ -42,7 +42,7 @@ or
 
 - New option handling using `\DeclareKeys`.
 This allows spaces before/after the `=` sign.
-- Remove support for `\input magyar.ldf`. This is poor practice; it is better if the compilation fails.
+- Remove support for `\input magyar.ldf` (poor practice; compilation should fail instead).
 - Remove deprecated options, with a warning about them:
 `accents`, `amslevelfix`, `amsuppercasefix`,
 `babelmarkfix`
