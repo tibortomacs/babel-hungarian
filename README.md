@@ -49,7 +49,7 @@ This allows spaces before/after the `=` sign.
 (see [071d93b](https://github.com/tibortomacs/babel-hungarian/commit/071d93b),
 [8849eb8](https://github.com/tibortomacs/babel-hungarian/commit/8849eb8)), 
 `captionfix`, `cjhebrewfix`, `hyphenation`, and `showfix`.
-- Fix:
+- Fixed:
 [116d69b](https://github.com/tibortomacs/babel-hungarian/commit/116d69b),
 [8ff175f](https://github.com/tibortomacs/babel-hungarian/commit/8ff175f),
 [issue #1](https://github.com/tibortomacs/babel-hungarian/issues/1),
@@ -60,7 +60,7 @@ This allows spaces before/after the `=` sign.
 [issue #6](https://github.com/tibortomacs/babel-hungarian/issues/6),
 [issue #7](https://github.com/tibortomacs/babel-hungarian/issues/7),
 [issue #8](https://github.com/tibortomacs/babel-hungarian/issues/8)
-- Solve:
+- Resolved:
 [issue #9](https://github.com/tibortomacs/babel-hungarian/issues/9),
 [issue #10](https://github.com/tibortomacs/babel-hungarian/issues/10)
 
