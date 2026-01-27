@@ -40,29 +40,34 @@ or
 
 ### v1.6a (unreleased)
 
-- New option handling using `\DeclareKeys`.
-This allows spaces before/after the `=` sign.
-- Remove support for `\input magyar.ldf` (poor practice; compilation should fail instead).
-- Remove deprecated options, with a warning about them:
+- Introduced new option handling using `\DeclareKeys`, allowing spaces before and after the `=` sign.
+- Removed support for `\input magyar.ldf` (poor practice; compilation should fail instead).
+- Removed deprecated options; their use now emits a warning:
 `accents`, `amslevelfix`, `amsuppercasefix`,
 `babelmarkfix`
-(see [071d93b](https://github.com/tibortomacs/babel-hungarian/commit/071d93b),
+(see [071d93b](https://github.com/tibortomacs/babel-hungarian/commit/071d93b)
+and
 [8849eb8](https://github.com/tibortomacs/babel-hungarian/commit/8849eb8)), 
 `captionfix`, `cjhebrewfix`, `hyphenation`, and `showfix`.
 - Fixed:
+commits
 [116d69b](https://github.com/tibortomacs/babel-hungarian/commit/116d69b),
 [8ff175f](https://github.com/tibortomacs/babel-hungarian/commit/8ff175f),
-[issue #1](https://github.com/tibortomacs/babel-hungarian/issues/1),
-[issue #2](https://github.com/tibortomacs/babel-hungarian/issues/2),
-[issue #3](https://github.com/tibortomacs/babel-hungarian/issues/3),
-[issue #4](https://github.com/tibortomacs/babel-hungarian/issues/4),
-[issue #5](https://github.com/tibortomacs/babel-hungarian/issues/5),
-[issue #6](https://github.com/tibortomacs/babel-hungarian/issues/6),
-[issue #7](https://github.com/tibortomacs/babel-hungarian/issues/7),
-[issue #8](https://github.com/tibortomacs/babel-hungarian/issues/8)
-- Resolved:
-[issue #9](https://github.com/tibortomacs/babel-hungarian/issues/9),
-[issue #10](https://github.com/tibortomacs/babel-hungarian/issues/10)
+issues
+[#1](https://github.com/tibortomacs/babel-hungarian/issues/1),
+[#2](https://github.com/tibortomacs/babel-hungarian/issues/2),
+[#3](https://github.com/tibortomacs/babel-hungarian/issues/3),
+[#4](https://github.com/tibortomacs/babel-hungarian/issues/4),
+[#5](https://github.com/tibortomacs/babel-hungarian/issues/5),
+[#6](https://github.com/tibortomacs/babel-hungarian/issues/6),
+[#7](https://github.com/tibortomacs/babel-hungarian/issues/7),
+and
+[#8](https://github.com/tibortomacs/babel-hungarian/issues/8).
+- Implemented:
+issues
+[#9](https://github.com/tibortomacs/babel-hungarian/issues/9)
+and
+[#10](https://github.com/tibortomacs/babel-hungarian/issues/10).
 
 
 ### v1.5d (2025-05-02)
