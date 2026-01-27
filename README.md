@@ -43,15 +43,15 @@ or
 - New option handling using `\DeclareKeys`.
 This allows spaces before/after the `=` sign.
 - Remove support for `\input magyar.ldf`. This is poor practice; it is better if the compilation fails.
-- Fix: `\SafeToday`
-[116d69b](https://github.com/tibortomacs/babel-hungarian/commit/116d69b)
-- Fix: the `babelmarkfix=yes` option generates test characters in the header of empty pages with newer babel versions.
-This option has been removed with a warning as it lost its original function with newer babel versions anyway.
-[071d93b](https://github.com/tibortomacs/babel-hungarian/commit/071d93b)
-[8849eb8](https://github.com/tibortomacs/babel-hungarian/commit/8849eb8)
-- Fix: `\DocumentMetadata{lang=hu}` crashed in some cases with `\@@magyar@mathbins@tabularfix`.
-[8ff175f](https://github.com/tibortomacs/babel-hungarian/commit/8ff175f)
+- Remove deprecated options, with a warning about them:
+`accents`, `amslevelfix`, `amsuppercasefix`,
+`babelmarkfix`
+(see [071d93b](https://github.com/tibortomacs/babel-hungarian/commit/071d93b),
+[8849eb8](https://github.com/tibortomacs/babel-hungarian/commit/8849eb8)), 
+`captionfix`, `cjhebrewfix`, `hyphenation`, and `showfix`.
 - Fix:
+[116d69b](https://github.com/tibortomacs/babel-hungarian/commit/116d69b),
+[8ff175f](https://github.com/tibortomacs/babel-hungarian/commit/8ff175f),
 [issue #1](https://github.com/tibortomacs/babel-hungarian/issues/1),
 [issue #2](https://github.com/tibortomacs/babel-hungarian/issues/2),
 [issue #3](https://github.com/tibortomacs/babel-hungarian/issues/3),
@@ -60,10 +60,10 @@ This option has been removed with a warning as it lost its original function wit
 [issue #6](https://github.com/tibortomacs/babel-hungarian/issues/6),
 [issue #7](https://github.com/tibortomacs/babel-hungarian/issues/7),
 [issue #8](https://github.com/tibortomacs/babel-hungarian/issues/8)
-- Solved:
+- Solve:
 [issue #9](https://github.com/tibortomacs/babel-hungarian/issues/9),
 [issue #10](https://github.com/tibortomacs/babel-hungarian/issues/10)
-- Remove deprecated options, with a warning about them: `accents`, `amslevelfix`, `amsuppercasefix`, `captionfix`, `cjhebrewfix`, `hyphenation`, and `showfix`.
+
 
 ### v1.5d (2025-05-02)
 
