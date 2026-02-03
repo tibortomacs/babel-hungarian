@@ -38,7 +38,7 @@ or
 
 ## Changelog
 
-### v1.6a (unreleased)
+### v1.6a (2026-02-03)
 
 - Introduced new option handling using `\DeclareKeys`, allowing spaces before and after the `=` sign.
 - Removed support for `\input magyar.ldf` (poor practice; compilation should fail instead).
