@@ -1,50 +1,25 @@
-%% -*- coding: utf-8 -*-
-%%
-%% This is file `magyar.ldf',
-%% generated with the docstrip utility.
-%%
-%% The original source files were:
-%%
-%% magyar.dtx  (with options: `code')
-%%
-%% This is a generated file.
-%%
-%% Copyright 1989-2026 Johannes L. Braams and any individual authors
-%% listed elsewhere in this file.  All rights reserved.
-%%
-%% This file is part of the Babel system release 3.7.
-%% --------------------------------------------------
-%%
-%% It may be distributed under the terms of the LaTeX Project Public
-%% License, as described in lppl.txt in the base LaTeX distribution.
-%% Either version 1.2 or, at your option, any later version.
-%%\ProvidesLanguage{magyar}
-%%        [2026/01/26 v1.6a Hungarian support from the babel system]
-%% File `magyar.dtx'
-%% Babel package for LaTeX version 2e
-%% Copyright (C) 1989 - 2026
-%%           by Johannes Braams, TeXniek
-%% Hungarian language support for the babel multilingual package
-%% Copyright (C) 1989 - 2026
-%%           by Johannes Braams, TeXniek
-%%              Árpád Bíró  --1996/12/13
-%%              József Bérces 1997-06-06  (exact date unknown, after 1996-12-13, before 2000-03-15)
-%%              Péter Szabó 2000-03-15--2001-03-06--2003-08-10--2019-03-20
-%%              Tibor Tómács 2025-05-01--
-%% The current primary maintainer is Tibor Tómács <tomacs.tibor@gmail.com>
-%% The current seconary maintainer is Péter Szabó <pts@fazekas.hu>
-%% The official repository is https://github.com/tibortomacs/babel-hungarian
-%%
+% magyar.ldf - Hungarian language support for the babel multilingual package
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
 % of this license or (at your option) any later version.
 % The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
-% and version 1.3 or later is part of all distributions of LaTeX
-% version 2005/12/01 or later.
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008 or later.
 %
 % This work has the LPPL maintenance status `maintained'.
+%
+% Copyright (C) 1989--2026
+%           by Johannes Braams, TeXniek
+%              Árpád Bíró  --1996/12/13
+%              József Bérces (exact date unknown, after 1996-12-13, before 2000-03-15)
+%              Péter Szabó 2000-03-15--2001-03-06--2003-08-10--2019-03-20
+%              Tibor Tómács 2025-05-02--
+%
+% The current primary maintainer is Tibor Tómács <tomacs.tibor@gmail.com>
+% The current secondary maintainer is Péter Szabó <pts@fazekas.hu>
+% The official repository is https://github.com/tibortomacs/babel-hungarian
 %
 % Please report errors to: Tibor Tómács
 %                     via: https://github.com/tibortomacs/babel-hungarian
@@ -53,7 +28,7 @@
 \NeedsTeXFormat{LaTeX2e}[2022-06-01]
 
 \ProvidesLanguage{\CurrentOption}
-  [2026/01/26 v1.6a Hungarian support from the babel system]
+  [2026/02/03 v1.6a Hungarian support from the babel system]
 
 \LdfInit{\CurrentOption}{captions\CurrentOption}
 
