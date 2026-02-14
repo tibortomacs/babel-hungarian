@@ -6,10 +6,10 @@ The babel-hungarian on the CTAN website:
 [https://ctan.org/pkg/babel-hungarian](https://ctan.org/pkg/babel-hungarian)
 
 Hungarian typography in LaTeX in this TUG 2004 article:
-[http://www.math.bme.hu/latex/dl/pts_tug2004_magyarldf2.pdf](http://www.math.bme.hu/latex/dl/pts_tug2004_magyarldf2.pdf)
+[https://math.bme.hu/latex/dl/pts_tug2004_magyarldf2.pdf](https://math.bme.hu/latex/dl/pts_tug2004_magyarldf2.pdf)
 
 There is a longer user manual in Hungarian:
-[http://math.bme.hu/latex/magyarldf-doc.pdf](http://math.bme.hu/latex/magyarldf-doc.pdf)
+[https://math.bme.hu/latex/magyarldf-doc.pdf](https://math.bme.hu/latex/magyarldf-doc.pdf)
 
 Detailed instructions and learning materials on how to use LaTeX for Hungarian language documents can be found at the following link:
 [https://tibortomacs.github.io/latex-tutorial-hu](https://tibortomacs.github.io/latex-tutorial-hu)
@@ -38,39 +38,39 @@ or
 
 ## Changelog
 
-### v1.6a (unreleased)
+### v1.6a (2026-02-03)
 
-- New option handling using `\DeclareKeys`.
-This allows spaces before/after the `=` sign.
-- Remove support for `\input magyar.ldf`. This is poor practice; it is better if the compilation fails.
-- Fix: `\SafeToday`
-[116d69b](https://github.com/tibortomacs/babel-hungarian/commit/116d69b)
-- Fix: the `babelmarkfix=yes` option generates test characters in the header of empty pages with newer babel versions.
-This option has been removed with a warning as it lost its original function with newer babel versions anyway.
-[071d93b](https://github.com/tibortomacs/babel-hungarian/commit/071d93b)
-[8849eb8](https://github.com/tibortomacs/babel-hungarian/commit/8849eb8)
-- Fix: `\DocumentMetadata{lang=hu}` crashed in some cases with `\@@magyar@mathbins@tabularfix`.
-[8ff175f](https://github.com/tibortomacs/babel-hungarian/commit/8ff175f)
-- Fix: [issue #1](https://github.com/tibortomacs/babel-hungarian/issues/1),
-[issue #2](https://github.com/tibortomacs/babel-hungarian/issues/2),
-[issue #3](https://github.com/tibortomacs/babel-hungarian/issues/3),
-[issue #4](https://github.com/tibortomacs/babel-hungarian/issues/4),
-[issue #5](https://github.com/tibortomacs/babel-hungarian/issues/5),
-[issue #6](https://github.com/tibortomacs/babel-hungarian/issues/6),
-[issue #7](https://github.com/tibortomacs/babel-hungarian/issues/7),
-[issue #8](https://github.com/tibortomacs/babel-hungarian/issues/8)
-- Solved: [issue #9](https://github.com/tibortomacs/babel-hungarian/issues/9)
-- Remove deprecated options, with a warning about them: `accents`, `amslevelfix`, `amsuppercasefix`, `captionfix`, `cjhebrewfix`, `hyphenation`, and `showfix`.
-
-### v1.5d (2025-05-02)
-
-- Fix: `magyar.ldf` interferes with the anchors created by `hyperref` for theorem-like environments, causing cross-references to jump to the wrong location.
-When the `amsthm` package is also loaded, duplicate PDF destination names are produced.
-[f115d8a](https://github.com/tibortomacs/babel-hungarian/commit/f115d8a)
-- Instead of `t1enc`, we recommend the `fontenc` package with the `T1` option.
-- Remove the recommendation for the `latin2` input encoding.
+- Introduced new option handling using `\DeclareKeys`, allowing spaces before and after the `=` sign.
+- Removed support for `\input magyar.ldf` (poor practice; compilation should fail instead).
+- Removed deprecated options; their use now emits a warning:
+`accents`, `amslevelfix`, `amsuppercasefix`,
+`babelmarkfix`
+(see [65458c4](https://github.com/tibortomacs/babel-hungarian/commit/65458c4)
+and
+[837305d](https://github.com/tibortomacs/babel-hungarian/commit/837305d)), 
+`captionfix`, `cjhebrewfix`, `hyphenation`, and `showfix`.
+- Fixed:
+commits
+[6a5d987](https://github.com/tibortomacs/babel-hungarian/commit/6a5d987)
+[add944e](https://github.com/tibortomacs/babel-hungarian/commit/add944e),
+[ef82fd4](https://github.com/tibortomacs/babel-hungarian/commit/ef82fd4),
+issues
+[#1](https://github.com/tibortomacs/babel-hungarian/issues/1),
+[#2](https://github.com/tibortomacs/babel-hungarian/issues/2),
+[#3](https://github.com/tibortomacs/babel-hungarian/issues/3),
+[#4](https://github.com/tibortomacs/babel-hungarian/issues/4),
+[#5](https://github.com/tibortomacs/babel-hungarian/issues/5),
+[#6](https://github.com/tibortomacs/babel-hungarian/issues/6),
+[#7](https://github.com/tibortomacs/babel-hungarian/issues/7),
+and
+[#8](https://github.com/tibortomacs/babel-hungarian/issues/8).
+- Implemented:
+issues
+[#9](https://github.com/tibortomacs/babel-hungarian/issues/9)
+and
+[#10](https://github.com/tibortomacs/babel-hungarian/issues/10).
 
 ## License
 
 This work may be distributed and/or modified under the conditions of the LaTeX Project Public License, either version 1.3 of this license or (at your option) any later version.
-The latest version of this license is in http://www.latex-project.org/lppl.txt and version 1.3 or later is part of all distributions of LaTeX version 2005/12/01 or later.
+The latest version of this license is in   [https://www.latex-project.org/lppl.txt](https://www.latex-project.org/lppl.txt) and version 1.3c or later is part of all distributions of LaTeX version 2008 or later.
