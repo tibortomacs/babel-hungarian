@@ -38,6 +38,12 @@ or
 
 ## Changelog
 
+### v1.6b (unreleased)
+
+- Fixed:
+issue
+[#11](https://github.com/tibortomacs/babel-hungarian/issues/11)
+
 ### v1.6a (2026-02-03)
 
 - Introduced new option handling using `\DeclareKeys`, allowing spaces before and after the `=` sign.
