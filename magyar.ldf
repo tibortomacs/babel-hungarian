@@ -5193,10 +5193,12 @@
   }{%
     \def\chaptermark##1{%
       \markboth{\MakeUppercase{\ifnum \c@secnumdepth>\m@ne%
-        \@@magyar@ifmainmatter%
+        % report.cls doesn't have \if@mainmatter, so we replace it with \iftrue
+        \@gobble\iftrue% balance for quick skipping
+        \@@magyar@ifmainmatter% must be macro if quick skipping
           \magyar@huordinal@chapterheaddot%
           \@chapapp.\magyar@opt@@hdrtitleskip%
-        \fi%
+        \fi% for \if@mainmatter
       \fi ##1}}{}}%
     \def\sectionmark##1{\markright{\MakeUppercase{\ifnum \c@secnumdepth>\z@%
       \thesection.\magyar@opt@@hdrtitleskip \fi ##1}}}%
