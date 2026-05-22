@@ -2113,7 +2113,7 @@
 
 \ifnum\magyar@opt@@suggestions=0 \@@magyar@skiplong\fi
   \def\magyar@sugg@to#1{%
-    \ifnum0\ifdefined\pdfoutput1\fi>0
+    \ifnum0\ifdefined\pdftexversion1\fi>0
       \def\reserved@a{T1}%
       \edef\reserved@b{\encodingdefault}%
       \ifx\reserved@a\reserved@b\else
