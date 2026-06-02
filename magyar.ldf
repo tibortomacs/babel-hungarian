@@ -4282,21 +4282,6 @@
     \else\@@magyar@fixeverymathcmds@appendto\mathoptions@on\@@magyar@onmathstart\fi
   }
 
-  % The definition of \@tabular contains a $, which calls
-  % \@@magyar@domathbins, which has some unintended side effects of changing
-  % \catcode values and the meaning of the active character : . This magic
-  % prevents the call to \@@magyar@domathbins .
-  %
-  % Test code: \author{a:b} \maketitle
-  % Test code: \def\foo{a:b} \begin{tabular}[t]{c}x\foo y\end{tabular}
-  \def\@@magyar@mathbins@tabularfix#1${%
-    \def\@@magyar@domathbins@prefix{%
-      \let\@@magyar@domathbins@prefix\@empty\@gobble}#1$}%
-  \expandafter\expandafter\expandafter\def
-  \expandafter\expandafter\expandafter\@tabular
-  \expandafter\expandafter\expandafter{%
-    \expandafter\@@magyar@mathbins@tabularfix\@tabular}
-
   \def\@@magyar@fixmathcmds{%
     \expandafter\ifx\csname ver@unicode-math.sty\endcsname\relax
       \let\do\@@magyar@fixmathcmd
