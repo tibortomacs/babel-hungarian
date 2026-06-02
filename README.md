@@ -43,7 +43,8 @@ or
 - Fixed:
 issue
 [#11](https://github.com/tibortomacs/babel-hungarian/issues/11),
-[#12](https://github.com/tibortomacs/babel-hungarian/issues/12)
+[#12](https://github.com/tibortomacs/babel-hungarian/issues/12),
+[#12](https://github.com/tibortomacs/babel-hungarian/issues/13)
 
 ### v1.6a (2026-02-03)
 
