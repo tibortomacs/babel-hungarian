@@ -2112,32 +2112,34 @@
 % --- suggestions=
 
 \ifnum\magyar@opt@@suggestions=0 \@@magyar@skiplong\fi
-  \def\magyar@sugg@to#1{%
+  \def\magyar@sugg@fontenc#1{%
     \ifnum0\ifdefined\pdftexversion1\fi>0
       \def\reserved@a{T1}%
       \edef\reserved@b{\encodingdefault}%
       \ifx\reserved@a\reserved@b\else
-        \@latex@warning@no@line{Please use \string\usepackage[T1]{fontenc} with\MessageBreak \string\usepackage[#1]{babel}, to get accented chars hyphenated}%
+        \PackageWarningNoLine{#1.ldf}{Please use \string\usepackage[T1]{fontenc} with\MessageBreak
+        \string\usepackage[#1]{babel}, to get accented chars hyphenated}%
       \fi
     \fi
   }
-  \def\magyar@sugg@af#1{%
+  \def\magyar@sugg@defopt#1{%
     \expandafter\ifx\csname#1Options\endcsname\relax\else
-      \PackageWarningNoLine{#1.ldf}{No effect of \string\def\@backslashchar #1Options{...}\MessageBreak
+      \PackageWarningNoLine{#1.ldf}{No effect of \string\def\@backslashchar #1Options{?}\MessageBreak
       please move it before \string\usepackage[#1]{babel}}%
     \fi
-  }%
-  \def\magyar@sugg@ap#1{%
+  }
+  \def\magyar@sugg@passopt#1{%
     \expandafter\ifx\csname opt@#1.ldf.sty\endcsname\relax\else
-      \PackageWarningNoLine{#1.ldf}{No effect of \@backslashchar PassOptionsToPackage{?}{#1.ldf}\MessageBreak
+      \PackageWarningNoLine{#1.ldf}{No effect of \string\PassOptionsToPackage{?}{#1.ldf}\MessageBreak
       please move it before \string\usepackage[#1]{babel}}%
     \fi
-  }%
-  \edef\reserved@a{\noexpand\AtBeginDocument{%
-    \noexpand\magyar@sugg@af{\CurrentOption}%
-    \noexpand\magyar@sugg@ap{\CurrentOption}%
-    \noexpand\magyar@sugg@to{\CurrentOption}%
-  }}\reserved@a
+  }
+  \edef\magyar@sugg{\noexpand\AtBeginDocument{%
+    \noexpand\magyar@sugg@defopt{\CurrentOption}%
+    \noexpand\magyar@sugg@passopt{\CurrentOption}%
+    \noexpand\magyar@sugg@fontenc{\CurrentOption}%
+  }}
+  \magyar@sugg
   \@gobble
 {^}%
 
