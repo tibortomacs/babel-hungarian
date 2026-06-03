@@ -49,6 +49,8 @@ issue
 ([7f95db6](https://github.com/tibortomacs/babel-hungarian/commit/7f95db6))
 - Removed suggestion to use `inputenc`
 ([ccef221](https://github.com/tibortomacs/babel-hungarian/commit/ccef221))
+- `\NeedsTeXFormat{LaTeX2e}[2026-06-01]`
+([ff21cbe](https://github.com/tibortomacs/babel-hungarian/commit/ff21cbe))
 
 
 ### v1.6a (2026-02-03)
