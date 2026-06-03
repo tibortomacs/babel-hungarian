@@ -28,7 +28,7 @@
 \NeedsTeXFormat{LaTeX2e}[2026-06-01]
 
 \ProvidesLanguage{\CurrentOption}
-  [2026/02/03 v1.6a Hungarian support from the babel system]
+  [2026/06/03 v1.6b Hungarian support from the babel system]
 
 \LdfInit{\CurrentOption}{captions\CurrentOption}
 

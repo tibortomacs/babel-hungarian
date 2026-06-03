@@ -38,7 +38,7 @@ or
 
 ## Changelog
 
-### v1.6b (unreleased)
+### v1.6b (2026-06-03)
 
 - Fixed:
 issue
