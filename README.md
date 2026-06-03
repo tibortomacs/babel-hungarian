@@ -47,6 +47,9 @@ issue
 [#13](https://github.com/tibortomacs/babel-hungarian/issues/13)
 - Adaptation to `varioref` v1.6i (2026/05/04)
 ([7f95db6](https://github.com/tibortomacs/babel-hungarian/commit/7f95db6))
+- Removed suggestion to use `inputenc`
+([ccef221](https://github.com/tibortomacs/babel-hungarian/commit/ccef221))
+
 
 ### v1.6a (2026-02-03)
 
