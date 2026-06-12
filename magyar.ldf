@@ -1728,7 +1728,7 @@
       \@@magyar@error{Invalid arg for option: postdescription = \magyar@opt@@postdescription}%
     \else
       \def\magyar@@descriptionfont{\normalfont\bfseries}%
-      \def\descriptionlabel#1{\hskip\labelsep{\magyar@@descriptionfont#1}\magyar@post@description\hskip-\labelsep}%
+      \def\descriptionlabel#1{\hskip\labelsep{\magyar@@descriptionfont#1\magyar@post@description}\hskip-\labelsep}%
     \fi
   \fi
   \@gobble
