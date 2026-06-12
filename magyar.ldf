@@ -630,8 +630,7 @@
 \def\magyar@opt@mathmuskips@@latex{\def\magyar@opt@@mathmuskips{1}}
 \def\magyar@opt@mathmuskips@@hu{\def\magyar@opt@@mathmuskips{2}}
 \def\magyar@opt@hynumberline@@unchanged{\def\magyar@opt@@hynumberline{0}}
-\def\magyar@opt@hynumberline@@latex{\def\magyar@opt@@hynumberline{1}}
-\def\magyar@opt@hynumberline@@hu{\def\magyar@opt@@hynumberline{2}}
+\def\magyar@opt@hynumberline@@hu{\def\magyar@opt@@hynumberline{1}}
 \def\magyar@opt@hunnewlabel@@no {\def\magyar@opt@@hunnewlabel{0}}
 \dMf magyar@opt@hunnewlabel@@only-hu {\def\magyar@opt@@hunnewlabel{1}}
 \def\magyar@opt@hunnewlabel@@yes{\def\magyar@opt@@hunnewlabel{2}}
@@ -4343,14 +4342,12 @@
 \fi
 
 % --- hynumberline=
-% by pts@fazekas.hu at Tue Nov 21 00:34:37 CET 2006
 %
 % hynumberline=hu adds a dot after the section number in the bookmarks/outline
-% with \hypersetup{bookmarksnumbered=true} in hyperref.sty.
+% with \hypersetup{bookmarksnumbered} in hyperref.sty.
 
 \if0\magyar@opt@@hynumberline \@@magyar@skiplong\fi
-  %** Overrides original definition (\def\Hy@numberline#1{#1 }) in
-  %** pdfmark.def.
+  %** Overrides original definition (\def\Hy@numberline#1{#1 }) in pdfmark.def.
   %** Also possible with:
   %** \pdfstringdefDisableCommands{\renewcommand*{\numberline}[1]{#1. }}
   \def\@@magyar@@hynumberline@old#1{#1 }% as defined in pdfmark.def
