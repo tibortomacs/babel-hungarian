@@ -42,6 +42,8 @@ or
 
 - Removed `hynumberline=latex`
 ([33a52e3](https://github.com/tibortomacs/babel-hungarian/commit/33a52e3))
+- Added `\@@magyar@skiplong` to `mathmuskips=unchanged`
+([df290dd](https://github.com/tibortomacs/babel-hungarian/commit/df290dd))
 
 ### v1.6b (2026-06-03)
 
