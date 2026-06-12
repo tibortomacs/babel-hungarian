@@ -127,9 +127,9 @@
   textqq.code            = \magyar@yesweaknoarg{textqq}{#1},%   yes,weak,no
   told.code              = \magyar@yesweaknoarg{told}{#1},%     yes,weak,no
   %
-  postdescription.code   = \magyar@paragraphopt{postdescription}{#1},% unchanged,bfdot,dot,quad,diamond,enskip,quad,em,empty,...(\magyar@post@...)
-  postpara.code          = \magyar@paragraphopt{postpara}{#1},%        unchanged,bfdot,dot,quad,diamond,enskip,quad,em,empty,...(\magyar@post@...)
-  postsubpara.code       = \magyar@paragraphopt{postsubpara}{#1},%     unchanged,bfdot,dot,quad,diamond,enskip,quad,em,empty,...(\magyar@post@...)
+  postdescription.code   = \magyar@paragraphopt{postdescription}{#1},% unchanged,bfdot,dot,quad,diamond,enskip,em,empty,...(\magyar@post@...)
+  postpara.code          = \magyar@paragraphopt{postpara}{#1},%        unchanged,bfdot,dot,quad,diamond,enskip,em,empty,...(\magyar@post@...)
+  postsubpara.code       = \magyar@paragraphopt{postsubpara}{#1},%     unchanged,bfdot,dot,quad,diamond,enskip,em,empty,...(\magyar@post@...)
   %
   amstocnumskip.code     = \magyar@opt@amstocnumskip{#1},% <command>,<empty>
   classmod.code          = \magyar@opt@classmod{#1},%      yes,unchanged(=no),<class name>
@@ -221,7 +221,7 @@
 %**     openqq=maybedown,          % or =up or =down or =unchanged
 %**     partnumber=unchanged,      % or =huordinal or =Huordinal
 %**     postdescription=unchanged, % see postpara=
-%**     postpara=unchanged,        % or =bfdot or =dot or =quad or =diamond or =enskip or =quad or =em or =empty ... (\magyar@post@...)
+%**     postpara=unchanged,        % or =bfdot or =dot or =quad or =diamond or =enskip or =em or =empty ... (\magyar@post@...)
 %**     postsubpara=unchanged,     % see postpara=
 %**     refstruc=weak,             % or =no or =yes
 %**     %safest=no,                % or =yes (safest=no has no effect, safest=yes is equivalent to defaults=safest)
