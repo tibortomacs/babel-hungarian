@@ -38,10 +38,15 @@ or
 
 ## Changelog
 
+### v1.6c (unreleased)
+
+- Removed `hynumberline=latex`
+([33a52e3](https://github.com/tibortomacs/babel-hungarian/commit/33a52e3))
+
 ### v1.6b (2026-06-03)
 
 - Fixed:
-issue
+issues
 [#11](https://github.com/tibortomacs/babel-hungarian/issues/11),
 [#12](https://github.com/tibortomacs/babel-hungarian/issues/12),
 [#13](https://github.com/tibortomacs/babel-hungarian/issues/13)
@@ -55,15 +60,14 @@ issue
 
 ### v1.6a (2026-02-03)
 
-- Introduced new option handling using `\DeclareKeys`, allowing spaces before and after the `=` sign.
-- Removed support for `\input magyar.ldf` (poor practice; compilation should fail instead).
+- Introduced new option handling using `\DeclareKeys`, allowing spaces before and after the `=` sign
+- Removed support for `\input magyar.ldf` (poor practice; compilation should fail instead)
 - Removed deprecated options; their use now emits a warning:
 `accents`, `amslevelfix`, `amsuppercasefix`,
 `babelmarkfix`
-(see [65458c4](https://github.com/tibortomacs/babel-hungarian/commit/65458c4)
-and
+(see [65458c4](https://github.com/tibortomacs/babel-hungarian/commit/65458c4),
 [837305d](https://github.com/tibortomacs/babel-hungarian/commit/837305d)), 
-`captionfix`, `cjhebrewfix`, `hyphenation`, and `showfix`.
+`captionfix`, `cjhebrewfix`, `hyphenation`, `showfix`
 - Fixed:
 commits
 [6a5d987](https://github.com/tibortomacs/babel-hungarian/commit/6a5d987)
@@ -77,13 +81,11 @@ issues
 [#5](https://github.com/tibortomacs/babel-hungarian/issues/5),
 [#6](https://github.com/tibortomacs/babel-hungarian/issues/6),
 [#7](https://github.com/tibortomacs/babel-hungarian/issues/7),
-and
-[#8](https://github.com/tibortomacs/babel-hungarian/issues/8).
+[#8](https://github.com/tibortomacs/babel-hungarian/issues/8)
 - Implemented:
 issues
-[#9](https://github.com/tibortomacs/babel-hungarian/issues/9)
-and
-[#10](https://github.com/tibortomacs/babel-hungarian/issues/10).
+[#9](https://github.com/tibortomacs/babel-hungarian/issues/9),
+[#10](https://github.com/tibortomacs/babel-hungarian/issues/10)
 
 ## License
 
