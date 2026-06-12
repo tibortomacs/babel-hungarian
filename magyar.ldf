@@ -4330,16 +4330,19 @@
 
 % --- mathmuskips=
 
-\if1\magyar@opt@@mathmuskips% =latex, as defined in latex.ltx
+\if0\magyar@opt@@mathmuskips \@@magyar@skiplong\fi
+\if1\magyar@opt@@mathmuskips% =latex, as defined in fontmath.ltx
   \thickmuskip 5mu plus 5mu
   \medmuskip   4mu plus 2mu minus 4mu
   \thinmuskip  3mu
 \fi
 \if2\magyar@opt@@mathmuskips% =hu
   \thickmuskip 4mu plus 2mu minus 4mu
-  \medmuskip   2mu plus 1.5mu minus 2mu % \medmuskip<\thinmuskip OK
+  \medmuskip   2mu plus 1.5mu minus 2mu
   \thinmuskip  3mu
 \fi
+\@gobble
+{^}%
 
 % --- hynumberline=
 %
