@@ -45,6 +45,10 @@ or
 - Added `\@@magyar@skiplong` to `mathmuskips=unchanged`
 ([df290dd](https://github.com/tibortomacs/babel-hungarian/commit/df290dd))
 
+- Fixed:
+commit
+[0fda1b0](https://github.com/tibortomacs/babel-hungarian/commit/0fda1b0)
+
 ### v1.6b (2026-06-03)
 
 - Fixed:
@@ -59,7 +63,6 @@ issues
 - `\NeedsTeXFormat{LaTeX2e}[2026-06-01]`
 ([ff21cbe](https://github.com/tibortomacs/babel-hungarian/commit/ff21cbe))
 
-
 ### v1.6a (2026-02-03)
 
 - Introduced new option handling using `\DeclareKeys`, allowing spaces before and after the `=` sign
@@ -72,7 +75,7 @@ issues
 `captionfix`, `cjhebrewfix`, `hyphenation`, `showfix`
 - Fixed:
 commits
-[6a5d987](https://github.com/tibortomacs/babel-hungarian/commit/6a5d987)
+[6a5d987](https://github.com/tibortomacs/babel-hungarian/commit/6a5d987),
 [add944e](https://github.com/tibortomacs/babel-hungarian/commit/add944e),
 [ef82fd4](https://github.com/tibortomacs/babel-hungarian/commit/ef82fd4),
 issues
