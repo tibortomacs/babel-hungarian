@@ -44,7 +44,6 @@ or
 ([33a52e3](https://github.com/tibortomacs/babel-hungarian/commit/33a52e3))
 - Added `\@@magyar@skiplong` to `mathmuskips=unchanged`
 ([df290dd](https://github.com/tibortomacs/babel-hungarian/commit/df290dd))
-
 - Fixed:
 commit
 [0fda1b0](https://github.com/tibortomacs/babel-hungarian/commit/0fda1b0)

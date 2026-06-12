@@ -1638,7 +1638,7 @@
   }
   \def\magyar@post@star{\enskip\({}^*\)\enskip}%
   \def\magyar@post@endash{ -- }%
-  \def\magyar@post@semicolon{:\enskip}%
+  \def\magyar@post@colon{:\enskip}%
   \def\magyar@first#1#2\vfuzz{\noexpand#1}%
   %** Calls \magyar@pf@lowb, and never emits code resulting from #3 to TOC
   %** @param #1 empty or `*'
