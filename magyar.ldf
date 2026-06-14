@@ -127,9 +127,9 @@
   textqq.code            = \magyar@yesweaknoarg{textqq}{#1},%   yes,weak,no
   told.code              = \magyar@yesweaknoarg{told}{#1},%     yes,weak,no
   %
-  postdescription.code   = \magyar@paragraphopt{postdescription}{#1},% unchanged,bfdot,dot,quad,diamond,enskip,em,empty,...(\magyar@post@...)
-  postpara.code          = \magyar@paragraphopt{postpara}{#1},%        unchanged,bfdot,dot,quad,diamond,enskip,em,empty,...(\magyar@post@...)
-  postsubpara.code       = \magyar@paragraphopt{postsubpara}{#1},%     unchanged,bfdot,dot,quad,diamond,enskip,em,empty,...(\magyar@post@...)
+  postdescription.code   = \magyar@paragraphopt{postdescription}{#1},% unchanged,bfdot,dot,quad,diamond,enskip,...(\magyar@post@...)
+  postpara.code          = \magyar@paragraphopt{postpara}{#1},%        unchanged,bfdot,dot,quad,diamond,enskip,...(\magyar@post@...)
+  postsubpara.code       = \magyar@paragraphopt{postsubpara}{#1},%     unchanged,bfdot,dot,quad,diamond,enskip,...(\magyar@post@...)
   %
   amstocnumskip.code     = \magyar@opt@amstocnumskip{#1},% <command>,<empty>
   classmod.code          = \magyar@opt@classmod{#1},%      yes,unchanged(=no),<class name>
@@ -221,7 +221,7 @@
 %**     openqq=maybedown,          % or =up or =down or =unchanged
 %**     partnumber=unchanged,      % or =huordinal or =Huordinal
 %**     postdescription=unchanged, % see postpara=
-%**     postpara=unchanged,        % or =bfdot or =dot or =quad or =diamond or =enskip or =em or =empty ... (\magyar@post@...)
+%**     postpara=unchanged,        % or =bfdot or =dot or =quad or =diamond or =enskip ... (\magyar@post@...)
 %**     postsubpara=unchanged,     % see postpara=
 %**     refstruc=weak,             % or =no or =yes
 %**     %safest=no,                % or =yes (safest=no has no effect, safest=yes is equivalent to defaults=safest)
@@ -1613,8 +1613,6 @@
 
 % --- postpara= and postsubpara= and postdescription=
 
-%\show\magyar@opt@@postpara
-%\show\magyar@@unchanged
 \let\magyar@opt@override@paragraphs\@empty
   \ifx\magyar@opt@@postpara\magyar@@unchanged
   \ifx\magyar@opt@@postsubpara\magyar@@unchanged
@@ -1622,20 +1620,12 @@
   \let\magyar@opt@override@paragraphs\@undefined
   \fi\fi\fi
 \expandafter\ifx\csname magyar@opt@override@paragraphs\endcsname\relax\@@magyar@skiplong\fi
-  % Dat: We make sure that hspaces emitted by \magyar@post@... are unstretchable
-  \def\magyar@post@dot{.\enskip}%  \bfseries is the default, same as =bfdot
+  \def\magyar@post@dot{.\enskip}%
   \def\magyar@post@mddot{\textmd.\enskip}%
   \def\magyar@post@bfdot{\textbf.\enskip}%
-  \let\magyar@post@quad\quad% not recommended in Hungarian
-  \let\magyar@post@enskip\enskip% not recommended in Hungarian
-  \def\magyar@post@em{\hskip1em\relax}%
-  \let\magyar@post@empty\@empty
-  %** from Gyurgy\'ak J\'anos: Szerkeszt\H{o}k \'es szerz\H{o}k k\'ezik\"onyve.
-  %** We don't have a square-shaped, black diamond in our math fonts :-(.
-  \def\magyar@post@diamond{%
-    \enskip\raise.5ex\hbox{\font\f=msam10 at1.3ex \f\char7}\enskip%\ignorespaces% raised \blacklozenge
-    %{\usefont{U}{msa}{m}{n}\small\char7}
-  }
+  \let\magyar@post@quad\quad%
+  \let\magyar@post@enskip\enskip%
+  \def\magyar@post@diamond{\enskip\raise.5ex\hbox{\font\f=msam10 at1.3ex \f\char7}\enskip}%
   \def\magyar@post@star{\enskip\({}^*\)\enskip}%
   \def\magyar@post@endash{ -- }%
   \def\magyar@post@colon{:\enskip}%
