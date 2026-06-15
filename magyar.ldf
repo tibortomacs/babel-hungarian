@@ -116,7 +116,6 @@
   tablecaptions.code     = \magyar@enumarg{tablecaptions}{#1},%     hu,us,unchanged
   theoremtitle.code      = \magyar@enumarg{theoremtitle}{#1},%      hu,unchanged
   toclang.code           = \magyar@enumarg{toclang}{#1},%           good,badfloat,badall,unchanged
-  varioref.code          = \magyar@enumarg{varioref}{#1},%          hu,unchanged
   %
   az.code                = \magyar@yesweaknoarg{az}{#1},%       yes,weak,no
   emitdate.code          = \magyar@yesweaknoarg{emitdate}{#1},% yes,weak,no
@@ -145,6 +144,7 @@
   cjhebrewfix.code       = \magyar@deprecatedopt{cjhebrewfix}[{The 'cjhebrewfix' option has been deprecated. Use the 'active=onlycs' option instead}],
   hyphenation.code       = \magyar@deprecatedopt{hyphenation},
   showfix.code           = \magyar@deprecatedopt{showfix},%      ucsencs.def no longer needs this
+  varioref.code          = \magyar@deprecatedopt{varioref},
 }
 
 \def\magyar@setkeys#1\relax{\SetKeys[babel-magyar]{#1}}
@@ -236,7 +236,6 @@
 %**     titles=\enskip,            % TeX code: =unchanged, =\quad or other
 %**     toclang=good,              % or =badfloat or =badall or =unchanged
 %**     told=weak,                 % or =no or =yes
-%**     varioref=hu,               % or =unchanged
 %**   }\usepackage[magyar]{babel}
 
 \dMf magyar@opt@defaults@@over-1.4 {
@@ -292,7 +291,6 @@
   \magyar@opt@titles{\enskip}
   \magyar@enumarg{toclang}{good}
   \magyar@yesweaknoarg{told}{weak}
-  \magyar@enumarg{varioref}{hu}
 }
 
 %** These defaults try to be compatible with magyar.ldf v1.4 as much as
@@ -355,7 +353,6 @@
   \magyar@opt@titles{\quad}
   \magyar@enumarg{toclang}{good}
   \magyar@yesweaknoarg{told}{no}
-  \magyar@enumarg{varioref}{hu}
 }
 
 %** These defaults turn of most features. The effect is similar to as if
@@ -413,7 +410,6 @@
   \magyar@opt@titles{unchanged}
   \magyar@enumarg{toclang}{unchanged}
   \magyar@yesweaknoarg{told}{no}
-  \magyar@enumarg{varioref}{unchanged}
 }
 
 %** These defaults load almost all features, and try to do their best to make
@@ -473,7 +469,6 @@
   \magyar@opt@titles{\enskip}
   \magyar@enumarg{toclang}{good}
   \magyar@yesweaknoarg{told}{yes}
-  \magyar@enumarg{varioref}{hu}
 }
 
 %** Expands to the \magyarOptions changes defaults=hu-min makes over
@@ -526,7 +521,6 @@
   titles=\enskip,
   toclang=good,
   told=weak,
-  varioref=hu,
 }
 
 %** Matches Hungarian typographic rules most closely
@@ -601,8 +595,6 @@
 \def\magyar@opt@sectiondot@@problematic{\def\magyar@opt@@sectiondot{2}}
 \def\magyar@opt@captions@@unchanged{\def\magyar@opt@@captions{0}}
 \def\magyar@opt@captions@@hu{\def\magyar@opt@@captions{1}}
-\def\magyar@opt@varioref@@unchanged{\def\magyar@opt@@varioref{0}}
-\def\magyar@opt@varioref@@hu{\def\magyar@opt@@varioref{1}}
 \def\magyar@opt@fancyhdr@@unchanged{\def\magyar@opt@@fancyhdr{0}}
 \def\magyar@opt@fancyhdr@@hu{\def\magyar@opt@@fancyhdr{1}}
 \def\magyar@opt@ntheoremfix@@unchanged{\def\magyar@opt@@ntheoremfix{0}}
@@ -5078,7 +5070,8 @@
 
 % vvv varioref=
 
-\if0\magyar@opt@@varioref \@@magyar@skiplong\fi
+%** See: https://github.com/tibortomacs/babel-hungarian/issues/6
+
 \AddBabelHook[\CurrentOption]{set-hu-varioref}{afterextras}{%
   \IfPackageLoadedT{varioref}{\let\vrefrangeformat\magyar@vrefrangeformat}}
 \def\magyar@vrefrangeformat#1#2#3{%
@@ -5088,8 +5081,6 @@
   \reftextlabelrange{#2}{#3} \vpagerefrange[{#1}]{#2}{#3}%
   \endgroup%
 }
-\@gobble
-{^}%
 
 % vvv fancyhdr=
 
