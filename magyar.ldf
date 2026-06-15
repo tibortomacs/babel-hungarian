@@ -106,7 +106,6 @@
   mathfactorial.code     = \magyar@enumarg{mathfactorial}{#1},%     define,unchanged,fix
   mathhucomma.code       = \magyar@enumarg{mathhucomma}{#1},%       define,unchanged,fix
   mathmuskips.code       = \magyar@enumarg{mathmuskips}{#1},%       unchanged,latex,hu
-  ntheoremfix.code       = \magyar@enumarg{ntheoremfix}{#1},%       yes,unchanged
   openqq.code            = \magyar@enumarg{openqq}{#1},%            maybedown,up,down,unchanged
   partnumber.code        = \magyar@enumarg{partnumber}{#1},%        unchanged,huordinal,Huordinal
   safest.code            = \magyar@enumarg{safest}{#1},%            no(no effect),yes(is equivalent to defaults=safest)
@@ -115,7 +114,6 @@
   suggestions.code       = \magyar@enumarg{suggestions}{#1},%       yes,no
   tablecaptions.code     = \magyar@enumarg{tablecaptions}{#1},%     hu,us,unchanged
   theoremtitle.code      = \magyar@enumarg{theoremtitle}{#1},%      hu,unchanged
-  toclang.code           = \magyar@enumarg{toclang}{#1},%           good,badfloat,badall,unchanged
   %
   az.code                = \magyar@yesweaknoarg{az}{#1},%       yes,weak,no
   emitdate.code          = \magyar@yesweaknoarg{emitdate}{#1},% yes,weak,no
@@ -143,7 +141,9 @@
   captionfix.code        = \magyar@deprecatedopt{captionfix},%   caption package no longer needs this
   cjhebrewfix.code       = \magyar@deprecatedopt{cjhebrewfix}[{The 'cjhebrewfix' option has been deprecated. Use the 'active=onlycs' option instead}],
   hyphenation.code       = \magyar@deprecatedopt{hyphenation},
+  ntheoremfix.code       = \magyar@deprecatedopt{ntheoremfix},
   showfix.code           = \magyar@deprecatedopt{showfix},%      ucsencs.def no longer needs this
+  toclang.code           = \magyar@deprecatedopt{toclang},
   varioref.code          = \magyar@deprecatedopt{varioref},
 }
 
@@ -217,7 +217,6 @@
 %**     mathmuskips=unchanged,     % or =latex or =hu
 %**     mathreal=weak,             % or =no or =yes
 %**     mond=weak,                 % or =no or =yes
-%**     ntheoremfix=yes,           % or =unchanged
 %**     openqq=maybedown,          % or =up or =down or =unchanged
 %**     partnumber=unchanged,      % or =huordinal or =Huordinal
 %**     postdescription=unchanged, % see postpara=
@@ -234,7 +233,6 @@
 %**     theoremtitle=hu,           % or =unchanged
 %**     footnote=yes,              % or =unchanged or =huplain or =starplain
 %**     titles=\enskip,            % TeX code: =unchanged, =\quad or other
-%**     toclang=good,              % or =badfloat or =badall or =unchanged
 %**     told=weak,                 % or =no or =yes
 %**   }\usepackage[magyar]{babel}
 
@@ -274,7 +272,6 @@
   \magyar@enumarg{hynumberline}{unchanged}
   \magyar@yesweaknoarg{mathreal}{weak}
   \magyar@yesweaknoarg{mond}{weak}
-  \magyar@enumarg{ntheoremfix}{yes}
   \magyar@enumarg{openqq}{maybedown}
   \magyar@enumarg{partnumber}{unchanged}
   \magyar@paragraphopt{postdescription}{unchanged}
@@ -289,7 +286,6 @@
   \magyar@yesweaknoarg{textqq}{weak}
   \magyar@enumarg{theoremtitle}{hu}
   \magyar@opt@titles{\enskip}
-  \magyar@enumarg{toclang}{good}
   \magyar@yesweaknoarg{told}{weak}
 }
 
@@ -336,7 +332,6 @@
   \magyar@enumarg{hynumberline}{unchanged}
   \magyar@yesweaknoarg{mathreal}{no}
   \magyar@yesweaknoarg{mond}{no}
-  \magyar@enumarg{ntheoremfix}{yes}
   \magyar@enumarg{openqq}{maybedown}
   \magyar@enumarg{partnumber}{unchanged}
   \magyar@paragraphopt{postdescription}{unchanged}
@@ -351,7 +346,6 @@
   \magyar@yesweaknoarg{textqq}{no}
   \magyar@enumarg{theoremtitle}{hu}
   \magyar@opt@titles{\quad}
-  \magyar@enumarg{toclang}{good}
   \magyar@yesweaknoarg{told}{no}
 }
 
@@ -393,7 +387,6 @@
   \magyar@enumarg{hynumberline}{unchanged}
   \magyar@yesweaknoarg{mathreal}{no}
   \magyar@yesweaknoarg{mond}{no}
-  \magyar@enumarg{ntheoremfix}{unchanged}
   \magyar@enumarg{openqq}{unchanged}
   \magyar@enumarg{partnumber}{unchanged}
   \magyar@paragraphopt{postdescription}{unchanged}
@@ -408,7 +401,6 @@
   \magyar@yesweaknoarg{textqq}{no}
   \magyar@enumarg{theoremtitle}{unchanged}
   \magyar@opt@titles{unchanged}
-  \magyar@enumarg{toclang}{unchanged}
   \magyar@yesweaknoarg{told}{no}
 }
 
@@ -452,7 +444,6 @@
   \magyar@enumarg{hynumberline}{hu}
   \magyar@yesweaknoarg{mathreal}{yes}
   \magyar@yesweaknoarg{mond}{yes}
-  \magyar@enumarg{ntheoremfix}{yes}
   \magyar@enumarg{openqq}{maybedown}
   \magyar@enumarg{partnumber}{Huordinal}
   \magyar@paragraphopt{postdescription}{dot}
@@ -467,7 +458,6 @@
   \magyar@yesweaknoarg{textqq}{yes}
   \magyar@enumarg{theoremtitle}{hu}
   \magyar@opt@titles{\enskip}
-  \magyar@enumarg{toclang}{good}
   \magyar@yesweaknoarg{told}{yes}
 }
 
@@ -506,7 +496,6 @@
   mathhucomma=fix,
   mathreal=weak,
   mond=weak,
-  ntheoremfix=yes,
   openqq=maybedown,
   postdescription=dot,
   postpara=diamond,
@@ -519,7 +508,6 @@
   textqq=weak,
   theoremtitle=hu,
   titles=\enskip,
-  toclang=good,
   told=weak,
 }
 
@@ -597,18 +585,12 @@
 \def\magyar@opt@captions@@hu{\def\magyar@opt@@captions{1}}
 \def\magyar@opt@fancyhdr@@unchanged{\def\magyar@opt@@fancyhdr{0}}
 \def\magyar@opt@fancyhdr@@hu{\def\magyar@opt@@fancyhdr{1}}
-\def\magyar@opt@ntheoremfix@@unchanged{\def\magyar@opt@@ntheoremfix{0}}
-\def\magyar@opt@ntheoremfix@@yes{\def\magyar@opt@@ntheoremfix{1}}
 \def\magyar@opt@figurecaptions@@unchanged{\def\magyar@opt@@figurecaptions{0}}
 \def\magyar@opt@figurecaptions@@hu{\def\magyar@opt@@figurecaptions{1}}
 \def\magyar@opt@figurecaptions@@us{\def\magyar@opt@@figurecaptions{2}}
 \def\magyar@opt@tablecaptions@@unchanged{\def\magyar@opt@@tablecaptions{0}}
 \def\magyar@opt@tablecaptions@@hu{\def\magyar@opt@@tablecaptions{1}}
 \def\magyar@opt@tablecaptions@@us{\def\magyar@opt@@tablecaptions{2}}
-\def\magyar@opt@toclang@@unchanged{\def\magyar@opt@@toclang{0}}% same as =badall
-\def\magyar@opt@toclang@@badall{\def\magyar@opt@@toclang{0}}
-\def\magyar@opt@toclang@@badfloat{\def\magyar@opt@@toclang{1}}
-\def\magyar@opt@toclang@@good{\def\magyar@opt@@toclang{2}}
 \def\magyar@opt@mathbrk@@unchanged{\def\magyar@opt@@mathbrk{0}}
 \def\magyar@opt@mathbrk@@define{\def\magyar@opt@@mathbrk{1}}
 \def\magyar@opt@mathbrk@@fix{\def\magyar@opt@@mathbrk{2}}
@@ -1985,107 +1967,6 @@
       \babel@save\tocsection \babel@save\tocappendix
       \@@magyar@amstocnumskip@defs
     }
-  \fi
-  \@gobble
-{^}%
-
-
-% --- Fixup Babel language selection glitches; toclang=
-
-% There are fundamental problem of emitting \select@language items in LOT
-% files.
-%
-% Problem (3): When using \begin{table}...\end{table} \selectlanguage{foo}
-% \begin{table}...\end{table}, the LaTeX-Babel scheme will not emit a
-% \select@language{foo} between the two \contentsline{}s in \jobname.lot. The
-% TOC file is OK, because section titles aren't floats. (But what about
-% \mark{}s?).
-%
-% Problem (1): \selectlanguage emits .aux entries even
-% if the language isn't really changed.
-%
-% Problem (2): babel.def has
-% `\AtBeginDocument...\selectlanguage...\bbl@main@language', from which an
-% \immediate is missing, so the \select@language is emitted to the .aux file
-% after the first float has been typeset. A better solution would be
-% `\select@language{\languagename}', which forcibly activates the default
-% language.
-%
-% Problem (4): \ps@headings isn't run \AtBeginDocument, but book.cls runs
-% \pagestyle{headings} when it is loaded. We should change this to
-% \AtBeginDocument or similar.
-
-\ifnum\magyar@opt@@toclang=0 \@@magyar@skiplong\fi
-  \ifnum\magyar@opt@@toclang>1  % toclang=good
-    % Solve problems (2) and (4). Timing is critical. \select@language must
-    % be called after \AtBeginDocument, so \catcode{}s won't be \activated
-    % too early. (Because some code in \AtBeginDocument might issue an
-    % \input such as hyperref.sty which does \RequirePackage{nameref}.)
-    % Note that \extrasmagyar containing the \catcode changes is
-    % only run when `magyar' is the default language (last arg of
-    % \usepackage[...]{babel}). If that is run after \AtBeginDocument hooks,
-    % then most packages will use 12 as \catcode\string``, which is intended.
-    %   \@@magyar@setup@psheadings might just be run \AtBeginDocument, it doesn't
-    % need \@preamblecmds -- but it must be after \select@language.
-    %
-    % \@preamblecmds is expanded after \@begindocumenthook
-    \expandafter\gdef\expandafter\@preamblecmds\expandafter{\@preamblecmds
-      \@@magyar@setup@psheadings% Solve problem (4). Before \selectlanguage.
-      \select@language{\languagename}% force initial language
-    }%
-    % Solve problem (1) and assist solving problem (2) by not emitting
-    % \select@language twice.
-    \def\bbl@set@language#1{%
-      \edef\@Lang@tmp{%
-	\ifcat\noexpand\noexpand\noexpand#1% a control sequence
-	  \expandafter\expandafter\expandafter\@gobble\expandafter\string
-	\fi
-	#1%
-      }%
-      \ifx\languagename\@Lang@tmp\else
-	\let\languagename\@Lang@tmp
-	\select@language{\languagename}%
-      \fi
-    }%
-    % Solve problem (3).
-    \long\def\addtocontents#1#2{%
-      % Dat: \noexpand should be avoided in \protected@write
-      \protected@write\@auxout
-	  {\let\label\@gobble \let\index\@gobble \let\glossary\@gobble \let\select@language\relax}%
-	  {\string\@writefile{#1}{\string\select@language{\languagename} #2}}}
-  \else
-    % Solve problems (2) and (4).
-    \AtBeginDocument{%
-      \if@filesw \immediate\write\@mainaux{%
-        \string\select@language{\languagename}%
-        \string\@writefile{toc}{\string\select@language{\languagename}}%
-        \string\@writefile{lof}{\string\select@language{\languagename}}%
-        \string\@writefile{lot}{\string\select@language{\languagename}}%
-      }\fi
-      \@@magyar@setup@psheadings% Solve problem (4). Before \selectlanguage.
-      \select@language{\languagename}% force initial language
-    }
-    % Solve problem (1) and assist solving problem (2) by not emitting
-    % \select@language twice.
-    \def\bbl@set@language#1{%
-      \edef\@Lang@tmp{%
-	\ifcat\noexpand\noexpand\noexpand#1% a control sequence
-	  \expandafter\expandafter\expandafter\@gobble\expandafter\string
-	\fi
-	#1%
-      }%
-      \ifx\languagename\@Lang@tmp\else
-	\let\languagename\@Lang@tmp
-	\select@language{\languagename}%
-	\if@filesw \protected@write\@auxout{}{%
-	  \string\select@language{\languagename}%
-	  \string\@writefile{toc}{\string\select@language{\languagename}}%
-	  \string\@writefile{lof}{\string\select@language{\languagename}}%
-	  \string\@writefile{lot}{\string\select@language{\languagename}}%
-	\fi}%
-      \fi
-    }%
-    % Don't solve problem (3).
   \fi
   \@gobble
 {^}%
@@ -5119,43 +5000,34 @@
 \@gobble
 {^}%
 
-% vvv ntheoremfix=
-
-%** Fix for the `! Undefined control sequence. \select' error message with
-%** ntheorem.sty
-%**
-%** The reason for the error is that magyar.ldf emits
-%** \select@language{magyar} into .thm files (as well as .toc, .lof, .lot
-%** etc. files), and LaTeX cannot read those files without \makeatletter
-%** because of the @ in the \select@language command.
-%**
-%** Our solution: add \makeatletter somewhere before \@input{\jobname.thm} to
-%** the macro which reads the .thm file (\thm@processlist) in ntheorem.sty .
-\if0\magyar@opt@@ntheoremfix \@@magyar@skiplong\fi
-  \def\magyar@@ntheoremfix{%
-    \expandafter\ifx\csname ver@ntheorem.sty\endcsname\relax\else
-      \ifx\thm@processlist\@undefined\else
-        % This doesn't work, because the body of \thm@processlist contains #
-        %\expandafter\def\expandafter\thm@processlist\expandafter{%
-        %  \expandafter\begingroup\expandafter\makeatletter
-        %  \thm@processlist\endgroup}%
-        \expandafter\@temptokena\expandafter{%
-          \expandafter\begingroup\expandafter\makeatletter
-          \thm@processlist\endgroup}%
-        \edef\thm@processlist{\the\@temptokena}%
-      \fi
-    \fi
-  }
-  \AtBeginDocument{\magyar@@ntheoremfix}
-  \@gobble
-{^}%
-
 % vvv extras=
 
 \ifnum\magyar@opt@@extras=0
   \expandafter\let\csname extras\CurrentOption\endcsname\@empty
   \expandafter\let\csname noextras\CurrentOption\endcsname\@empty
 \fi
+
+% --- Problem:
+%
+% \ps@headings isn't run \AtBeginDocument, but book.cls runs
+% \pagestyle{headings} when it is loaded. We should change this to
+% \AtBeginDocument or similar.
+% Solve problem: Timing is critical. \select@language must
+% be called after \AtBeginDocument, so \catcode{}s won't be \activated
+% too early. (Because some code in \AtBeginDocument might issue an
+% \input such as hyperref.sty which does \RequirePackage{nameref}.)
+% Note that \extrasmagyar containing the \catcode changes is
+% only run when `magyar' is the default language (last arg of
+% \usepackage[...]{babel}). If that is run after \AtBeginDocument hooks,
+% then most packages will use 12 as \catcode\string``, which is intended.
+%   \@@magyar@setup@psheadings might just be run \AtBeginDocument, it doesn't
+% need \@preamblecmds -- but it must be after \select@language.
+%
+% \@preamblecmds is expanded after \@begindocumenthook
+\expandafter\gdef\expandafter\@preamblecmds\expandafter{\@preamblecmds%
+  \@@magyar@setup@psheadings% Solve problem. Before \selectlanguage.
+  \select@language{\languagename}% force initial language (This is also needed for the longcaption option.)
+}%
 
 % --- Finish
 
