@@ -76,7 +76,7 @@ issues
 - Removed deprecated options; their use now emits a warning:
 `accents`, `amslevelfix`, `amsuppercasefix`,
 `babelmarkfix`
-(see [65458c4](https://github.com/tibortomacs/babel-hungarian/commit/65458c4),
+([65458c4](https://github.com/tibortomacs/babel-hungarian/commit/65458c4),
 [837305d](https://github.com/tibortomacs/babel-hungarian/commit/837305d)), 
 `captionfix`, `cjhebrewfix`, `hyphenation`, `showfix`
 - Fixed:
