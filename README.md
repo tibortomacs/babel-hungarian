@@ -46,6 +46,8 @@ or
 ([22b045a](https://github.com/tibortomacs/babel-hungarian/commit/22b045a))
 - Added `\@@magyar@skiplong` to `mathmuskips=unchanged`
 ([df290dd](https://github.com/tibortomacs/babel-hungarian/commit/df290dd))
+- Removed deprecated option: `varioref`
+([a2a45c8](https://github.com/tibortomacs/babel-hungarian/commit/a2a45c8))
 - Fixed:
 commits
 [0fda1b0](https://github.com/tibortomacs/babel-hungarian/commit/0fda1b0),
