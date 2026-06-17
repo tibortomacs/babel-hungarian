@@ -1345,6 +1345,9 @@
 
 % --- captions=
 
+% The \captionsmagyar command must also be defined when captions=unchanged.
+\@namedef{captions\CurrentOption}{}
+
 \if0\magyar@opt@@captions\@@magyar@skiplong\fi
 \@namedef{captions\CurrentOption}{%
   % Dat: inputenc isn't known, so we just use the safe \'a for accented letters.
