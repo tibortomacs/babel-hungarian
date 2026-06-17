@@ -53,7 +53,9 @@ or
 - Fixed:
 commits
 [0fda1b0](https://github.com/tibortomacs/babel-hungarian/commit/0fda1b0),
-[716fcf8](https://github.com/tibortomacs/babel-hungarian/commit/716fcf8)
+[716fcf8](https://github.com/tibortomacs/babel-hungarian/commit/716fcf8),
+issue
+[#14](https://github.com/tibortomacs/babel-hungarian/issues/14)
 
 ### v1.6b (2026-06-03)
 
