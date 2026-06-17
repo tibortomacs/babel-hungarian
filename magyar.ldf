@@ -66,10 +66,6 @@
 % \dMf foo-bar {...} is equivalent to \@namedef{foo-bar}{...}
 \def\dMf#1 {\expandafter\def\csname#1\endcsname}
 
-% \magyar@opt@defaults used to be a defined command for the 'defaults=...' option.
-% It shouldn't be now, but the caption package will only switch to the Hungarian label type when it exists.
-\let\magyar@opt@defaults\empty
-
 % --- Declare options.
 
 % Dat: \languageattribute{magyar}{...} and \bbl@declare@ttribute{magyar}{foo}{...}
@@ -5006,6 +5002,36 @@
   \expandafter\let\csname extras\CurrentOption\endcsname\@empty
   \expandafter\let\csname noextras\CurrentOption\endcsname\@empty
 \fi
+
+% --- Fix caption.sty
+%
+% https://github.com/tibortomacs/babel-hungarian/issues/14
+
+% Soluton 1
+% \let\magyar@opt@defaults\empty% for \caption@IfBabelHungarian (see in caption3.sty)
+% \AddToHook{package/caption3/after}{\def\caption@IfBabelHungarian#1#2{}}% Deactivate the faulty content of \caption@IfBabelHungarian in caption.sty
+
+% Soluton 2
+% \let\magyar@opt@defaults\empty% for \caption@IfBabelHungarian (see in caption3.sty)
+% \AddToHook{begindocument/end}{%
+ % \@ifpackageloaded{caption}{%
+   % \ifx\@makecaption\@undefined
+     % \let\@makecaption\caption@makecaption% Fix the faulty content of \caption@IfBabelHungarian in caption.sty
+   % \fi
+ % }{}%
+% }
+
+% Soluton 3
+% \magyar@opt@defaults is not defined, therefore \caption@IfBabelHungarian is not active in caption3 and caption.
+% But 'magyar' labelformat is defined in caption3.sty:
+% \DeclareCaptionLabelFormat{magyar}{#2\bothIfSecond{.~}{#1}}
+\expandafter\addto\csname extras\CurrentOption\endcsname{%
+  \IfPackageLoadedT{caption}{%
+    \caption@switchdefault{labelformat}{\babel@save #1}{magyar}%
+    \caption@switchdefault{labelseparator}{\babel@save #1}{period}%
+    \caption@switchdefault{listformat}{\babel@save #1}{subperiod}%
+  }%
+}
 
 % --- Problem:
 %
