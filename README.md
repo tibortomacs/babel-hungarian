@@ -56,7 +56,8 @@ commits
 [716fcf8](https://github.com/tibortomacs/babel-hungarian/commit/716fcf8),
 issues
 [#14](https://github.com/tibortomacs/babel-hungarian/issues/14),
-[#15](https://github.com/tibortomacs/babel-hungarian/issues/15)
+[#15](https://github.com/tibortomacs/babel-hungarian/issues/15),
+[#16](https://github.com/tibortomacs/babel-hungarian/issues/16)
 
 ### v1.6b (2026-06-03)
 
