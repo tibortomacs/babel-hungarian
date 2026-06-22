@@ -2132,7 +2132,7 @@
   \magyar@activate@char!\magyar@opt@@activespace
   \declare@shorthand{\CurrentOption}{!}{%
     \ifmmode
-      \expandafter\ifx\csname factorial\endcsname\relax\mathchar"5021 \else\factorial\fi
+      \expandafter\ifx\csname magyar@factorial\endcsname\relax\mathchar"5021 \else\magyar@factorial\fi
     \else\magyar@thinspaced!\fi}
   % ^^^ compatibility with nath.sty
   \magyar@activate@char?\magyar@opt@@activespace
@@ -4152,6 +4152,7 @@
 \if2\magyar@opt@@mathfactorial\else \@@magyar@skiplong\fi
   \expandafter\addto\csname \expandafter\ifx\csname mathoptions@on\endcsname
    \relax check@mathfonts\else mathoptions@on\fi\endcsname{% detect nath.sty
+    \let\magyar@factorial\factorial% for activespace=safe
     \catcode`!12 \mathcode`!"8000
     \begingroup\lccode`~`!\lowercase{\endgroup\def~}{\factorial}%
   }
