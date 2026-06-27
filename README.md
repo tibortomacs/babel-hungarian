@@ -48,6 +48,8 @@ or
 ([df290dd](https://github.com/tibortomacs/babel-hungarian/commit/df290dd))
 - Simplifying the `longcaption` option
 ([f016500](https://github.com/tibortomacs/babel-hungarian/commit/f016500))
+- Support for `caption2` regardless of the `longcaption` option
+([b23db2a](https://github.com/tibortomacs/babel-hungarian/commit/b23db2a))
 - Removed deprecated options: `varioref`
 ([a2a45c8](https://github.com/tibortomacs/babel-hungarian/commit/a2a45c8)),
 `toclang`
