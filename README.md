@@ -46,6 +46,8 @@ or
 ([22b045a](https://github.com/tibortomacs/babel-hungarian/commit/22b045a))
 - Added `\@@magyar@skiplong` to `mathmuskips=unchanged`
 ([df290dd](https://github.com/tibortomacs/babel-hungarian/commit/df290dd))
+- Simplifying the `longcaption` option
+([f016500](https://github.com/tibortomacs/babel-hungarian/commit/f016500))
 - Removed deprecated options: `varioref`
 ([a2a45c8](https://github.com/tibortomacs/babel-hungarian/commit/a2a45c8)),
 `toclang`
