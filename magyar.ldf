@@ -1449,14 +1449,13 @@
   % We don't emit the two dots of `1. táblázat.' here, because
   % has already been emitted by \fnum@table etc.
   % We apply some formatting depending on the longcaption= option.
-  % Dat: Gyurgyák, p95. says: `11. ábra. Hajtási változatok.'
+  % Dat: `1. ábra. Kép címe'
   \let\@@magyar@do@makecaption\relax% before .toc
   \expandafter\addto\csname extras\CurrentOption\endcsname{%
+    \IfPackageLoadedT{caption}{\let\@@magyar@do@makecaption\relax}%
+    \IfPackageLoadedT{caption2}{\let\@@magyar@do@makecaption\relax}%
     \@@magyar@do@makecaption}
-  \def\@@magyar@do@makecaption@captiontwo@yes{%
-    % Dat: caption2.sty or caption3.sty is loaded; do nothing.
-  }
-  \def\@@magyar@do@makecaption@captiontwo@no{%
+  \def\@@magyar@do@makecaption{%
     %** @param #1 \fnum@table or \fnum@figure
     \def\@makecaption##1##2{%
       \vskip\abovecaptionskip
@@ -1468,32 +1467,6 @@
         \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
       \fi
       \vskip\belowcaptionskip}}
-  \AtBeginDocument{%
-    \expandafter\ifx\csname captionlabeldelim\endcsname\relax
-      \expandafter\ifx\csname caption@lsep@period\endcsname\relax
-        \let\@@magyar@do@makecaption\@@magyar@do@makecaption@captiontwo@no
-      \else
-        % Dat: caption3.sty is loaded, and it has caption@lsep defined
-        % Dat: \show\caption@lsep@colon  % \long\def\caption@lsep@colon{: }
-        % Dat: \show\caption@lsep %\def\caption@lsep{\caption@lsep@colon}
-        \ifx\caption@lsep\caption@lsep@default
-          % There was no \captionsetup{labelsep=...} yet, so we set the
-          % default to period (dot).
-          %
-          % This sets \caption@lsep@default and \caption@lsep.
-          \caption@setdefaultlabelsep{period}%
-        \fi
-        \let\@@magyar@do@makecaption\@@magyar@do@makecaption@captiontwo@yes
-      \fi
-    \else
-      % Dat: caption2.sty is loaded (and has \def\captionlabeldelim{.} -- but it might have {:})
-      % Dat: we now redefine {:} to {.}
-      % Dat: the user can force {:} by \def\captionlabeldelim{:\empty}
-      % Dat: this works now: \usepackage[german,french,magyar]{babel} \usepackage{caption2} \begin{document} \renewcommand*\captionfont{\itshape} \renewcommand*\captionlabelfont{\scshape}
-      \def\reserved@a{:}%
-      \ifx\reserved@a\captionlabeldelim \def\captionlabeldelim{.}\fi
-      \let\@@magyar@do@makecaption\@@magyar@do@makecaption@captiontwo@yes
-    \fi}
   \@gobble
 {^}%
 
