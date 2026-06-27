@@ -48,7 +48,10 @@ or
 ([df290dd](https://github.com/tibortomacs/babel-hungarian/commit/df290dd))
 - Removed deprecated options: `varioref`
 ([a2a45c8](https://github.com/tibortomacs/babel-hungarian/commit/a2a45c8)),
-`toclang`, `ntheoremfix`
+`toclang`
+([ceb5ebc](https://github.com/tibortomacs/babel-hungarian/commit/ceb5ebc),
+[#17](https://github.com/tibortomacs/babel-hungarian/issues/17)), 
+`ntheoremfix`
 ([ceb5ebc](https://github.com/tibortomacs/babel-hungarian/commit/ceb5ebc))
 - Fixed:
 commits
