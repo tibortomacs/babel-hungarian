@@ -5010,6 +5010,15 @@
   }%
 }
 
+% --- caption2.sty
+
+\expandafter\addto\csname extras\CurrentOption\endcsname{%
+  \IfPackageLoadedT{caption2}{%
+    \babel@save\captionlabeldelim%
+    \def\captionlabeldelim{.}% colon --> dot
+  }%
+}
+
 % --- Problem:
 %
 % \ps@headings isn't run \AtBeginDocument, but book.cls runs
