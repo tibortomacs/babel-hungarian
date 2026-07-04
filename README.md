@@ -9,9 +9,6 @@ The current maintainers of this work are
 The babel-hungarian on the CTAN website:
 [https://ctan.org/pkg/babel-hungarian](https://ctan.org/pkg/babel-hungarian)
 
-Hungarian typography in LaTeX in this TUG 2004 article:
-[https://math.bme.hu/latex/dl/pts_tug2004_magyarldf2.pdf](https://math.bme.hu/latex/dl/pts_tug2004_magyarldf2.pdf)
-
 There is a user manual in Hungarian:
 [https://tibortomacs.github.io/babel-hungarian/babel-hungarian-manual.pdf](https://tibortomacs.github.io/babel-hungarian/babel-hungarian-manual.pdf)
 
