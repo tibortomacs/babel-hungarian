@@ -1,0 +1,1489 @@
+\documentclass[12pt]{article}
+
+\usepackage[
+  a4paper,
+  margin=1in,
+  ]{geometry}
+
+\usepackage[T1]{fontenc}
+
+\PassOptionsToPackage{
+  defaults=hu-min,
+  labelenums=unchanged,
+  postdescription=unchanged,
+  mathfactorial=fix,
+  }{magyar.ldf}
+
+\usepackage[english,magyar]{babel}
+
+\footnotestyle{rule=fourth}
+
+\usepackage{
+  xcolor,
+  lmodern,
+  upquote,
+  enumitem,
+  longtable,
+  caption,
+  tcolorbox,
+  hyperref,
+  }
+
+\hypersetup{
+  colorlinks,
+  allcolors=blue,
+  pdfstartview=FitH,
+  bookmarksnumbered,
+  }
+
+\captionsetup{
+  labelfont=bf,
+  font=small,
+%  width=10cm,
+  labelsep=newline,
+  justification=centering,
+  }
+
+\newlist{optionlist}{description}{3}
+\setlist[optionlist]{nosep}
+\setlist[description]{parsep=0pt}
+\setlist[enumerate]{noitemsep}
+
+\newcommand\param[1]{{\normalfont\slshape$\langle$#1$\rangle$}}
+
+\renewcommand\descriptionlabel[1]{%
+  \hspace{\labelsep}\normalfont\ttfamily\bfseries\hunotpvaluefont#1}
+
+\def\hunotpvaluefont{}
+
+\NewDocumentEnvironment{hunopt}{ m m o }{%
+  \item[#1=\param{érték}]
+  \hfill
+  (alapérték: \textbf{\texttt{\color{gray}#2}})\\
+  \IfValueT{#3}{#3 }%
+  A lehetséges értékek:
+  \begin{optionlist}
+  \def\hunotpvaluefont{\color{gray}}
+  }{
+  \end{optionlist}
+  }
+
+\NewDocumentEnvironment{hunopt*}{ m m }{%
+  \item[#1=\param{érték}]
+  \hfill
+  (alapérték: \textbf{\texttt{\color{gray}#2}})\\
+  }{}
+
+\NewDocumentEnvironment{footstyle}{ m }{%
+  \item[#1=\param{érték}]
+  A lehetséges értékek:
+  \begin{optionlist}
+  \def\hunotpvaluefont{\color{gray}}
+  }{
+  \end{optionlist}
+  }
+
+\tcbuselibrary{skins,listings}
+
+\tcbset{
+%  skin=enhanced,
+%  segmentation style={solid,line width=.4pt},
+  boxsep=0pt,
+  boxrule=.4pt,
+  left=4pt,
+  top=3pt,
+  right=4pt,
+  bottom=2pt,
+  colback=black!15,
+  after=\global\setlength{\exampleparindent}{0pt}\par\smallskip\noindent,
+  }
+
+\lstdefinestyle{tcblatex}{
+  literate={ö}{{\"o}}1{ü}{{\"u}}1{ó}{{\'o}}1{ő}{{\H o}}1{ú}{{\'u}}1
+  {ű}{{\H u}}1{é}{{\'e}}1{á}{{\'a}}1{í}{{\'i}}1{Ö}{{\"O}}1{Ü}{{\"U}}1
+  {Ó}{{\'O}}1{Ő}{{\H O}}1{Ú}{{\'U}}1{Ű}{{\H U}}1{É}{{\'E}}1{Á}{{\'A}}1,
+  %{Í}{{\'I}}1,
+  comment=[l][\color{gray}]{\%},
+  escapeinside={(*}{*)},
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  keepspaces,
+  belowskip=0pt,
+  aboveskip=0pt,
+  }
+
+\newtcblisting{latexcode}{
+  listing only,
+  listing options={style=tcblatex},
+  }
+
+\newtcblisting{latexexample}{
+  sidebyside,
+%  sidebyside align=top,
+  sidebyside gap=3mm,
+  colback=white,
+  bicolor,
+  colback=black!5,
+  colbacklower=white,
+  before lower=\setlength{\parindent}{\exampleparindent},
+  }
+
+\newlength{\exampleparindent}
+\setlength{\exampleparindent}{0pt}
+\def\latexexampleparindent{\setlength{\exampleparindent}{10pt}}
+
+\definecolor{hured}{RGB}{207,36,54}
+\definecolor{hugreen}{RGB}{69,113,79}
+\usepackage{contour}
+\def\hulogo{%
+  {\contourlength{.8pt}%
+  \sbox0{\contour{black!80}{\Huge\bfseries\sffamily\color{black!10}BABEL\lower-3pt\hbox{-}HUNGARIAN}}%
+  \mbox{}%
+  \lower-\dimeval{2\ht0/3}%
+  \rlap{{\color{hured}\rule{\wd0}{\dimeval{\ht0/3}}}}%
+  {\color{hugreen}\rule{\wd0}{\dimeval{\ht0/3}}}%
+  \llap{\usebox0}}}
+
+\begin{document}
+
+\title{%
+   \hulogo\\[1em] 
+   Babel support for Hungarian\\
+   {\large v1.6c (2026-07-04)}
+   }
+
+\author{%
+  \textsc{Péter Szabó} and \textsc{Tibor Tómács}\\
+  \href{mailto:tomacs.tibor@gmail.com}{\texttt{tomacs.tibor@gmail.com}}\\
+  \url{https://github.com/tibortomacs/babel-hungarian}\\
+  \url{https://ctan.org/pkg/babel-hungarian}\\[6mm]
+  %
+  This manual is based on\\%[2mm]
+  \emph{Typing Hungarian text with Magyar\LaTeX}%
+  \thanks{The original version of this documentation was written in Hungarian in 2009 under the title \emph{``Magyar nyelvű szöveg szedése Magyar\LaTeX-hel''}.}\\
+  by \textsc{Péter Szabó}\\
+  \url{https://math.bme.hu/latex/magyarldf-doc.pdf}
+  }
+
+\date{}
+
+\selectlanguage{english}
+
+\maketitle
+
+\begin{abstract}
+This manual documents \textsf{babel} language support for Hungarian as provided by the \textsf{babel-hungarian} package.
+The documentation is written in Hungarian, as it is intended primarily for Hungarian-speaking users.
+\end{abstract}
+
+\selectlanguage{magyar}
+
+\section{A \textsf{babel} magyar nyelvi támogatásának betöltése}
+
+\subsection{Általános információk}
+
+A \textsf{babel} csomag magyar nyelvi támogatása a \texttt{magyar} vagy \texttt{hungarian} opcióval érhető el:
+
+\begin{latexcode}
+\usepackage[magyar]{babel}
+\end{latexcode}
+vagy
+
+\begin{latexcode}
+\usepackage[hungarian]{babel}
+\end{latexcode}
+Ezek a \textsf{magyar.ldf} fájlt használják a magyar nyelvi beállításokhoz.
+A \textsf{magyar.ldf} működése testre szabható opciókkal.
+Erre két lehetőség van.
+Ha a \textsf{babel} csomag \texttt{magyar} opcióval van betöltve, akkor
+
+\begin{latexcode}
+\def\magyarOptions{(*\param{opciók}*)}
+\end{latexcode}
+vagy
+
+\begin{latexcode}
+\PassOptionsToPackage{(*\param{opciók}*)}{magyar.ldf}
+\end{latexcode}
+illetve \texttt{hungarian} használata esetén
+
+\begin{latexcode}
+\def\hungarianOptions{(*\param{opciók}*)}
+\end{latexcode}
+vagy
+
+\begin{latexcode}
+\PassOptionsToPackage{(*\param{opciók}*)}{hungarian.ldf}
+\end{latexcode}
+
+Ezeket a parancsokat még a \verb|\usepackage[···]{babel}| előtt ki kell adni!
+Az opciók \param{kulcs}\texttt{=}\param{érték} alakúak és több opció esetén azokat vesszővel kell elválasztani.
+Az opciók megadási sorrendje lényeges.
+
+Ha több \verb|\def\magyarOptions| (illetve \verb|\def\hungarianOptions|) szerepel a dokumentumban, akkor csak a legutolsó (de még a \verb|\usepackage[···]{babel}| előtti) számít.
+Ha több \verb|\PassOptionsToPackage| szerepel, akkor mindegyik számít, futási sorrendben.
+Az egy parancson belüli opciólistában a sorrend balról jobbra halad.
+Ha egy \param{kulcs} többször szerepel, akkor a sorrend szerinti legutolsó értéke lép érvénybe.
+Van néhány olyan \param{kulcs} (pl.~\verb|defaults|), amely más kulcsok értékét módosítja.
+
+Amennyiben a \verb|\PassOptionsToPackage| segítségével vannak megadva az opciók, és valamelyik érték egy parancs, akkor az elé be kell szúrni a \verb|\noexpand| parancsot, különben hibás lesz a fordítás (pl.~\verb|shorthandcs=\noexpand\shu|).
+
+A pdf\LaTeX{} fordító használatakor az ékezetes betűket
+tartalmazó szavak elválasztásához be kell tölteni a \textsf{fontenc} csomagot \texttt{T1} opcióval, de Lua\LaTeX{} vagy Xe\LaTeX{} esetén erre nincs szükség.
+
+\subsection{A \textsf{magyar.ldf} ajánlott betöltése}
+
+A \textsf{magyar.ldf} következő betöltése jól illeszkedik a magyar tipográfiai szabályokhoz, ezért a legtöbb esetben ez ajánlott:
+
+\begin{latexcode}
+\usepackage[T1]{fontenc} % Csak pdflatex esetén kell!
+\PassOptionsToPackage{defaults=hu-min}{magyar.ldf}
+\usepackage[magyar]{babel}
+\end{latexcode}
+Ezzel egyenértékű:
+
+\begin{latexcode}
+\usepackage[T1]{fontenc} % Csak pdflatex esetén kell!
+\PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}
+\usepackage[hungarian]{babel}
+\end{latexcode}
+
+\subsection{A \textsf{magyar.ldf} opciói}
+
+Ebben az alszakaszban ismertetésre kerülnek a \textsf{magyar.ldf} opciói.
+
+\begin{description}
+
+\begin{hunopt}{active}{safe}
+\item[safe]
+Aktívvá teszi az \texttt{activeprefix=} opcióban megadott karaktert, továbbá elérhetővé teszi a \texttt{shorthandcs=} opcióban megadott parancsot.
+Az aktív karakterekről \aref{sec-aktiv}.~szakaszban lesz szó részletesen. 
+\item[none]
+Nem tesz aktívvá karaktert.
+Csak \texttt{shorthandcs=none} esetén használható!
+\item[onlycs]
+Nem aktivál karaktert, de bevezeti a \texttt{shorthandcs=} opcióban megadott nevű parancsot, amely ugyanazt nyújtja hosszabb gépelés árán, mint egy aktívvá tett karakter.
+\end{hunopt}
+
+\begin{hunopt}{activeprefix}{babelopt2}
+\item[babelopt2]
+Az \texttt{active=safe} opció esetén van hatása.
+A sima aposztrófot (\verb|'|) teszi aktívvá, ha a \textsf{babel} csomag \texttt{activeacute} opcióval lett betöltve, egyébként pedig a fordított aposztrófot (\verb|`|).
+\item[babelopt3]
+Az \texttt{active=safe} opció esetén van hatása.
+A sima aposztrófot (\verb|'|) teszi aktívvá, ha a \textsf{babel} csomag \texttt{activeacute} opcióval lett betöltve.
+A fordított aposztrófot (\verb|`|) teszi aktívvá, ha a \textsf{babel} csomag \texttt{activegrave} opcióval lett betöltve.
+Minden más esetben az írógép idézőjelet (\verb|"|) aktiválja.
+\item[acute]
+Az \texttt{active=safe} opció esetén a sima aposztrófot (\verb|'|) teszi aktívvá.
+\item[grave]
+Az \texttt{active=safe} opció esetén a fordított aposztrófot (\verb|`|) teszi aktívvá.
+\item[quotedbl]
+Az \texttt{active=safe} opció esetén az írógép idézőjelet (\verb|"|) teszi aktívvá.
+\item[none]
+Egyetlen karaktert sem tesz aktívvá.
+\end{hunopt}
+
+\begin{hunopt}{activespace}{none}
+\item[safe]
+Rövid szóköz lesz kihagyva minden kettőspont, pontosvessző, kérdőjel és felkiáltójel előtt.
+A magyar tipográfia megköveteli ezt a kihagyást.
+Ez az előbbi négy karakter aktiválásával valósul meg.
+\item[none]
+A kettőspont, pontosvessző, kérdőjel és felkiáltójel előtt nem lesz rövid szóköz kihagyva, ezeket a karakterek nem teszi aktívvá.
+\end{hunopt}
+
+\begin{hunopt}{afterindent}{unchanged}
+\item[force-yes]
+A szakaszcím után az első sort beljebb kezdi a \verb|\parindent| mértékével.
+\item[force-no]
+A szakaszcím után az első sort nem kezdi beljebb.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{amspostsectiondot}{no}
+\item[no]
+Bizonyos AMS dokumentumosztályok (\textsf{amsproc}, \textsf{amsbook} és \textsf{amsart}) ponttal fejezik be néhány strukturális egység címsorát, amit a magyar tipográfia megtilt.
+Ez az opció eltünteti ezt a pontot.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{amstocnumlang}{all}
+\item[all]
+Az \texttt{amstocnumskip=} opció a nem magyar nyelvű fejezetek tartalomjegyzékbeli címsoraira is vonatkozzon.
+\item[hu]
+Csak a magyar nyelvű fejezetek tartalomjegyzékbeli címsoraira alkalmazza az \texttt{amstocnumskip=} opciót.
+\end{hunopt}
+
+\begin{hunopt}{amstocnumskip}{\textbackslash enskip}
+\item[\param{hosszúságparancs}]
+Előírja, hogy az AMS dokumentumosztályok magyar nyelvű bejegyzéseinek számait a tartalomjegyzékben mekkora kihagyás válassza el a fejezet nevétől.
+Tetszőleges hosszúságparancs megadható.
+A magyar tipográfia az \verb|\enskip|-et javasolja az AMS által használt \verb|\quad| helyett.
+\item[\param{üres}]
+Ha az értéket üresen hagyjuk, akkor nem változtat, marad az eredeti \verb|\quad| hosszúság.
+\end{hunopt}
+
+\begin{hunopt}{appendixdot}{yes}
+\item[yes]
+A \verb|\chapter|-rel megadott függelékek sorszáma után rak pontot.
+\item[no]
+A \verb|\chapter|-rel megadott függelékek sorszáma után nem rak pontot.
+\end{hunopt}
+
+\begin{hunopt}{az}{weak}
+\item[weak]
+A határozott névelőt (a/az) automatikusan kirakni képes \verb|\az| parancsot és az őt használó \verb|\aref| és egyéb parancsokat definiálja, a részleteket lásd \aref{sec-nevelo}.~szakaszban.
+Ezeket a parancsokat csak akkor definiálja, ha korábban nem voltak definiálva.
+\item[yes]
+Ugyanaz mint a \texttt{weak}, de ha korábban ezek a parancsok már definiáltak voltak, akkor azokat átdefiniálja.
+\item[no]
+Nem definiál határozott névelőre vonatkozó parancsokat.
+\end{hunopt}
+
+\begin{hunopt}{captions}{hu}
+\item[hu]
+A járulékos fejezetneveket és egyéb feliratokat magyarul jeleníti meg.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{chapterhead}{yes}
+\item[yes]
+A fejezetek elején a magyarnak megfelelő formátumban először a sorszám, egy pont, majd a ,,fejezet'' szó jelenik meg.
+Az alapértelmezett angol formátumban ez fordítva van pont nélkül.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{chapternumber}{unchanged}
+\item[Huordinal]
+A fejezetszámok magyarul betűzve jelennek meg, az elején nagybetűvel, például ,,Első fejezet''.
+\item[huordinal]
+A fejezetszámok magyarul betűzve jelennek meg, az elején kisbetűvel, például ,,első fejezet''.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{classmod}{yes}
+\item[yes]
+A \textsf{book}, a \textsf{report} és az \textsf{article} osztályok viselkedését képes módosítani.
+Ezekben a \verb|\part| és \verb|\chapter| parancsok, a tartalomjegyzékek és a fejlécek tipográfiáját módosítja.
+Bár ismeri a \textsf{letter} osztályt is, a levél fejlécét és egyéb formai elemeit nem a magyar szabályok szerint helyezi el, csak a címsort módosítja.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{dottedtocline}{fix}
+\item[fix]
+A \verb|\@dottedtocline| parancs átdefiniálásával engedélyezi, hogy a tartalomjegyzékek pontozott sorainak végén az oldalszám balra túllógjon a számára fenntartott \verb|\@pnumwidth| távolságon.
+Az opció nem kötődik szorosan a magyar nyelvhez.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{emitdate}{weak}
+\item[weak]
+A dátumok magyar helyesírás szerinti megjelenítését végző, több formából választani engedő és a ragozást is támogató \verb|\emitdate| parancsot definiálja, feltéve, hogy korábban nem volt definiálva.
+A részleteket lásd \aref{sec-datum}.~szakaszban.
+Lásd még a \texttt{hutoday=} opciót.
+\item[yes]
+Ugyanaz mint a \texttt{weak}, de ha korábban az \verb|\emitdate| már definiált volt, akkor azt átdefiniálja.
+\item[no]
+Nem definiálja az \verb|\emitdate| parancsot.
+\end{hunopt}
+
+\begin{hunopt}{extras}{yes}
+\item[yes]
+A magyar nyelv aktívvá válásakor számos beállítás módosul az \verb|\extrasmagyar| makró futtatásával, továbbá amikor egy másik nyelv lesz aktív, akkor előbb a \verb|\noextrasmagyar| makró fut le.
+A \textsf{magyar.ldf} betöltődésekor a fenti két makróba építi bele saját nyelvspecifikus beállításait.
+Az opció \texttt{yes} értéke engedi érvényre jutni ezeket a beállításokat
+\item[no]
+Letiltja az \verb|\extrasmagyar| és \verb|\noextrasmagyar| makrók futását.
+Ez egyedül hibakeresési céllal javasolt, mert épp a \textsf{magyar.ldf} fő célját hiúsítja meg.
+Hibakeresés esetén érdemes az \texttt{extras=no}-t is tartalmazó \texttt{defaults=safest} alapbeállításokból kiindulni (lásd \aref{subsec-defaults}.~alszakaszt).
+\end{hunopt}
+
+\begin{hunopt}{fancyhdr}{hu}
+\item[hu]
+A \textsf{fancyhdr} csomag viselkedését igazítja a magyar tipográfiához.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{figurecaptions}{hu}
+\item[hu]
+Az ábra feliratokat igazítja a magyar tipográfiához.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{footnote}{yes}
+\item[yes]
+Definiálja a \verb|\footnotestyle| parancsot, mellyel \aref{sec-labjegyzet}.~szakaszban leírt módon testre szabható a lábjegyzetek megjelenítése.
+\item[huplain]
+Ugyanaz, mint a \texttt{yes}, de ezen felül még a magyar tipográfiának megfelelő, arab számokat használó stílust állít be.
+\item[starplain]
+Ugyanaz, mint a \texttt{yes}, de csillagokat használó stílust állít be, ami szintén megfelel a magyar tipográfiának.
+\item[unchanged]
+Nem változtat a lábjegyzeteken, és a \verb|\footnotestyle| parancsot sem definiálja.
+\end{hunopt}
+
+\begin{hunopt}{frenchspacing}{unchanged}
+\item[yes]
+Az írásjelek utáni szóköz szélességét a magyar tipográfiának megfelelően egyenletesre állítja (\verb|\frenchspacing|), amíg a magyar nyelv aktív.
+\item[no]
+A magyar nyelv aktívvá válásakor az írásjeltől függő változó szóközszélességet ír elő. (Nem felel meg a magyar tipográfiának!)
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{hang}{weak}
+\item[weak]
+A szimbólummal kezdődő, függő bekezdések nyitására szolgáló \verb|\hang| parancsot definiálja, amennyiben korábban nem volt definiálva.
+A részleteket lásd \aref{sec-idezet-parbeszed}.~szakaszban.
+\item[yes]
+Ugyanaz mint a \texttt{weak}, de ha korábban a \verb|\hang| már definiált volt, akkor azt átdefiniálja.
+\item[no]
+Nem definiálja a \verb|\hang| parancsot.
+\end{hunopt}
+
+\begin{hunopt}{hunnewlabel}{yes}
+\item[yes]
+A generált oldalszámok és fejezetszámok névelővel történő ellátását segítő \verb|\hunnewlabel| segédmakrót definiálja.
+A részleteket lásd \aref{sec-nevelo}.~szakaszban.
+\item[no]
+Nem generál \verb|\hunnewlabel|-eket.
+\item[only-hu]
+Csak akkor generál \verb|\hunnewlabel|-eket, ha a \verb|\label| parancs hívásakor a magyar nyelv aktív.
+\end{hunopt}
+
+\begin{hunopt}{hunumbers}{yes}
+\item[yes]
+Az egész számokat $-9999\dots9999$ között magyarul kibetűzni képes parancsokat definiálja: \verb|\@hunumeral|, \verb|\@Hunumeral|, \verb|\@huordinal|, \verb|\@huordinal|.
+Ezek a \texttt{partnumber=} és \texttt{chapternumber=} opciók \texttt{huordinal} és \texttt{Huordinal} értékeihez is kellenek, de önállóan is használhatóak.
+Például
+\begin{latexexample}
+\makeatletter
+\@hunumeral{123}\\
+\@Hunumeral{123}\\
+\@huordinal{123}\\
+\@Huordinal{123}
+\makeatother
+\end{latexexample}
+Számok kibetűzéséhez a \textsf{numspell} csomag (\url{https://ctan.org/pkg/numspell}) is használható, amely a magyaron kívül több nyelven is működik.
+\item[no]
+Nem definiálja az előbbi parancsokat.
+\end{hunopt}
+
+\begin{hunopt}{hutoday}{yes}
+\item[yes]
+A dátumok magyar megjelenítéséért felelős parancsokat definiálja: \verb|\today|, \verb|\ondatemagyar|, \verb|\ontoday|.
+Bővebb leírás olvasható \aref{sec-datum}.~szakaszban.
+A magyar nyelvű dátummegjelenítésnek egy gazdagabb, ragozást is megengedő formája az \verb|\emitdate| parancs, melyet az \texttt{emitdate=} opcióval lehet engedélyezni.
+\item[no]
+Nem módosít az alapbeállításokon.
+\end{hunopt}
+
+\begin{hunopt}{hynumberline}{unchanged}
+\item[hu]
+Ha a \textsf{hyperref} csomagot \texttt{bookmarksnumbered} opcióval töltötte be, akkor a PDF könyvjelzőjében a szakasz számai után pont fog állni a magyar tipográfiának megfelelően.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{hyphenmins}{22}
+\item[\param{számjegy bal\,}\param{számjegy jobb}]
+A \param{számjegy bal\,} illetve \param{számjegy jobb} azt adja meg, hogy a magyar nyelvű szavak bal illetve jobb oldalán legalább hány karakter közé nem szabad automatikusan elválasztójelet tenni.
+A \textsf{babel} és a \LaTeX\ alapbeállítása 23, a \textsf{magyar.ldf}-é pedig 22, tehát például ,,Aliz'' a bal oldala miatt nem választható el, ,,Sára'' viszont igen, mivel mindkét oldalon megvan a két karakter.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{labelenums}{unchanged}
+[Az \texttt{enumerate} környezettel létrehozott lista szintjeinek számozását állítja be.]
+\item[hu-a]
+A szintek száma 5.
+Ezek számozási típusa sorrendben:
+I. 1. \textit{a)} \textit{$\alpha$)} \textit{A)}
+\item[hu-A]
+A szintek száma 5.
+Ezek számozási típusa sorrendben:
+I. 1. \textit{A)} \textit{a)} \textit{$\alpha$)}
+\item[hu-d]
+A szintek száma 4.
+Ezek számozási típusa sorrendben:
+1. \textit{a)} \textit{$\alpha$)} \textit{A)}
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{labelitems}{unchanged}
+[Az \texttt{itemize} környezettel létrehozott lista szintjeinek jelöléseit állítja be.]
+\item[hu]
+A szintek száma 5.
+Ezek jelei sorrendben:
+\labelitemi\ \labelitemii\ \labelitemiii\ \labelitemiv\ \labelitemv
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{longcaption}{justified}
+[Az úsztató környezetek feliratának formátumát szabályozza.
+Nincs hatása, amennyiben a \textsf{caption} vagy \textsf{caption2} csomagok valamelyikét betölti.]
+\item[justified]
+A címke végére kettőspont helyett pontot rak.
+A többsoros címek sorkizártan jelennek meg.
+\item[centered]
+A címke végére kettőspont helyett pontot rak.
+A többsoros címek középre zártan jelennek meg.
+\item[centernewline]
+Annyiban különbözik a \texttt{centered} értéktől, hogy ekkor a címke után sortörés van.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{mathbrk}{define}
+\item[define]
+A matematikai szimbólumok sortörését támogató \verb|\MathBrk| parancsot definiálja.
+A részleteket lásd \aref{sec-matek}.~szakaszban.
+\item[fix]
+A matematikai szimbólumok sortörését támogató \verb|\MathBrk| parancsot definiálja, és ezen felül még a magyar tipográfiai szokásokhoz igazítja néhány matematikai
+bináris operátor és bináris reláció sortöréssel kapcsolatos viselkedését.
+A részleteket lásd \aref{sec-matek}.~szakaszban.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{mathfactorial}{define}
+\item[define]
+A matematikai faktoriális jelet helyes térközzel beszúró \verb|\factorial| parancsot definiálja.
+A részleteket lásd \aref{sec-matek}.~szakaszban.
+\item[fix]
+A matematikai faktoriális jelet helyes térközzel beszúró \verb|\factorial| parancsot definiálja és ezen felül még átírja a felkiáltójel képleten belüli jelentését \verb|\factorial|-ra.
+Ha az \texttt{activespace=} és a \texttt{mathfactorial=} opciókat együtt használjuk, akkor a felkiáltójelre matematikai képletben a \texttt{mathfactorial=}, szövegben pedig az \texttt{activespace=} van hatással.
+A részleteket lásd \aref{sec-matek}.~szakaszban.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{mathhucomma}{define}
+[A vessző viselkedését szabályozza matematikai üzemmódban.]
+\item[fix]
+A magyar tipográfia a tizedes törtekben tizedespont helyett tizedesvesszőt használ. Magyar tizedes törtek alapesetben nem gépelhetők közvetlenül \verb|$1,2$| módon, mert a vessző körül kihagyott térköz hibás lenne (ugyanis a vessző operátorosztálya Punct, a jó osztály, ahová a pont is tartozik, pedig Ord).
+
+Ezzel az opcióval azonban, amennyiben egy vesszőt közvetlenül szám követ matematikai üzemmódban, akkor a vessző Ord osztályba sorolódik, így az \verb|$1,2$| már valóban tizedes törtet fog jelölni.
+
+Ha a vessző nem tizedesvesszőt jelent és szám követi, akkor be kell tenni egy szóközt a vessző és szám közé.
+Pl.~\verb|$1, 2, 3$|.
+Ekkor a vessző az eredeti Punct jelként működik.
+
+Ha a vesszőt közvetlenül nem szám, hanem például egy betű követi, akkor marad a vessző eredeti Punct jelként való besorolása.
+Pl.~\verb|$a,b,c$|.
+
+Az előbb leírtak úgy valósulnak meg, hogy definiálódik egy \verb|\HuComma| parancs, ami a magyar tizedesvessző szerepét látja el, és ezután a vessző képleten belüli jelentését átírja \verb|\HuComma|-ra.
+\item[define]
+A \texttt{fix} értéknél említett \verb|\HuComma| definiálódik, de a vessző képleten belüli jelentését nem írja át.
+\item[unchanged]
+Nem történik módosítás.
+Ebben az esetben pl.~\verb|$1{,}2$| módon lehet magyar tizedes törtet gépelni.
+\end{hunopt}
+
+\begin{hunopt}{mathmuskips}{unchanged}
+\item[hu]
+A \verb|\thickmuskip|, \verb|\medmuskip| és \verb|\thinmuskip| távolságok állításával igyekszik megfelelni a magyar tipográfiának -- bár teljesen nem tud, mert a magyar tipográfia a \TeX{} térköz-generálásától lényegesen eltérően építi fel a szabályokat, melyek követése ráadásul kevésbé tetszetős képleteket eredményezne, mint ez az opció.
+\item[latex]
+Az előbbi távolságokat a \LaTeX{} alapbeállításaira állítja.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{mathreal}{weak}
+\item[weak]
+A képletekben a tizedespontot tizedesvesszővel helyettesítő \verb|\MathReal| parancsot definiálja, amennyiben korábban nem volt definiálva.
+A részleteket lásd \aref{sec-matek}.~szakaszban.
+\item[yes]
+Ugyanaz mint a \texttt{weak}, de ha korábban a \verb|\MathReal| már definiált volt, akkor azt átdefiniálja.
+\item[no]
+Nem definiálja a \verb|\MathReal| parancsot.
+\end{hunopt}
+
+\begin{hunopt}{mond}{weak}
+\item[weak]
+Párbeszédekben a megszólalást bevezető \verb|\mond| parancsot definiálja, amennyiben korábban nem volt definiálva.
+A részleteket lásd \aref{sec-idezet-parbeszed}.~szakaszban.
+\item[yes]
+Ugyanaz mint a \texttt{weak}, de ha korábban a \verb|\mond| már definiált volt, akkor azt átdefiniálja.
+\item[no]
+Nem definiálja a \verb|\mond| parancsot.
+\end{hunopt}
+
+\begin{hunopt}{openqq}{maybedown}
+[Azt adja meg, hogy aktív karakter után írt fordított aposztróf (\texttt{\textasciigrave}) illetve sima aposztróf (\texttt{\textquotesingle}) hogyan viselkedjen.
+Például, ha a fordított aposztróf aktív karakter, akkor mi legyen a \texttt{\textasciigrave\textasciigrave} illetve \texttt{\textasciigrave\textquotesingle} eredménye a PDF-ben?]
+\item[down]
+Ezzel nem használható az \texttt{active=none} opció! Hatása:\\
+\param{aktív karakter}+\verb|`| $=$ \verb|\quotedblbase| (\quotedblbase)\\
+\param{aktív karakter}+\verb|'| $=$ \verb|\textquotedblleft| (\textquotedblleft)
+\item[up]
+Ezzel nem használható az \texttt{active=none} opció! Hatása:\\
+\param{aktív karakter}+\verb|`| $=$ \verb|\textquotedblleft| (\textquotedblleft)\\
+\param{aktív karakter}+\verb|'| $=$ \verb|\quotedblbase| (\quotedblbase)
+\item[unchanged]
+Nem kezeli parancsként az \param{aktív karakter}+\verb|`| és \param{aktív karakter}+\verb|'| párosításokat.
+\item[maybedown]
+Az \texttt{active=none} opció esetén az \texttt{unchanged}, egyéb esetben pedig a \texttt{down} értékkel ekvivalens.
+\end{hunopt}
+
+\begin{hunopt}{partnumber}{unchanged}
+\item[Huordinal]
+A részek számai magyarul betűzve jelennek meg, az elején nagybetűvel, például ,,Első rész''.
+\item[huordinal]
+A részek számai magyarul betűzve jelennek meg, az elején kisbetűvel, például ,,első rész''.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{postdescription}{unchanged}
+[A \texttt{description} leíró lista környezetben az \texttt{\textbackslash item} opcionális paraméterével megadott listaelem címe és az ezt követő szöveg közti kihagyást, illetve a díszjelet állítja be.]
+\item[dot]
+A díszjel egy pont, ami a listaelem címének betűtípusával jelenik meg.
+A pont után 0,5\,em térköz van.
+\item[mddot]
+Ugyanaz, mint a \texttt{dot}, de mindig normál vastagságú fonttal.
+\item[bfdot]
+Ugyanaz, mint a \texttt{dot}, de mindig félkövér vastagságú fonttal.
+\item[diamond]
+A díszjel \mbox{\raise.5ex\hbox{\font\f=msam10 at1.3ex \f\char7}}, ami a listaelem címének betűtípusával jelenik meg.
+Előtte és utána 0,5\,em térköz van.
+\item[star]
+A díszjel egy csillag.
+Előtte és utána 0,5\,em térköz van.
+\item[endash]
+A díszjel egy nagykötőjel, ami a listaelem címének betűtípusával jelenik meg.
+Előtte és utána normál szóköz van.
+\item[colon]
+A díszjel egy kettőspont, ami a listaelem címének betűtípusával jelenik meg.
+Ezután 0,5\,em térköz van.
+\item[quad]
+Nincs díszjel, csak 1\,em térköz.
+\item[enskip]
+Nincs díszjel, csak 0,5\,em térköz.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt*}{postpara}{unchanged}
+Abban különbözik a \texttt{postdescription=} opciótól, hogy a \texttt{\textbackslash paragraph} címsorára van hatással.
+A lehetséges értékek megegyeznek a \texttt{postdescription=} értékeivel.
+\end{hunopt*}
+
+\begin{hunopt*}{postsubpara}{unchanged}
+Abban különbözik a \texttt{postdescription=} opciótól, hogy a \texttt{\textbackslash subparagraph} címsorára van hatással.
+A lehetséges értékek megegyeznek a \texttt{postdescription=} értékeivel.
+\end{hunopt*}
+
+\begin{hunopt}{refstruc}{weak}
+\item[weak]
+A dokumentum strukturális egységeire hivatkozó \verb|\refstruc| parancsot definiálja, feltéve, hogy korábban nem volt definiálva.
+A részleteket lásd \aref{sec-hivatkozas}.~szakaszban.
+\item[yes]
+Ugyanaz mint a \texttt{weak}, de ha korábban a \verb|\refstruc| már definiált volt, akkor azt átdefiniálja.
+\item[no]
+Nem definiálja a \verb|\refstruc| parancsot.
+\end{hunopt}
+
+\begin{hunopt}{sectiondot}{safe}
+\item[safe]
+Pontot tesz az ábra/táblázat számok után az ábra/táblázat jegyzékekben, illetve a fejezet/szakasz számok után a tartalomjegyzékben.
+\item[none]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{shorthandcs}{\textbackslash shu}
+\item[\param{parancs}]
+Az \texttt{active=none} opcióval nem használható együtt.
+A megadott \param{parancs} az aktív karakterrel lesz egyenértékű.
+Fontos, hogy ekkor a \param{parancs} elnyeli az első paraméterét.
+Például \verb|shorthandcs=\shu| esetén \verb|\shu&tty| vagy \verb|\shu`tty| hatása ugyanaz, mint \verb|`tty| (feltéve, hogy \verb|`| aktív karakter).
+\item[\param{parancsnév}]
+Ugyanaz, mint az előbbi, de itt csak a parancs nevét kell megadni \verb|\| nélkül.
+Ebben az esetben a definiált parancs nem nyeli el az első paraméterét.
+Például \verb|shorthandcs=shu| esetén \verb|\shu tty| hatása ugyanaz, mint \verb|`tty| (feltéve, hogy \verb|`| aktív karakter).
+\item[none]
+Nem lesz ilyen parancs.
+\end{hunopt}
+
+\begin{hunopt}{shortrefcmds}{yes}
+\item[yes]
+Háromkarakteres neveket definiál a névelővel hivatkozó parancsoknak: \verb|\aref| $\to$ \verb|\azr|, \verb|\Aref| $\to$ \verb|\Azr|, \verb|\apageref|
+$\to$ \verb|\azp|, \verb|\Apageref| $\to$ \verb|\Azp|, \verb|\acite| $\to$ \verb|\azc|, \verb|\Acite| $\to$ \verb|\Azc|.
+A határozott névelőről szóló \ref{sec-nevelo}.~szakaszban további részletek olvashatók.
+\item[no]
+Ezeket a hárombetűs parancsokat nem definiálja.
+\end{hunopt}
+
+\begin{hunopt}{suggestions}{yes}
+\item[yes]
+Figyelmeztető üzeneteket jelenít meg a naplófájlban, ha a \textsf{magyar.ldf}-et hiányosan vagy hibásan próbálják használni.
+\item[no]
+Nincs ilyen figyelmeztetés.
+\end{hunopt}
+
+\begin{hunopt}{tablecaptions}{hu}
+\item[hu]
+A táblázatok feliratait igazítja a magyar tipográfiához.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{textqq}{weak}
+\item[weak]
+Az idézőjeleket generáló \verb|\textqq| parancsot definiálja, feltéve, hogy korábban nem volt definiálva.
+A részleteket \aref{sec-idezet-parbeszed}.~szakasz tartalmazza.
+\item[yes]
+Ugyanaz mint a \texttt{weak}, de ha korábban a \verb|\textqq| már definiált volt, akkor azt átdefiniálja.
+\item[no]
+Nem definiálja a \verb|\textqq| parancsot.
+\end{hunopt}
+
+\begin{hunopt}{theoremtitle}{hu}
+\item[hu]
+A magyar tipográfiai szabályoknak megfelelően szedi a tételszerű környezetek címeit: a sorszám után pont és szóköz van, majd a környezet címe (tétel, lemma,
+bizonyítás, stb.), megint egy pont, és végül szóköz jön.
+Ez az opció kompatibilis a \textsf{theorem}, \textsf{ntheorem} és \textsf{amsthm} csomagokkal.
+A \textsf{theorem} és \textsf{ntheorem} esetén a magyarítást a \verb|\theoremstyle{magyar-plain}| illetve \verb|\theoremstyle{hungarian-plain}| parancs végzi attól függően, hogy a \textsf{babel} csomag \texttt{magyar} vagy \texttt{hungarian} opcióval lett betöltve.
+Ez a parancs a dokumentumtest elején aktiválódik, így a \verb|\begin{document}| után írt \verb|\newtheorem| esetén működik.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{titles}{\textbackslash enskip}
+\item[\param{hosszúságparancs}]
+A strukturális egységek címeinek (pl.~\verb|\section|) szedésekor a pont és a cím közötti térközt adja meg.
+\item[unchanged]
+Nem történik módosítás.
+\end{hunopt}
+
+\begin{hunopt}{told}{weak}
+\item[weak]
+Az egész számok toldalékolását végző \verb|\told| parancsot definiálja, feltéve, hogy korábban nem volt definiálva.
+A részleteket \aref{sec-toldalek}.~szakasz tartalmazza.
+\item[yes]
+Ugyanaz mint a \texttt{weak}, de ha korábban a \verb|\told| már definiált volt, akkor azt átdefiniálja.
+\item[no]
+Nem definiálja a \verb|\told| parancsot.
+A \texttt{varioref} csomag magyarítása használja a \verb|\told| parancsot, ezért ilyenkor a \texttt{told=no} nem megfelelő választás.
+\end{hunopt}
+
+\end{description}
+
+\subsection{Az opciók alapértékeinek beállítása}\label{subsec-defaults}
+
+A következő opció \aref{tablazat-defaults}.~táblázatnak megfelelően állítja be a korábban ismertetett opciók alapértékeit.
+
+\begin{description}
+
+\begin{hunopt}{defaults}{over-1.4}
+\item[over-1.4]
+A \textsf{magyar.ldf} 1.4-es verziójának tipográfiájától csak kevéssé tér el, de néhány fontos ponton van különbség.
+Az új, más csomagokkal össze nem akadó parancsokat elérhetővé teszi, de nem kapcsolja be.
+Célja, hogy az összes 1.4-es verzióhoz készült dokumentum leforduljon vele, és csak kevés, a sor- és oldalhatárokat általában nem érintő látható eltérés legyen az 1.4-es verzióhoz képest.
+Ha ehelyett a szerző célja az, hogy a dokumentum a magyar tipográfiai szabályokat minél inkább kövesse, akkor helyette a \texttt{defaults=hu-min} ajánlott.
+\item[compat-1.4]
+Nem változtat lehetőség szerint a \textsf{magyar.ldf} 1.4-es verziójának tipográfiáján, de kijavít számos megvalósítási hibát és más \LaTeX{} csomagokkal való összeférhetetlenséget.
+Ezt ajánljuk azoknak, akik egy régi dokumentumot szeretnének vizuális változás nélkül az új \textsf{magyar.ldf}-fel újrafordítani. 
+A teljes egyezés nem garantált, a kompatibilitás a \textsf{magyar.ldf}-nek csak az opciók által befolyásolt részeire terjed ki.
+Elrejti az 1.4-es verzió után definiált parancsokat is.
+\item[prettiest]
+Minden új szolgáltatást bekapcsol, a magyar tipográfiához a lehető legjobban illeszkedik.
+Vigyázat!
+Az itt bekapcsolt szolgáltatások esetleg összeakadhatnak más csomagokkal.
+\item[hu-min]
+Az alapbeállításoktól annyiban tér el, hogy nem az 1.4-es verzióval való kompatibilitásra figyel, hanem az opciókat úgy állítja be, hogy azok ne mondjanak ellent a magyar tipográfiai alapelveknek.
+Ha a szabályok választást tesznek lehetővé, akkor ez az alapbeállítás a legegyszerűbben megvalósítható és legkevesebb kompatibilitási problémát előhozó értékek közül válogat.
+A legtöbb magyar nyelvű dokumentum esetén ez a beállítás javasolt.
+A \texttt{defaults=hu-min} által aktivált opciók listáját kiírathatja a fordítási naplóba a \verb|\magyarDumpHuMin| paranccsal.
+\item[safest]
+Szinte mindent kikapcsol, hatása olyan, mintha a \textsf{magyar.ldf}-et be se töltöttük volna.
+Hibakeresésnél érdemes ezt választani.
+Váratlan hibaüzenetnél, vagy ha az a gyanú, hogy a \textsf{magyar.ldf} összeakad valamely másik csomaggal, akkor át kell váltani \texttt{defaults=safest}-re, és ha a probléma továbbra is fennáll, akkor nem a \textsf{magyar.ldf}-fel volt baj.
+\end{hunopt}
+
+\begin{hunopt}{safest}{no}
+\item[no]
+Nincs hatása.
+\item[yes]
+Ugyanaz, mint a \texttt{defaults=safest}.
+\end{hunopt}
+
+\end{description}
+
+{\ttfamily\footnotesize 
+\begin{longtable}{|l|l|l|l|l|l|}
+\caption{Az opciók alapértékei a \texttt{defaults=} opció különböző értékei esetén}
+\label{tablazat-defaults}\\
+\hline
+\textbf{\small\rule{0pt}{.9em}defaults=} & \textbf{\small over-1.4} & \textbf{\small compat-1.4} & \textbf{\small prettiest} & \textbf{\small safest} & \textbf{\small hu-min} \\
+\hline
+\endfirsthead
+\hline
+\textbf{\small\rule{0pt}{.9em}defaults=} & \textbf{\small over-1.4} & \textbf{\small compat-1.4} & \textbf{\small prettiest} & \textbf{\small safest} & \textbf{\small hu-min} \\
+\hline
+\endhead
+\hline
+\multicolumn{6}{r@{}}{\rule{0pt}{1em}\rmfamily\em Folytatás a következő oldalon!}
+\endfoot
+\hline
+\endlastfoot
+%
+active= & safe & safe & safe & none & safe \\
+activeprefix= & babelopt2 & grave & babelopt2 & none & babelopt2 \\
+activespace= & none & none & safe & none & safe \\
+afterindent= & unchanged & unchanged & unchanged & unchanged & unchanged \\
+amspostsectiondot= & no & unchanged & no & unchanged & no \\
+amstocnumlang= & all & all & all & all & all \\
+amstocnumskip= & \textbackslash enskip &  & \textbackslash enskip &  & \textbackslash enskip \\
+appendixdot= & yes & yes & no & yes & no \\
+az= & weak & yes & yes & no & weak \\
+captions= & hu & hu & hu & unchanged & hu \\
+chapterhead= & yes & yes & yes & no & yes \\
+chapternumber= & unchanged & unchanged & unchanged & unchanged & unchanged \\
+classmod= & yes & yes & yes & unchanged & yes \\
+dottedtocline= & fix & unchanged & fix & unchanged & fix \\
+emitdate= & weak & no & yes & no & weak \\
+extras= & yes & yes & yes & no & yes \\
+fancyhdr= & hu & unchanged & hu & unchanged & hu \\
+figurecaptions= & hu & hu & hu & unchanged & hu \\
+footnote= & yes & unchanged & yes & unchanged & huplain \\
+frenchspacing= & unchanged & unchanged & yes & unchanged & yes \\
+hang= & weak & no & yes & no & weak \\
+hunnewlabel= & yes & yes & yes & no & yes \\
+hunumbers= & yes & no & yes & no & yes \\
+hutoday= & yes & yes & yes & no & yes \\
+hynumberline= & unchanged & unchanged & hu & unchanged & hu \\
+hyphenmins= & 22 & unchanged & 22 & unchanged & 22 \\
+labelenums= & unchanged & unchanged & hu-a & unchanged & hu-d \\
+labelitems= & unchanged & unchanged & hu & unchanged & hu \\
+longcaption= & justified & justified & centered & unchanged & centered \\
+mathbrk= & define & unchanged & fix & unchanged & fix \\
+mathfactorial= & define & unchanged & fix & unchanged & define \\
+mathhucomma= & define & unchanged & fix & unchanged & fix \\
+mathmuskips= & unchanged & unchanged & hu & unchanged & unchanged \\
+mathreal= & weak & no & yes & no & weak \\
+mond= & weak & no & yes & no & weak \\
+openqq= & maybedown & maybedown & maybedown & unchanged & maybedown \\
+partnumber= & unchanged & unchanged & Huordinal & unchanged & unchanged \\
+postdescription= & unchanged & unchanged & dot & unchanged & dot \\
+postpara= & unchanged & unchanged & diamond & unchanged & diamond \\
+postsubpara= & unchanged & unchanged & star & unchanged & star \\
+refstruc= & weak & no & yes & no & weak \\
+sectiondot= & safe & safe & safe & none & safe \\
+shorthandcs= & \textbackslash shu & none & \textbackslash shu & none & \textbackslash shu \\
+shortrefcmds= & yes & yes & no & no & yes \\
+suggestions= & yes & no & yes & yes & yes \\
+tablecaptions= & hu & hu & hu & unchanged & hu \\
+textqq= & weak & no & yes & no & weak \\
+theoremtitle= & hu & hu & hu & unchanged & hu \\
+titles= & \textbackslash enskip & \quad & \textbackslash enskip & unchanged & \textbackslash enskip \\
+told= & weak & no & yes & no & weak \\
+\hline
+\end{longtable}}
+
+\section{Idézetek, párbeszédek}\label{sec-idezet-parbeszed}
+
+\begin{latexcode}
+\textqq{(*\param{szövegközi idézet}*)}
+\end{latexcode}
+Magyar nyelvű dokumentumokban a következő módon lehet szövegközi idézeteket írni:
+
+\begin{latexexample}
+,,Külső >>középső 'belső' 
+középső<< külső''
+\end{latexexample}
+A \texttt{textqq=yes} opció esetén definiálódik a \verb|\textqq| parancs, amivel ez automatizálható:
+
+\begin{latexexample}
+\textqq{Külső \textqq{középső 
+\textqq{belső} középső} külső}
+\end{latexexample}
+Magyartól eltérő nyelvre váltásnál a \verb|\textqq| angol tipográfia szerint fog működni, függetlenül a nyelvtől.
+
+\begin{latexcode}
+\mond (*\param{kimondott szöveg}*)
+\end{latexcode}
+Ha egy szereplő a műben megszólal, az általa mondott szöveget új bekezdésben, gondolatjellel kell kezdeni.
+A gondolatjel után nem nyúló szóközt kell hagyni.
+Ezt valósítja meg \texttt{mond=yes} opció esetén a \verb|\mond| parancs.
+A kimondott szövegbe gondolatjelek közt leírást is lehet ékelni, melyet ponttal kell lezárni.
+A kimondott szöveg végére szükség esetén ki kell tenni a kérdőjelet vagy a felkiáltójelet, de a pontot tilos.
+Például
+
+\latexexampleparindent
+\begin{latexexample}
+Egy deszkán találta magát,
+amely a tenger hullámain
+zötykölődött.
+\mond Hol a Titanic? -- kérdezte,
+de nem kapott választ.
+\mond Ez nem lehet -- szólalt
+meg ismét. -- Öt perce még a
+kabinomban voltam.
+\end{latexexample}
+
+\begin{latexcode}
+\hang{(*\param{bekezdéskezdő jel}*)}(*\param{bekezdés}*)
+\end{latexcode}
+Ad hoc szervezésű függő felsorolásokhoz lehet hasznos a \texttt{hang=yes} opció esetén definiált \verb|\hang| parancs, amely az új bekezdés első sorát a bal margón kezdi, a további sorokat pedig a megadott jel mögött.
+A \verb|\hang| listakörnyezeteken kívül használandó, ebben is különbözik az \verb|\item|-től.
+Például
+
+\begin{latexexample}
+\hang{-- }Első sor\\
+második sor.\par
+\hang{$\bullet\circ$ }Egy másik.
+\end{latexexample}
+
+\section{Aktív karakter}\label{sec-aktiv}
+
+Alapértelmezésben a \textsf{magyar.ldf} a fordított aposztróf (\verb|`|) karaktert teszi aktívvá (ez megváltoztatható az \texttt{activeprefix=} opcióval), továbbá definiálja a \verb|\shu| parancsot, és ezután az \verb|\shu`| és a \verb|`| ugyanarra használható.
+
+Az aktív karakter az őt követő karaktert makróparaméterként veszi, tehát például \verb|`=| írható így: \verb|`{=}| vagy így is: \verb*|` =|. 
+A \verb|\string| az őt követő aktív karakter speciális jelentését megszünteti.
+Így például \verb|\string`\string`| egy angol nyitó idézőjelet eredményez, feltéve, hogy az aktuális fontban van ilyen ligatúra.
+
+A \textsf{magyar.ldf} aktív karaktere az alábbi funkciókat nyújtja:
+\begin{longtable}[l]{l|l}
+\verb|``|   & ,, magyar nyitó idézőjel,\texttt{ openqq=} miatt eltérhet\\
+\verb|`'|   & `' angol nyitó idézőjel,\texttt{ openqq=} miatt eltérhet\\
+\verb|`=|   & szón belüli kötőjel, ha a részszavakat is el akarjuk választani\\
+\verb|`_|   & szón belüli feltételes kötőjel\\
+            & \verb|\showhyphens{bohém\-életre bohém`_életre}| $\to$\\
+            & \texttt{bohém-életre bo-hém-élet-re}\\
+\verb|`--|  & gondolatjel kis szóközzel, személynevek elválasztására\\
+            & \verb|Kiss Előd`--Nagy Pál| $\to$ Kiss Előd`--Nagy Pál\\
+\verb|`-|   & ugyanaz, mint \verb|`=|, kivéve matematikai képletben, vagy ha így folytatódik: \verb|`--|\\
+            & matematikai képletben törhető szóköz: \verb|$1<2,`-3<4$| $\to$ $1<2,\ 3<4$\\
+\verb!`|!   & fontos kötőjel, sor végén és elején is megjelenik\\
+\verb|`<|   & `< francia nyitó idézőjel\\
+\verb|`>|   & `> francia nyitó idézőjel\\
+\verb|`"|   & szón belüli \verb|\allowbreak|, résszavak elválasztása automatikus\\
+            & \verb|\showhyphens{kutatás`"+`"fejlesztés}| $\to$ \texttt{ku-ta-tás+fej-lesz-tés}\\
+\verb|`~|   & ligatúrát nem képező kötőjel, pl.~\verb|`~`~`~| $\to$ `~`~`~\\
+\verb|`ccs| & sor végén ,,ccs'', elválasztva ,,cs-cs''\\
+            & \verb|\showhyphens{loccsan szétlo`ccsantja}| $\to$\\
+            & \texttt{loccsan szét-locs-csant-ja}\\
+\verb|`CCS| & sor végén ,,CCS'', elválasztva ,,CS-CS''\\
+\verb|`cxy| & sor végén ,,cxy'', elválasztva ,,cs-xy''; de csak akkor hasznos, ha \texttt{xy = cs}
+\end{longtable}
+\noindent
+Hasonló az összes többi dupla kettős illetve hármas mássalhangzó esete is:
+\begin{verbatim}
+`ddz `ddzs `ggy `lly `nny `ssz `tty `zzs
+`DDZ `DDZS `GGY `LLY `NNY `SSZ `TTY `ZZS
+\end{verbatim}
+
+\section{Matematikai képletek}\label{sec-matek}
+
+\begin{latexcode}
+\MathBrk{(*\param{matematikai szimbólum}*)}
+\MathBrkAll{(*\param{matematikai szimbólum}*)}
+\end{latexcode}
+A magyar tipográfia a főszövegen belüli belső képletekben a bináris relációk és a bináris operátorok körül (a szorzásjelet és perjelet kivéve) megengedi a sortörést, de sortörés esetén az operátort illetve relációt a következő sor elején meg kell ismételni.
+Erre szolgál a \verb|\MathBrk| parancs, amely egyetlen szimbólumot vár paraméterül, ami vagy egyetlen karakter (pl.~\texttt{+}), vagy egy parancs (pl.~\verb|\cup|).
+A \verb|\MathBrk| csak akkor elérhető, ha a \textsf{magyar.ldf}-et megfelelő \texttt{mathbrk=} opcióval lett betöltve.
+A \verb|\MathBrk| parancs csak akkor módosítja a szimbólumot, ha a magyar nyelv aktív, a \verb|\MathBrkAll| viszont mindig.
+
+Ha a \textsf{magyar.ldf} \texttt{mathbrk=fix} opcióval van betöltve, akkor a szorzásjel és a perjel mellett nem engedélyezett a sortörés, és a legtöbb bináris reláció és bináris operátor a \verb|\MathBrk| kirakása nélkül is a második sorban ismételve választódik el, feltéve, hogy a magyar nyelv aktív.
+
+\begin{latexcode}
+\factorial
+\end{latexcode}
+Ha a \textsf{magyar.ldf}-et a \texttt{mathfactorial=fix} opcióval lett betöltve, akkor a képletekben a felkiáltójel körüli térköz helyes lesz, tehát a faktoriális  egyszerűen bevihető. 
+Például \verb|$x=n!k!$| $\to$ $x=n!k!$.
+Az eredményben a szorzótényezők közötti szóköz hiányozna \texttt{mathfactorial=fix} nélkül.
+Ha csak az alapértelmezés szerinti \texttt{mathfactorial=define} opció aktív, akkor \texttt{\string!} helyett \verb|\factorial|-t érdemes gépelni, hogy a térközök helyesek legyenek.
+
+\begin{latexcode}
+\MathReal{(*\param{képlet tizedestörtekkel}*)}
+\end{latexcode}
+Ezt a parancsot a \texttt{mathreal} opció definiálja.
+A paraméterül kapott matematikai képletet úgy jeleníti meg, hogy minden pontot tizedesvesszőre cserél, ha a magyar nyelv aktív.
+A paraméterben a pontokat tilos makróba rejteni.
+A \verb|\MathReal| képleten belül és azon kívül is működik.
+Például
+
+\begin{latexexample}
+\MathReal{1.25+2+3.75=7}\\
+$\MathReal{1.25+2+3.75=7}$
+\end{latexexample}
+
+\section{Automatikus határozott névelő}\label{sec-nevelo}
+
+\begin{latexcode}
+\az{(*\param{szó}*)} % a vers 
+\Az{(*\param{szó}*)} % Az ős kaján
+\az+(*\param{parancs}*){(*\param{argumentum}*)} % az 5. táblázat
+\Az+(*\param{parancs}*){(*\param{argumentum}*)} % Az 5. táblázat
+\aref{(*\param{címke}*)} % a 2.11. alfejezet
+\Aref{(*\param{címke}*)} % A 2.11. alfejezet
+\apageref{(*\param{címke}*)} % a 15. oldalon
+\Apageref{(*\param{címke}*)} % A 15. oldalon
+\acite{(*\param{irodalom-címkék}*)} % az [1, 2] művek rövidek
+\Acite{(*\param{irodalom-címkék}*)} % A [3, 4] művek szépek
+\end{latexcode}
+A \textsf{magyar.ldf} számos parancsot tartalmaz, melyek automatikusan ki tudják tenni a határozott a/az névelőt a szavak elé.
+Ezek csak akkor érhetők el, ha a \textsf{magyar.ldf} a megfelelő \texttt{az=} opcióval lett betöltve.
+Ezen parancsok csillagos változata csak a névelőt, a csillag nélküli változat pedig a névelővel ellátott szót adja.
+
+Az \verb|\az| és \verb|\Az| parancsok \param{szó} paramétere tartalmazhatja a \verb|\ref|, \verb|\pageref| és \verb|\cite| parancsokat, továbbá a \texttt{+} kiválthat egy kapcsos zárójelet.
+Így például a következők ugyanazt szúrják be: \verb|\Az{\pageref{nagy}}|, \verb|\Apageref{nagy}|, \verb|\Az+\pageref{nagy}|.
+
+A \param{szó} elején levő írásjeleket nem veszi figyelembe, például \verb|\az{$*^+$52}| és \verb|\az{52}| ugyanazt eredményezi.
+Megzavarhatja a működést, ha a \param{szó}-ban a makrók kifejtése után kapcsos zárójelek vagy kifejthető token-ek maradnak.
+
+A \textsf{magyar.ldf} az arab és római számok és a betűk elé is a megfelelő névelőt rakja.
+Például
+
+\begin{latexexample}
+\az{xilofon}\\
+\az{x betű}\\
+\az{\romannumeral10}. osztály\\
+\az{\csname @Roman\endcsname{10}}.
+osztály\\
+\end{latexexample}
+
+A római számokat akkor is helyesen kezeli, ha azok pl.~egy \verb|\aref| által hivatkozott fejezetszám elején találhatók.
+Ehhez segítségként az \texttt{.aux} fájlba minden \verb|\newlabel| parancs után a \textsf{magyar.ldf} elhelyez egy \verb|\hunnewlabel| parancsot, amely már mindenképpen arab számokat tartalmaz.
+(Ez csak akkor működik, ha a magyar.ldf-et a \texttt{hunnewlabel=yes} opcióval töltöttük be.)
+
+Az előbbi parancsok helyett az 
+\begin{latexcode}
+\azr \Azr \azp \Azp \azc \Azc 
+\end{latexcode}
+rövidítések is használhatók, ha a \textsf{magyar.ldf}-et a \texttt{shortrefs=yes} opcióval lett betöltve.
+
+Egyenletekre a következő módokon lehet hivatkozni az \textsf{amsmath} csomag használata esetén:
+
+\begin{latexcode}
+\aref({(*\param{címke}*)})
+\Aref({(*\param{címke}*)})
+\az{\eqref{(*\param{címke}*)}}
+\Az{\eqref{(*\param{címke}*)}}
+\end{latexcode}
+Ezekből inkább az utolsó kettőt ajánlott használni, mert az az egyenletszámot mindig álló betűvel jeleníti meg, ahogy a névelő nélküli esetben is.
+
+A \textsf{magyar.ldf} automatikus határozott névelő kezelésének van néhány korlátja, melyekről a \textsf{huaz} csomag leírásában esik szó (\url{https://ctan.org/pkg/huaz}).
+Az automatikus határozott névelő kezeléséhez ez a csomag is használható.
+
+\section{Számok toldalékolása}\label{sec-toldalek}
+
+\begin{latexcode}
+\told(*\param{szám}*)+(*\param{toldalék}*){}
+\told(*\param{szám}*)+(*\param{toldalék\textsubscript1}*)+(*\param{toldalék\textsubscript2}*){}
+\atold(*\param{szám}*)+(*\param{toldalék}*){}
+\Atold(*\param{szám}*)+(*\param{toldalék}*){}
+\end{latexcode}
+Különösen a képletekre való hivatkozásnál lehet hasznos, hogy a \textsf{magyar.ldf} a számneveket ragozni tudja (kivéve, ha ez a \texttt{told=} opcióban le van tiltva).
+Így például a ,,(3)-at hozzáadva (4)-hez, majd azt kivonva (6)-ból a (7)-et kapjuk'' alakú kifejezéseket akkor is írhatunk, ha a pontos számokat a \LaTeX{} menet közben generálja.
+Ennek a forrása így kezdődik: \verb|\told\aref({eq3})+at{}...|
+Ha a dokumentum átrendezése során az \texttt{eq3} címkéjű képlet sorszáma megváltozik, a \verb|\told| akkor is a helyes toldalékot fogja hozzátenni.
+
+A \param{szám} argumentumot az egyértelműség kedvéért kapcsos zárójelbe szabad tenni.
+A \verb|\told| a parancs végén található \verb|{}| jelből tudja, hol van vége a toldaléknak: például a \verb|\told1+be{}| és a \verb|\told1+ben{}| között csak így lehet különbséget tenni.
+Bizonyos feltételek mellett (például akkor, ha a parancsot pont vagy vessző követi) a \verb|{}| elhagyható, de érdemes a biztonságra törekedve mindig kitenni.
+A \param{szám} állhat matematikai módban, és lehet negatív is (pl.~\verb|\told{$-2$}+edik{}| $\to$ $-2$-edik, olvasd: ,,mínusz kettedik''), de vigyázat, mert két mínusz jel kiejti egymást (pl.~\verb|\told{--2}+edik{}| $\to$ --2-odik, de kevesen olvasnák ,,második''-nak).
+
+A \param{szám} tartalmazhat \verb|\ref|, \verb|\aref|, \verb|\Aref|, \verb|\pageref|, \verb|\apageref|, \verb|\Apageref|, \verb|\cite|, \verb|\acite| és \verb|\Acite| parancsokat, de csak csillag és zárójel nélkül.
+Például ebben a dokumentációban \aref{subsec-defaults}.~alszakaszra így is lehet hivatkozni:
+
+\begin{latexexample}
+\told\ref{subsec-defaults}+as{} 
+alszakasz
+\end{latexexample}
+
+Az \verb|\atold| illetve \verb|\Atold| parancsok egyenértékűek egy \verb|\az|-ba illetve \verb|\Az|-ba ágyazott \verb|\told|-dal.
+
+A \verb|\told| mindig a legutolsó számot ragozza, tehát például ha az \texttt{ott} címkéjű alalszakasz sorszáma 1.2.3, akkor \verb|\told\ref{ott}+ben{}| így jelenik meg: ,,1.2.3-ban''.
+
+A \param{szám} technikai okokból nem tartalmazhat \verb|\refstruc| parancsot (lásd \aref{sec-hivatkozas}.~szakaszban), mivel az nem expandálható. A megoldás: \verb|\told\refstruc{ott}+ben{}| helyett \verb|\refstruc{ott+ben}|-t kell írni.
+
+A számok végére illeszthető toldalékok a következők:
+
+\begin{longtable}[l]{l|l}
+\verb|\told42+a{}| & 42-e\\
+\verb|\told42+as{}| & 42-es\\
+\verb|\told42+ad{}| & 42-ed\\
+\verb|\told42+adik{}| & 42-edik\\
+\verb|\told42+an{}| & 42-en\\
+\verb|\told42+at{}| & 42-t\\
+\verb|\told42+on{}| & 42-en\\
+\verb|\told42+a{}| & 42-e\\
+\verb|\told42+nal{}| & 42-nél\\
+\verb|\told42+ul{}| & 42-ül\\
+\verb|\told42+val{}| & 42-vel\\
+\verb|\told42+hoz{}| & 42-höz\\
+\verb|\told42+ban{}| & 42-ben\\
+\verb|\told42+nak{}| & 42-nek\\
+\verb|\told42+ba{}| & 42-be\\
+\verb|\told42+ra{}| & 42-re\\
+\verb|\told42+tol{}| & 42-től\\
+\verb|\told42+rol{}| & 42-ről\\
+\verb|\told42+szor{}| & 42-ször
+\end{longtable}
+\noindent
+A folytatható toldalékok (\param{toldalék\textsubscript1}) a következők:
+
+\begin{longtable}[l]{l|l}
+\verb|\told42+as+at{}| & 42-eset\\
+\verb|\told42+ad+szor{}| & 42-edszer\\
+\verb|\told42+adik+nal{}| & 42-ediknél\\
+\verb|\told42+a+an{}| & 42-én
+\end{longtable}
+\noindent
+Minden \param{toldalék\textsubscript1} minden \param{toldalék\textsubscript2}-vel kombinálható, de nincs értelme az összes kombinációnak.
+
+A számok automatikus toldalékolásához használható még a \textsf{huaz} csomag (\url{https://ctan.org/pkg/huaz}) is.
+
+\section{Hivatkozás a dokumentum strukturális egységeire}\label{sec-hivatkozas}
+
+\begin{latexcode}
+\refstruc{(*\param{szám}*)(*\normalfont[*)+(*\param{toldalékok}*)(*\normalfont]*)}
+\end{latexcode}
+Ez a parancs abban tér el a \verb|\ref| parancstól, hogy nem csak a strukturális egység számszerű megjelölését, hanem a nevét is megjeleníti.
+Csak akkor érhető el, ha a \textsf{magyar.ldf} betöltésekor a \texttt{refstruc=} opcióban nem lett letiltva.
+Ha a magyar nyelv aktív, akkor ,,1.2.~alszakasz'' formában jeleníti meg a
+címet, egyébként ,,subsection 1.2'' formában; az angol elnevezés az egységet nyitó \LaTeX{} parancsszóval egyezik meg.
+
+Ha a magyar nyelv aktív, akkor a \verb|\refstruc| elfogad toldalékokat is,  \aref{sec-toldalek}.~szakaszban leírt módon:
+
+\begin{latexexample}
+\refstruc{sec-toldalek+ben}
+\end{latexexample}
+
+A -val/-vel ragot nem tudja helyesen hozzákapcsolni a nevekhez.
+Csak számozott egységre lehet hivatkozni, tehát például \verb|\section*|-ra nem.
+Ha \verb|\az+| van írva a \verb|\refstruc| elé, akkor a megfelelő a/az határozott névelő kerül kiírásra.
+Nem használható a \verb|\refstruc| ábrákra, táblázatokra, egyenletekre vagy tételszerű környezetekre való hivatkozásra; ezek ugyanis a dokumentumnak nem strukturális egységei, így például ha egy szakaszban egy ábra sorszáma ,,3.4'', akkor ,,3.4.~szakasz'' generálódna.
+Ennek a fogyatékosságnak az az oka, hogy a hivatkozott egység típusa nem áll rendelkezésre az \texttt{.aux} fájlból a \verb|\refstruc| hívásakor.
+
+\section{Dátumok}\label{sec-datum}
+
+A \LaTeX\ \verb|\today| parancsát a dokumentumosztályok többsége átdefiniálja amerikai dátumformátumra, amely a dokumentum fordításának dátumát fogja mutatni.
+A \textsf{babel} minden nyelvváltáskor felülírja ezt a parancsot az adott nyelvnek megfelelően.
+A dátumgeneráló parancsok használatára néhány példa (melyben a fordítás dátuma \today):
+
+\begin{latexexample}
+\SafeToday\\
+\today\\
+\emitdate{b}{\today}\\
+\emitdate[e]{g}{\today}\\
+\ondatemagyar\\
+\ontoday\\
+\emitdate[a+an]{g}{\today}
+\end{latexexample}
+Ezek a \textsf{magyar.ldf} \texttt{hutoday=} illetve \texttt{emitdate=} opcióival válnak elérhetővé.
+
+Az \verb|\ontoday| parancs csak magyar nyelven elérhető, és az -án/-én raggal látja el a magyar \verb|\today| dátumát.
+Az \verb|\ontoday| aktív nyelvtől független, de magyar kimenetet produkáló változata az \verb|\ondatemagyar|.
+
+\begin{latexcode}
+\emitdate[(*\param{toldalék}*)]{(*\param{formátum}*)}{(*\param{dátum}*)}
+\end{latexcode}
+Felismeri a \param{dátum}-ot, és megjeleníti az előírt \param{formátum}-ban, esetleg \param{toldalék}-kal látva el.
+A \param{toldalék} a \verb|\told| parancs \texttt{+}-a után megengedett tetszőleges toldalék lehet, tipikus értékei: \texttt{e} és \texttt{a+an}.
+Az \texttt{edik+e} használata nem ajánlott, helyette \texttt{e} javasolt.
+
+A \param{dátum} lehet \verb|\today| parancs, vagy egy fix dátum a következő alakokban:
+\begin{itemize}[noitemsep,label=]
+\item \verb|É-H-N     | (pl.~\texttt{2000-04-01} vagy \texttt{2000-4-1})
+\item \verb|É/H/N     | (pl.~\texttt{2000/04/01} vagy \texttt{2000/4/1})
+\item \verb|É.H.N     | (pl.~\texttt{2000.04.01} vagy \texttt{2000.4.1})
+\item \verb|É. hónap N| (pl.~\texttt{2000. április 1} vagy \texttt{2000. April 1})
+\item \verb|hónap N, É| (pl.~\texttt{április 1, 2000} vagy \texttt{April 1, 2000})
+\end{itemize}
+
+A 0\dots49 közötti évszámokhoz 2000-et, az 50\dots99 közöttiekhez pedig 1900-at ad hozzá.
+A dátum végén lehet egy extra pont, amit figyelmen kívül hagy.
+Szóközök számítanak.
+Ha a megadott dátum nem felel meg egyik formátumnak sem, az \verb|\emitdate| nem minden esetben ad értelmes hibaüzenetet, és esetleg a dokumentum fordítása végleg elakadhat.
+
+Az \verb|\emitdate| \param{formátum} argumentuma a kimeneti formátumot adja meg.
+A magyar helyesírásban minden (\texttt{a}--\texttt{h}) formátum helyes, de \texttt{h} esetén a \textsf{magyar.ldf} nem oldja meg a hónapnevek automatikus ragozását.
+A lehetséges formátumok:
+
+\begin{latexexample}
+\emitdate{a}{1848-3-15}\\
+\emitdate{b}{1848-3-15}\\
+\emitdate{c}{1848-3-15}\\
+\emitdate{d}{1848-3-15}\\
+\emitdate{e}{1848-3-15}\\
+\emitdate{f}{1848-3-15} közepe\\
+\emitdate[a+an]{g}{1848-3-15}\\
+\emitdate{h}{1848-3-15}ában
+\end{latexexample}
+
+\section{Lábjegyzetek}\label{sec-labjegyzet}
+
+\subsection{Beállítási lehetőségek}
+
+\begin{latexcode}
+\footnotestyle{(*\param{előíráslista}*)}
+\end{latexcode}
+A \textsf{magyar.ldf} betöltésekor a \texttt{footnote=} opció értékétől függően állítja be a lábjegyzetek stílusát.
+\texttt{footnote=unchanged} esetén a lábjegyzetkezelő rész (benne a \verb|\footnotestyle| paranccsal) be se töltődik.
+Az alapértelmezés \texttt{footnote=yes}, ekkor a parancsok betöltődnek, de a stílus nem módosul (tehát kezdetben csak a kernel, az osztály és a betöltött csomagok alakítják).
+\texttt{footnote=huplain} esetén a \verb|\footnotestyle{huplain}|, illetve \texttt{footnote=starplain} esetén a \verb|\footnotestyle{starplain}| kerül automatikusan kiadásra.
+
+A \verb|\footnotestyle| változtat a lábjegyzetek megjelenítési stílusán.
+Hatása csak csoporton belül érvényesül. 
+(A lap alján megjelenő részek, például \verb|\footnoterule|, általában az oldal vagy hasáb kiadásakor kerülnek szedésre, ami később történik, mint az oldal főszövegének szedése.
+Így például egy oldalon, csoporton belül kiadott \verb|\footnotestyle| visszahathat az előző oldal fejlécét és láblécét alkotó részekre.)
+Az \param{előíráslista} vesszővel elválasztott előírásokból áll, melyek sorrendje lényeges.
+
+\medskip
+Az előírások a következők lehetnek:
+
+\begin{description}
+
+\begin{footstyle}{reset}
+
+\item[none]
+A dokumentumban folyamatosan számozza a lábjegyzeteket.
+Csak akkor kezdi újra a számozást, ha egyéb csomagok vagy az osztály ezt állítja be.
+Például \textsf{book} osztály esetén a lábjegyzetszámozás fejezetenként újrakezdődik.
+
+\item[section]
+Szakaszonként és fejezetenként újrakezdi a lábjegyzetek számozását.
+
+\item[chapter]
+Fejezetenként újrakezdi a lábjegyzetek számozását.
+
+\item[page]
+1-től azonnal, és a továbbiakban minden oldalon újrakezdi a lábjegyzetek számozását.
+Az oldalhatárok követéséhez az \textsf{.aux} fájlt használja, és a konzolon figyelmeztet, ha a változások miatt a \LaTeX-et újra kell futtatni.
+Hatóköre végeztével az általa befejezett számozás folytatódik.
+
+\item[page-resume]
+1-től azonnal, és a továbbiakban minden oldalon újrakezdi a lábjegyzetek számozását.
+Hatóköre végeztével az őt megelőző számozás onnan folytatódik, ahol abbamaradt.
+
+\item[page-cont]
+Minden oldalon újrakezdi a lábjegyzetek számozását.
+Egy oldalon belül többször ki- és bekapcsolható, emiatt nem kezdi 1-től újra.
+A \texttt{page-cont} és a rajta kívüli lábjegyzetek számozása egymástól függetlenül folyamatos.
+Az \verb|\editorfootnote| is ezt használja.
+
+\end{footstyle}
+
+\item[resume]
+A csoport végén visszaáll az épp aktuális lábjegyzetszám. 
+Kiegészítő funkció, önmagában nem használatos.
+Például a \verb|\footnotestyle{resume,reset=page}| és a \verb|\footnotestyle{reset=page-resume}| ugyanazt eredményezi.
+
+\begin{footstyle}{indent}
+
+\item[article-nosp]
+Az \textsf{article} osztállyal egyező lábjegyzet-megjelenést állít be: a lábjegyzet első sora beljebb kezdődik a többinél, és a sor eleji lábjegyzetszám után nincs szóköz.
+
+\item[article-sp]
+Az \textsf{article} osztályhoz hasonló, a magyar tipográfiának megfelelő lábjegyzet`-megjelenést állít be:
+a lábjegyzet első sora beljebb kezdődik a többinél, és a sor eleji lábjegyzetszám után egy rövid szóköz van.
+
+\item[hulist]
+A magyar tipográfiának megfelelő listaszerű lábjegyzet-megjelenést állít be:
+a lábjegyzet első bekezdésének minden sora a bal margótól az első szintű listával egyező mértékben kezdődik beljebb, a lábjegyzetszám ettől balra, egy rövid szóközzel elválasztva lóg ki.
+
+\end{footstyle}
+
+\begin{footstyle}{rule}
+
+\item[none]
+Nem helyez el vízszintes vonalat a főszöveg és a lábjegyzetek között.
+
+\item[one-line]
+Nem helyez el vízszintes vonalat a főszöveg és a lábjegyzetek között, és e két téglalapot egymástól egy sor $\pm10$\,\% távolságra helyezi el.
+A sorméret a \verb|\normalsize| beállítás \verb|\baselineskip| értéke.
+Magyar tipográfiában ez a fix távolság ajánlott.
+A $\pm10$\,\% esélyt ad a \LaTeX-nek, hogy széthúzza az oldalt.
+
+\item[fourth]
+Egy vízszintes vonalat helyez el a főszöveg és a lábjegyzetek között, melynek hossza a szedéstükör egynegyede (tipográfiai szempontból ez ajánlott).
+A két téglalap távolságát nem befolyásolja.
+
+\item[choose]
+Három különbözőféle vonal közüli választást állít be a főszöveg és a lábjegyzetek között.
+A \verb|\pagefootnoterule| makrót fogja hívni ha a legfelső lábjegyzet az aktuális (és nem egy korábbi) oldalon kezdődött.
+Alapértéke az eredeti \verb|\footnoterule| vonalhúzómakró.
+Ha a legfelső lábjegyzet egy korábbi oldalon kezdődött, akkor az \verb|\mpfootnoterule| makrót fogja hívni, melynek alapértéke a \verb|\footnotestyle{rule=fourth}|-szal egyező.
+A \texttt{minipage} környezetben viszont egységesen az \verb|\mpfootnoterule| makrót hívja meg, melynek alapértéke az eredeti \verb|\footnoterule| vonalhúzómakró.
+
+Az előbbi három makrót a szerző a preambulumban átdefiniálhatja.
+Arra figyelni kell, hogy a makrókat a \LaTeX{} -- ritka szerencsétlen esetben -- egy oldalon többször is meghívhatja, tehát úgy kell megírni őket, hogy többszöri meghívásuk is ugyanúgy nézzen ki, mint az egyszeri.
+Ha a vonalak alapvastagsága 0,4\,pt, akkor például az alábbi definíciók helyesek:\par
+\begin{footnotesize}
+\begin{verbatim}
+\def\pagefootnoterule{\kern-3pt \hrule width 2in \kern2.6pt}
+\def\splitfootnoterule{\kern-3pt \hrule width .25\textwidth \kern2.6pt}
+\def\mpfootnoterule{}
+\end{verbatim}
+\end{footnotesize}
+Az előbbi három makró elnevezése és használata kompatibilis a \texttt{footmisc} csomag \texttt{splitrule} opcióval történő betöltésével. 
+
+A lábjegyzet és a lábléc közé néha beékelődhet egy úszó objektum.
+Ez ellen a lefelé úsztatás tiltásával lehet védekezni, pl.~így: \verb|\begin{table}[th!]|.
+Az opciók között ne legyen \texttt{b}, mert az írja elő az oldal alját.
+
+\end{footstyle}
+
+\begin{footstyle}{marksize}
+
+\item[max-normal]
+A főszövegben megjelenő lábjegyzetjel méretét korlátozza:
+ha az aktuális betűméret nagyobb \verb|\normalsize|-nál, akkor \verb|\footnotesize|-ra korlátozza a jel betűméretét, egyébként nem változtat rajta.
+
+\end{footstyle}
+
+\begin{footstyle}{mark}
+
+\item[arabic]
+A lábjegyzetszámok arab megjelenítését állítja be.
+
+\item[stars]
+A lábjegyzetszámokat egyre több csillaggal jeleníti meg.
+Három csillag fölött már kényelmetlenül hosszú ez a számozás, helyette a \texttt{stars-max} ajánlott.
+
+\item[stars-max]
+Az első hét lábjegyzetet így számozza: \textsuperscript{* *** *** † †† ††† *7}. 
+Ezután az arab számozás folytatódik, csillaggal kezdve.
+
+\end{footstyle}
+
+\item[mpmark=\param{érték}]
+A lehetséges értékek ugyanazok, mint a \texttt{mark=} esetén, és ugyanazt is csinálják, de ezek a a \texttt{minipage} környezeten belüli lábjegyzetjel (\verb|\mpfootnotemark|) megjelenését módosítják.
+Továbbá módosítják a \verb|\makeFootnotable| parancs (lásd később) által előkészített környezeteket is.
+
+\item[plain]
+Egyenértékű a
+\begin{verbatim}
+\footnotestyle{reset=none,mark=arabic}
+\end{verbatim}
+beállítással, ami a \LaTeX{} alapbeállítása.
+
+\item[huplain]
+Egyenértékű a
+\begin{verbatim}
+\footnotestyle{marksize=max-normal,reset=none,
+               mark=arabic,rule=none,indent=hulist}
+\end{verbatim}
+beállítással, ami a \LaTeX{} alapbeállításához hasonló, de a magyar tipográfiát követő arab számos stílus.
+
+\item[starplain]
+Egyenértékű a
+\begin{verbatim}
+\footnotestyle{marksize=max-normal,reset=page,
+               mark=stars-max,rule=none,indent=hulist}
+\end{verbatim}
+beállítással, ami a magyar tipográfiát követő csillagos stílus.
+
+\item[editor]
+Egyenértékű a
+\begin{verbatim}
+\footnotestyle{marksize=max-normal,reset=none,
+               mark=arabic,rule=none,indent=hulist}
+\end{verbatim}
+beállítással, ami a szerkesztő megjegyzéseihez használható.
+A szerző lábjegyzeteit ekkor \texttt{huplain} stílusban ajánlott elhelyezni.
+Lásd még az \verb|\editorfootnote| parancsot.
+
+\end{description}
+
+\begin{latexcode}
+\makeFootnotable{(*\param{környezetnév}*)}
+\end{latexcode}
+A \param{környezetnév} egy úsztatott környezet neve (pl.~\texttt{figure}).
+Ezt az úsztatott környezetet felkészíti a \verb|\footnote| parancs befogadására.
+Az úsztatott környezetekben eredetileg a \verb|\footnote| parancs hatására csak a lábjegyzetjel jelenik meg, maga a lábjegyzet hiányozni fog a dokumentumból.
+Például a \verb|\makeFootnotable{figure}| kiadása után viszont minden \texttt{figure} környezetben meg fognak jelenni a lábjegyzetek, mégpedig a cím (\verb|\caption|) alatt.
+A működés a magyar tipográfiai gyakorlatnak megfelelő, ugyanis az ábra vagy táblázat lábjegyzetét nem a főoldalon, hanem magában az ábrában kell elhelyezni.
+A \verb|\makeFootnotable{}| csak az aktuális úsztatott környezet aktív példányára van hatással.
+
+Alternatív megoldás, ha a szóban forgó környezet tartalmát egy \texttt{minipage} környezetben helyezzük el, ekkor azonban számolni kell a \texttt{minipage} egyéb velejáróival is.
+
+Ezt a parancsot a \textsf{footmisc} csomag \texttt{para} opciójával együtt használva, a lábjegyzetek egymás alá fognak kerülni.
+Az \textsf{fnpara} csomag esetén viszont e belső lábjegyzetek is egymás mellett jelennek majd meg.
+
+A belső lábjegyzetek megjelenítési stílusát a \verb|\thempfootnote| szabályozza, ami a \LaTeX{} kernel alapértelmezésében dőlt kisbetűket állít be.
+Átdefiniálható például félkövér római számokra  \verb|\def\thempfootnote{\bfseries\roman{mpfootnote}}| módon, csillagokra pedig a
+\verb|\footnotestyle{mpmark=stars}| paranccsal.
+
+\begin{latexcode}
+\editorfootnote{(*\param{lábjegyzet szövege}*)}
+\end{latexcode}
+A rendes lábjegyzetek közé egy \verb|\footnotestyle{starplain}| stílusban, csillagokkal, oldalanként újrakezdődő számozású lábjegyzetet helyez el.
+Hatása megegyezik egy csoporton belül \verb|\footnotestyle{editor}| után kiadott \verb|\footnote|-éval.
+Jól használható a szerkesztő megjegyzéseinek feltüntetésére, miközben a szerző jegyzetei sima \verb|\footnote| paranccsal szerepelnek.
+
+\begin{latexcode}
+\setlength{\skip\footins}{(*\param{rugalmas távolság}*)}
+\setlength{\dimen\footins}{(*\param{maximális magasság}*)}
+\end{latexcode}
+A főszöveg és a lábjegyzettömb távolságát, illetve a lábjegyzettömb maximális magasságát állítja be.
+Előbbi alapértéke \verb|\bigskipamount|, utóbbié pedig \texttt{8in}, de ezt az osztály és a betöltött csomagok felülbírálhatják.
+
+\begin{latexcode}
+\headingfootnote(*\textrm{[}[\dots]\textrm{]}*){(*\param{lábjegyzet szövege}*)}
+\end{latexcode}
+Fejezet- illetve szakaszcímekben nem lehet használni a \verb|\footnote| parancsot.
+Ha mégis szükséges, akkor \verb|\footnote| helyett a \verb|\headingfootnote| parancsot kell használni.
+
+\subsection{A lábjegyzetekre vonatkozó magyar tipográfiai szabályok}
+
+A lábjegyzetek magyar tipográfiai szabályainak a \textsf{magyar.ldf} a következő listában leírt módokon próbál megfelelni:
+
+\begin{enumerate}
+\item
+Csillagok és arab számozás egyaránt használható a lábjegyzet jelölésére.
+A kívánt számozás a \texttt{mark=} előírással kiválasztható.
+\item
+A csillagos számozás minden oldalon újrakezdődik, az arab számozás pedig fejezetenként.
+Lásd a \texttt{reset=} előírást.
+\item
+A lábjegyzetjel szóköz nélkül követi a szót, amire vonatkozik.
+Ennek érdekében a szerzőnek kell figyelni arra, hogy a \verb|\footnote| előtt ne legyen szóköz vagy sortörés.
+\item
+A lábjegyzet külön mondat, tehát nagybetűvel kell kezdeni, és általában ponttal kell befejezni.
+Erre a szerzőnek kell figyelni.
+\item
+Ha egy műben a szerkesztő és a szerző is helyez el lábjegyzeteket, a szerző lábjegyzeteit arab számokkal, a szerkesztőjét pedig csillagokkal érdemes jelölni. Lásd az \verb|\editorfootnote| parancsot.
+\item
+A lábjegyzetek szövege és a főszöveg között elég egy üres sort hagyni, vonalra nincs
+szükség.
+Lásd a \texttt{rule=none} vagy \texttt{rule=one-line} előírásokat.
+\item
+A főszöveg és egy hosszú lábjegyzet előző oldalon félbemaradt részének folytatásával induló lábjegyzetblokk között vonalat kell elhelyezni (melynek hossza a tükörszélesség harmada vagy negyede legyen).
+A legtöbbször jól működő megoldást valósít meg a \texttt{rule=choose} előírás.
+\item
+Rövid lábjegyzetek egy sorba tördelhetők.
+Ehhez a \textsf{footmisc} csomag ajánlott \texttt{para} opcióval, vagy az \textsf{fnpara} csomag. 
+A \textsf{footmisc} a \texttt{minipage} környezeten belüli lábjegyzeteket nem teszi egy sorba, az \textsf{fnpara} viszont igen.
+\item
+Táblázat illetve ábra lábjegyzetei közvetlenül alatta, és ne az oldal alján jelenjenek meg.
+Lásd a \verb|\makeFootnotable| parancsot.
+\item
+Ha a normálnál nagyobb betűméretű szövegben van lábjegyzet, a lábjegyzetjel ne legyen nagyobb a normál betűmérethez tartozónál.
+Lásd a \texttt{marksize=max-normal} előírást.
+\item
+A lábjegyzet kezdődhet beütéssel (azaz első sora beljebb kezdődik) vagy listaszerűen (a lábjegyzetjeltől eltekintve az első és a második sor egymás fölött kezdődik).
+Lásd az \texttt{indent=hulist} előírást.
+\item
+Az oldal alján található lábjegyzetjel után egy rövid szóköz van.
+Ehhez használhatóak az \texttt{indent=article-sp} vagy \texttt{indent=hulist} előírások.
+\item
+Ha túl sok csillagos megjegyzés kerülne egy oldalra, akkor más jelre kell áttérni.
+Lásd a \texttt{mark=stars-max} előírást.
+\end{enumerate}
+
+\end{document}
