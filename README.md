@@ -39,7 +39,7 @@ or
 
 ## Changelog
 
-### v1.6c (unreleased)
+### v1.6c (2026-07-04)
 
 - Removed `hynumberline=latex`
 ([33a52e3](https://github.com/tibortomacs/babel-hungarian/commit/33a52e3)),
