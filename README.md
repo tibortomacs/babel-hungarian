@@ -2,14 +2,18 @@
 
 Hungarian language support for the babel multilingual package in LaTeX.
 
+The current maintainers of this work are
+  - primary maintainer: Tibor Tómács
+  - secondary maintainer: Péter Szabó
+
 The babel-hungarian on the CTAN website:
 [https://ctan.org/pkg/babel-hungarian](https://ctan.org/pkg/babel-hungarian)
 
 Hungarian typography in LaTeX in this TUG 2004 article:
 [https://math.bme.hu/latex/dl/pts_tug2004_magyarldf2.pdf](https://math.bme.hu/latex/dl/pts_tug2004_magyarldf2.pdf)
 
-There is a longer user manual in Hungarian:
-[https://math.bme.hu/latex/magyarldf-doc.pdf](https://math.bme.hu/latex/magyarldf-doc.pdf)
+There is a user manual in Hungarian:
+[https://tibortomacs.github.io/babel-hungarian/babel-hungarian-manual.pdf](https://tibortomacs.github.io/babel-hungarian/babel-hungarian-manual.pdf)
 
 Detailed instructions and learning materials on how to use LaTeX for Hungarian language documents can be found at the following link:
 [https://tibortomacs.github.io/latex-tutorial-hu](https://tibortomacs.github.io/latex-tutorial-hu)
