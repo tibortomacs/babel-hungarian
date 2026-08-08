@@ -43,7 +43,7 @@ or
 
 - Fixed:
 issue
-[#18](https://github.com/tibortomacs/babel-hungarian/issues/18),
+[#18](https://github.com/tibortomacs/babel-hungarian/issues/18)
 
 ### v1.6c (2026-07-04)
 
@@ -57,13 +57,15 @@ issue
 ([f016500](https://github.com/tibortomacs/babel-hungarian/commit/f016500))
 - Support for `caption2` regardless of the `longcaption` option
 ([b23db2a](https://github.com/tibortomacs/babel-hungarian/commit/b23db2a))
-- Removed deprecated options: `varioref`
+- Removed deprecated options:
+`varioref`
 ([a2a45c8](https://github.com/tibortomacs/babel-hungarian/commit/a2a45c8)),
-`toclang`
-([ceb5ebc](https://github.com/tibortomacs/babel-hungarian/commit/ceb5ebc),
-[#17](https://github.com/tibortomacs/babel-hungarian/issues/17)), 
 `ntheoremfix`
 ([ceb5ebc](https://github.com/tibortomacs/babel-hungarian/commit/ceb5ebc))
+- Removed option
+`toclang`
+([ceb5ebc](https://github.com/tibortomacs/babel-hungarian/commit/ceb5ebc),
+[#17](https://github.com/tibortomacs/babel-hungarian/issues/17))
 - Fixed:
 commits
 [0fda1b0](https://github.com/tibortomacs/babel-hungarian/commit/0fda1b0),
