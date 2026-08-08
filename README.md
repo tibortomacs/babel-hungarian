@@ -39,6 +39,12 @@ or
 
 ## Changelog
 
+### v1.6d (unreleased)
+
+- Fixed:
+issue
+[#18](https://github.com/tibortomacs/babel-hungarian/issues/18),
+
 ### v1.6c (2026-07-04)
 
 - Removed `hynumberline=latex`
