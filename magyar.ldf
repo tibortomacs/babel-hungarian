@@ -5019,27 +5019,62 @@
   }%
 }
 
-% --- Problem:
+% --- Timing \@@magyar@setup@psheadings
 %
-% \ps@headings isn't run \AtBeginDocument, but book.cls runs
-% \pagestyle{headings} when it is loaded. We should change this to
-% \AtBeginDocument or similar.
-% Solve problem: Timing is critical. \select@language must
-% be called after \AtBeginDocument, so \catcode{}s won't be \activated
-% too early. (Because some code in \AtBeginDocument might issue an
-% \input such as hyperref.sty which does \RequirePackage{nameref}.)
-% Note that \extrasmagyar containing the \catcode changes is
-% only run when `magyar' is the default language (last arg of
-% \usepackage[...]{babel}). If that is run after \AtBeginDocument hooks,
-% then most packages will use 12 as \catcode\string``, which is intended.
-%   \@@magyar@setup@psheadings might just be run \AtBeginDocument, it doesn't
-% need \@preamblecmds -- but it must be after \select@language.
+% book.cls calls \pagestyle{headings} at load time, not \AtBeginDocument. 
+% Timing matters: \extras<lang> (backtick-catcode activation, 
+% when magyar is the default language) must run only after
+% all \AtBeginDocument code has run, or it can race a package's own
+% \input calls (e.g. hyperref -> nameref). \@@magyar@setup@psheadings
+% must run before \extras<lang> executes (it registers the header
+% localization into it), so it's placed right before the deferred
+% \bbl@set@language{\languagename} call below, both driven from \@preamblecmds.
 %
-% \@preamblecmds is expanded after \@begindocumenthook
+% \@@magyar@bbl@curlang remembers which language we last switched to.
+% We can't use \languagename for this comparison: TeX's own grouping
+% already restores \languagename to the outer language before
+% \bbl@set@language runs (e.g. at the end of \otherlanguage), so
+% comparing against \languagename would always look "unchanged" right
+% at that moment, silently skipping both the re-activation and the
+% .toc/.lof/.lot write.
+% It starts as \relax, not the main language's own name, so that the
+% very first activation below (deliberately routed through
+% \bbl@set@language itself, not a bare \select@language, precisely so
+% it also gets a marker written) also counts as "changed" -- seeding it
+% with the main language's name would make that first call look
+% unchanged too and silently drop the opening marker.
+
+\newif\if@@magyar@bbl@activated
+
 \expandafter\gdef\expandafter\@preamblecmds\expandafter{\@preamblecmds%
-  \@@magyar@setup@psheadings% Solve problem. Before \selectlanguage.
-  \select@language{\languagename}% force initial language (This is also needed for the longcaption option.)
-}%
+  \@@magyar@setup@psheadings%
+  \global\let\@@magyar@bbl@curlang\relax%
+  \global\@@magyar@bbl@activatedtrue% for the redefined \bbl@set@language (see below)
+  \bbl@set@language{\languagename}%
+}
+
+% --- Redefine \bbl@set@language#1
+%
+% Babel-core's own early \AtBeginDocument{\selectlanguage{\bbl@main@language}}
+% call (registered when \usepackage{babel} is processed) reaches
+% \bbl@set@language and can fire before a later-loaded package's own
+% \AtBeginDocument code (e.g. mathtools -> graphicx -> trig.sty's
+% \catcode`t=12\catcode`p=12 trick), racing our backtick-catcode
+% activation and breaking it.
+
+\def\bbl@set@language#1{%
+  \if@@magyar@bbl@activated%
+    \edef\@Lang@tmp{\expandafter\string#1\@empty}%
+    \ifx\@@magyar@bbl@curlang\@Lang@tmp\else%
+      \global\let\@@magyar@bbl@curlang\@Lang@tmp%
+      \let\languagename\@Lang@tmp%
+      \select@language{\languagename}%
+      \if@filesw%
+        \protected@write\@auxout{}{\string\babel@aux{\languagename}{}}%
+      \fi%
+    \fi%
+  \fi%
+}
 
 % --- Finish
 
