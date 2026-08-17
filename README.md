@@ -29,13 +29,13 @@ or
 \PassOptionsToPackage{defaults=hu-min}{magyar.ldf}% or \def\magyarOptions{defaults=hu-min}
 \usepackage[magyar]{babel}
 ```
-or
+<!-- or
 ```
 \DocumentMetadata{lang=hu}
 \documentclass{...}
 \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}
 \usepackage{babel}
-```
+``` -->
 
 ## Changelog
 
