@@ -5044,16 +5044,27 @@
 % with the main language's name would make that first call look
 % unchanged too and silently drop the opening marker.
 
-\newif\if@@magyar@bbl@activated
+\newif\if@@magyar@bbl@activated@\@@magyar@bbl@activated@false
+\newif\if@@magyar@active@grave@\@@magyar@active@grave@false
+\edef\magyar@activeprefix@grave{\string`}
+\ifnum\magyar@opt@@active>1
+  \ifx\magyar@opt@@activeprefix\magyar@activeprefix@grave
+    \@@magyar@active@grave@true % ` is active
+  \fi
+\fi
 
 \expandafter\gdef\expandafter\@preamblecmds\expandafter{\@preamblecmds%
   \@@magyar@setup@psheadings%
-  \global\let\@@magyar@bbl@curlang\relax%
-  \global\@@magyar@bbl@activatedtrue% for the redefined \bbl@set@language (see below)
-  \bbl@set@language{\languagename}%
+  \if@@magyar@active@grave@% if ` is active
+    \global\let\@@magyar@bbl@curlang\relax%
+    \global\@@magyar@bbl@activated@true% for the redefined \bbl@set@language (see below)
+    \bbl@set@language{\languagename}%
+  \else% if ` is not active
+    \select@language{\languagename}%
+  \fi%
 }
 
-% --- Redefine \bbl@set@language#1
+% --- Redefine \bbl@set@language
 %
 % Babel-core's own early \AtBeginDocument{\selectlanguage{\bbl@main@language}}
 % call (registered when \usepackage{babel} is processed) reaches
@@ -5062,19 +5073,18 @@
 % \catcode`t=12\catcode`p=12 trick), racing our backtick-catcode
 % activation and breaking it.
 
-\def\bbl@set@language#1{%
-  \if@@magyar@bbl@activated%
-    \edef\@Lang@tmp{\expandafter\string#1\@empty}%
-    \ifx\@@magyar@bbl@curlang\@Lang@tmp\else%
-      \global\let\@@magyar@bbl@curlang\@Lang@tmp%
-      \let\languagename\@Lang@tmp%
-      \select@language{\languagename}%
-      \if@filesw%
-        \protected@write\@auxout{}{\string\babel@aux{\languagename}{}}%
+\if@@magyar@active@grave@% if ` is active
+  \let\@@magyar@orig@bbl@set@language\bbl@set@language
+  \def\bbl@set@language#1{%
+    \if@@magyar@bbl@activated@%
+      \edef\@Lang@tmp{\expandafter\string#1\@empty}%
+      \ifx\@@magyar@bbl@curlang\@Lang@tmp\else%
+        \global\let\@@magyar@bbl@curlang\@Lang@tmp%
+        \@@magyar@orig@bbl@set@language{#1}%
       \fi%
     \fi%
-  \fi%
-}
+  }
+\fi
 
 % --- Finish
 
