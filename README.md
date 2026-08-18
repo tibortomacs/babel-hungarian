@@ -39,6 +39,11 @@ or
 
 ## Changelog
 
+### v1.6e (unreleased)
+
+- Better fix of issue
+[#18](https://github.com/tibortomacs/babel-hungarian/issues/18)
+
 ### v1.6d (2026-08-08)
 
 - Fixed:
