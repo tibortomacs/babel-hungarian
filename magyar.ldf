@@ -4015,8 +4015,8 @@
     \edef\reserved@b{\string\mathchar}%
     \ifx\reserved@a\reserved@b
       \ifnum"#2<"8000 % redundant sanity check, trueness implied by #1==\mathchar
-        % Make #4 robust.
-	\edef#4{\noexpand\protect\expandafter\noexpand\csname
+        % Make #4 e-TeX protected
+        \protected\edef#4{\expandafter\noexpand\csname
           \expandafter\@gobble\string#4 \endcsname}%
 	% vvv Imp: \def would be better than \edef?
 	\expandafter\edef\csname\expandafter\@gobble\string#4 \endcsname{%
@@ -4042,7 +4042,7 @@
     \ifx#1\@undefined\else
       \expandafter\ifx\csname @@magyar@orig@\expandafter\@gobble\string#1\endcsname\relax
         \expandafter\let\csname @@magyar@orig@\expandafter\@gobble\string#1\endcsname=#1%
-        \edef#1{\noexpand\protect\expandafter\noexpand\csname
+        \protected\edef#1{\expandafter\noexpand\csname
           \expandafter\@gobble\string#1 \endcsname}%
         \expandafter\edef\csname\expandafter\@gobble\string#1 \endcsname{%
           \expandafter\noexpand\csname @@magyar@orig@\expandafter\@gobble\string#1\endcsname
@@ -4090,7 +4090,7 @@
     \do\wedge\do\land\do\ominus\do\oslash\do\bigcirc\do\bigtriangledown\do\rhd
     \do\unrhd\do\triangleleft\do\triangleright\do\star\do\ast\do\circ\do\bullet
     \do\diamond\do\uplus\do\amalg\do\dagger\do\ddagger\do\wr
-    \edef\cdot{\noexpand\protect\csname cdot \endcsname}%
+    \protected\edef\cdot{\expandafter\noexpand\csname cdot \endcsname}%
     \expandafter\def\csname cdot \endcsname{\nobreak\mathchar"2201\nobreak}%
     \def\slash{\nobreak/\nobreak}% only in math-mode start, \nobreak
     % ^^^ Dat: \slash is fragile in latex.ltx
