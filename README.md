@@ -29,21 +29,22 @@ or
 \PassOptionsToPackage{defaults=hu-min}{magyar.ldf}% or \def\magyarOptions{defaults=hu-min}
 \usepackage[magyar]{babel}
 ```
-<!-- or
+or
 ```
 \DocumentMetadata{lang=hu}
 \documentclass{...}
 \PassOptionsToPackage{defaults=hu-min}{hungarian.ldf}% or \def\hungarianOptions{defaults=hu-min}
 \usepackage{babel}
-``` -->
+```
 
 ## Changelog
 
 ### v1.6f (unreleased)
 
 - Fixed:
-issue
-[#19](https://github.com/tibortomacs/babel-hungarian/issues/19)
+issues
+[#19](https://github.com/tibortomacs/babel-hungarian/issues/19),
+[#20](https://github.com/tibortomacs/babel-hungarian/issues/20)
 
 ### v1.6e (2026-10-07)
 
