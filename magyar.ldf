@@ -4871,6 +4871,82 @@
     \fi}%
   \expandafter\magyar@def@psheadings\expandafter{\CurrentOption}{letter}%
 }{}
+
+% for \DocumentMetadata{lang=hu}
+\IfInstanceExistsT{heading}{part}{%
+  \expandafter\addto\csname extras\CurrentOption\endcsname{%
+    \EditInstance{heading}{part}%
+      {prefix=\magyar@huordinal@partheaddot, number-format=\partname}%
+    \EditInstance{headformat}{part}%
+      {prefix-number-sep=0pt}%
+  }
+  \expandafter\addto\csname noextras\CurrentOption\endcsname{%
+    \EditInstance{heading}{part}%
+      {prefix=\partname, number-format=\thepart}%
+    \EditInstance{headformat}{part}%
+      {prefix-number-sep=.5em}%
+  }
+}
+\IfInstanceExistsT{heading}{chapter}{%
+  \expandafter\addto\csname extras\CurrentOption\endcsname{%
+    \EditInstance{heading}{chapter}%
+      {prefix=\magyar@huordinal@chapterheaddot, number-format=\@chapapp}%
+    \EditInstance{headformat}{chapter}%
+      {prefix-number-sep=0pt}%
+  }
+  \expandafter\addto\csname noextras\CurrentOption\endcsname{%
+    \EditInstance{heading}{chapter}%
+      {prefix=\@chapapp, number-format=\thechapter}%
+    \EditInstance{headformat}{chapter}%
+      {prefix-number-sep=.5em}%
+  }
+}
+\IfInstanceExistsT{heading}{section}{%
+  \expandafter\addto\csname extras\CurrentOption\endcsname{%
+    \EditInstance{heading}{section}%
+      {number-format=\thesection.\magyar@opt@@titleskip}%
+    \EditInstance{headformat}{section}%
+      {number-title-sep=0pt}%
+    \EditInstance{heading}{subsection}%
+      {number-format=\thesubsection.\magyar@opt@@titleskip}%
+    \EditInstance{headformat}{subsection}%
+      {number-title-sep=0pt}%
+    \EditInstance{heading}{subsubsection}%
+      {number-format=\thesubsubsection.\magyar@opt@@titleskip}%
+    \EditInstance{headformat}{subsubsection}%
+      {number-title-sep=0pt}%
+    \EditInstance{heading}{paragraph}%
+      {number-format=\theparagraph.\magyar@opt@@titleskip}%
+    \EditInstance{headformat}{paragraph}%
+      {number-title-sep=0pt}%
+    \EditInstance{heading}{subparagraph}%
+      {number-format=\thesubparagraph.\magyar@opt@@titleskip}%
+    \EditInstance{headformat}{subparagraph}%
+      {number-title-sep=0pt}%
+  }
+  \expandafter\addto\csname noextras\CurrentOption\endcsname{%
+    \EditInstance{heading}{section}%
+      {number-format=\theheading}%
+    \EditInstance{headformat}{section}%
+      {number-title-sep=1em}%
+    \EditInstance{heading}{subsection}%
+      {number-format=\theheading}%
+    \EditInstance{headformat}{subsection}%
+      {number-title-sep=1em}%
+    \EditInstance{heading}{subsubsection}%
+      {number-format=\theheading}%
+    \EditInstance{headformat}{subsubsection}%
+      {number-title-sep=1em}%
+    \EditInstance{heading}{paragraph}%
+      {number-format=\theheading}%
+    \EditInstance{headformat}{paragraph}%
+      {number-title-sep=1em}%
+    \EditInstance{heading}{subparagraph}%
+      {number-format=\theheading}%
+    \EditInstance{headformat}{subparagraph}%
+      {number-title-sep=1em}%
+  }
+}
 \@gobble
 {^}%
 
