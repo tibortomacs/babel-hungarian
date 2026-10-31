@@ -40,6 +40,14 @@
   \fi
 \fi
 
+% Ensure that \addto uses its token-register branch
+\@ifundefined{extras\CurrentOption}{%
+  \expandafter\let\csname extras\CurrentOption\endcsname\@empty
+}{}
+\@ifundefined{noextras\CurrentOption}{%
+  \expandafter\let\csname noextras\CurrentOption\endcsname\@empty
+}{}
+
 % Fix \catcodes{} possibly screwed up by other Babel languages.
 \edef\@@magyar@restcats{%
   \catcode\string`\string`\the\catcode\string``\space\space
@@ -825,6 +833,50 @@
     \let\swappedhead\thmhead
   \fi
 }%
+
+% Template-based theorem headings (\DocumentMetadata[lang=hu])
+\IfInstanceExistsT{thmstyle}{plain}{%
+  \expandafter\addto\csname extras\CurrentOption\endcsname{%
+    \EditInstance{thmstyle}{plain}{%
+      order={number,separator-a,title,separator-b,note,punct},
+      number-format={#1.}%
+    }%
+  }%
+  \expandafter\addto\csname noextras\CurrentOption\endcsname{%
+    \EditInstance{thmstyle}{plain}{%
+      order={title,separator-a,number,separator-b,note,punct},
+      number-format={#1}%
+    }%
+  }%
+}
+\IfInstanceExistsT{thmstyle}{definition}{%
+  \expandafter\addto\csname extras\CurrentOption\endcsname{%
+    \EditInstance{thmstyle}{definition}{%
+      order={number,separator-a,title,separator-b,note,punct},
+      number-format={#1.}%
+    }%
+  }%
+  \expandafter\addto\csname noextras\CurrentOption\endcsname{%
+    \EditInstance{thmstyle}{definition}{%
+      order={title,separator-a,number,separator-b,note,punct},
+      number-format={#1}%
+    }%
+  }%
+}
+\IfInstanceExistsT{thmstyle}{remark}{%
+  \expandafter\addto\csname extras\CurrentOption\endcsname{%
+    \EditInstance{thmstyle}{remark}{%
+      order={number,separator-a,title,separator-b,note,punct},
+      number-format={#1.}%
+    }%
+  }%
+  \expandafter\addto\csname noextras\CurrentOption\endcsname{%
+    \EditInstance{thmstyle}{remark}{%
+      order={title,separator-a,number,separator-b,note,punct},
+      number-format={#1}%
+    }%
+  }%
+}
 \@gobble
 {^}%
 
