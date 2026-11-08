@@ -3846,11 +3846,11 @@
   \def\fos@editor{\fos@huplain\csname fos@reset=page-cont\endcsname\csname fos@mark=stars-max\endcsname}%
 
   \def\fos@{}
-  \def\fos@zapspaces#1{\zap@space#1 \@empty}
+  \def\magyar@zapspaces#1{\zap@space#1 \@empty}
 
   \def\footnotestyle#1{%
     \@for\reserved@a:=#1\do{%
-      \edef\reserved@a{\expandafter\fos@zapspaces\expandafter{\reserved@a}}%
+      \edef\reserved@a{\expandafter\magyar@zapspaces\expandafter{\reserved@a}}%
       \@ifundefined{fos@\reserved@a}{\@latex@error{Undefined footnote style: \reserved@a}\@ehc}%
       {\csname fos@\reserved@a\endcsname}%
     }%
