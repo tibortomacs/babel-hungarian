@@ -39,7 +39,7 @@ or
 
 ## Changelog
 
-### v1.6f (unreleased)
+### v1.6f (2026-11-14)
 
 - Fixed:
 issues

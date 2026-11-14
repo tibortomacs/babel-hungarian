@@ -25,10 +25,10 @@
 %                     via: https://github.com/tibortomacs/babel-hungarian
 %                   email: tomacs.tibor@gmail.com
 
-\NeedsTeXFormat{LaTeX2e}[2026-06-01]
+\NeedsTeXFormat{LaTeX2e}[2026-11-01]
 
 \ProvidesLanguage{\CurrentOption}
-  [2026/10/07 v1.6e Hungarian support from the babel system]
+  [2026/11/14 v1.6f Hungarian support from the babel system]
 
 \LdfInit{\CurrentOption}{captions\CurrentOption}
 
